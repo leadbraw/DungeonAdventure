@@ -16,9 +16,12 @@ playerImg = pygame.image.load('hero.png')
 playerImg = pygame.transform.scale(playerImg, (50, 50))
 playerX = 370
 playerY = 480
+playerX_change = 0
+playerY_change = 0
 
-def player():
-    screen.blit(playerImg, (playerX, playerY))
+#method for displaying the player/hero
+def player(theX, theY):
+    screen.blit(playerImg, (theX, theY))
 
 #Game loop
 running = True
@@ -31,5 +34,26 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    player()
+        # if keystroke is pressed check whether its right or left
+        if event.type == pygame.KEYDOWN:
+
+            if event.key == pygame.K_LEFT:
+                playerX_change = -0.2
+            if event.key == pygame.K_RIGHT:
+                playerX_change = 0.2
+            if event.key == pygame.K_UP:
+                print("Up key is pressed")
+                playerY_change = -0.2
+            if event.key == pygame.K_DOWN:
+                print("Down arrow is pressed")
+                playerY_change = 0.2
+
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                playerX_change = 0
+                playerY_change = 0
+
+    playerX += playerX_change
+    playerY += playerY_change
+    player(playerX, playerY)
     pygame.display.update()
