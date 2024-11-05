@@ -38,6 +38,7 @@ class Dungeon:
 
     def __init__(self, floor_number):
         """Constructor for Dungeon. Instantiates it."""
+        # 5x5, 6x6, 7x7, 8x8
         self.length = floor_number + 4
         self.width = floor_number + 4
         self.map = [[Room('BLOCKED') for _ in range(self.length)] for _ in range(self.width)] # Rooms by default are blocked
@@ -68,33 +69,38 @@ class Dungeon:
         entrance_x, entrance_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
         exit_x, exit_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
         distance = self.__distance(entrance_x, entrance_y, exit_x, exit_y)
-        while distance < 3:
+        while distance <= self.length - 2:
             exit_x, exit_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
             distance = self.__distance(entrance_x, entrance_y, exit_x, exit_y)
         self.map[entrance_x][entrance_y] = Room('ENTRANCE')
         self.map[exit_x][exit_y] = Room('EXIT')
         # self.__str__()
-        print('~')
+        # print('~')
         path = self.__path_to_exit(entrance_x, entrance_y, exit_x, exit_y)
         # self.__str__()
-        print('~')
+        # print('~')
         offshoot_rooms = self.__generate_offshoots(path)
         populated_rooms = path + offshoot_rooms
         self.__place_pillar(populated_rooms, exit_x, exit_y)
         # self.__str__()
-        # TODO: fix line 89 error
-        # TODO: fix the occasional inaccessible room(s)
 
     def __generate_offshoots(self, path):
         offshoot_length = self.length - 2
-        starting_points = random.sample(path[1:-1], 2)
+        starting_points = random.sample(path[1:-1], offshoot_length - 1)
         directions = [(1,0),(-1,0),(0,1),(0,-1)]
         room_locations = []
         for x, y in starting_points:
             direction = random.choice(directions)
+            if not self.__valid_direction_for_offshoot(direction, x, y):
+                # If we know the direction won't work, reverse it before trying again
+                direction = [-1 * direction[0], -1 * direction[1]]
             for i in range(offshoot_length):
                 next_x, next_y = x + direction[0] * (i + 1), y + direction[1] * (i + 1)
-                if (next_x < self.length and next_y < self.width) and self.map[next_x][next_y].type == 'BLOCKED':
+                '''Validate coordinates and avoid an offshoot 'wrapping around' and generating on the opposite side
+                of the map after hitting an edge (due to negative indexing).'''
+                if (0 <= next_x < self.length and
+                    0 <= next_y < self.width and
+                    self.map[next_x][next_y].type == 'BLOCKED'):
                     self.map[next_x][next_y] = Room('RANDOM')
                     room_locations.append((next_x, next_y))
                 else:
@@ -107,7 +113,7 @@ class Dungeon:
         current_y = entrance_y
         path = []
         '''Path from entrance to exit horizontally, then vertically, creating random rooms along the way.
-        the path from entrance to exit is stored to generate offshoots later.'''
+        The path from entrance to exit is stored to generate offshoots later.'''
         while current_y != exit_y:
             while current_x != exit_x:
                 current_x = current_x + 1 if current_x < exit_x else current_x - 1
@@ -126,7 +132,11 @@ class Dungeon:
             x, y = random.choice(rooms)
         self.map[x][y] = Room('PILLAR')
 
+    def __valid_direction_for_offshoot(self, direction, x, y) -> bool:
+        new_x, new_y = x * direction[0], y * direction[1]
+        return (0 <= new_x < self.length and 0 <= new_y < self.width and
+                self.map[new_x][new_y].type == 'BLOCKED')
 
 # for testing...
-d = Dungeon(1)
+# d = Dungeon(4)
 
