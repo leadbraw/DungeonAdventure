@@ -1,3 +1,4 @@
+import random
 from entities import Entity
 
 
@@ -11,13 +12,33 @@ class Adventurer(Entity):
         # adventurer specific attributes (from database)
         self.__my_chance_to_block = the_chance_to_block
 
-    def __calculate_attacks_per_turn(self, the_target):
-        # compare attack speeds
-        # return number of attacks
-        pass
+    def _update_hp(self, the_diff):
+        message = ""
+
+        # check block
+        if self.block():
+            message += f"\n{self.get_name()} blocked the attack."
+        else:
+            super()._update_hp(the_diff)
+            if not self.is_alive():
+                message += f"\n{self.get_name()} fainted."
+
+        return message
+
+    def block(self):
+        blocked = False
+        # chance to block (random float within block chance)
+        if random.uniform(0,1) <= self.__my_chance_to_block:
+            blocked = True
+
+        return blocked
+
+    def get_block_chance(self):
+        return self.__my_chance_to_block
+
 
     def move(self, the_new_position):
-        self.__my_position = the_new_position
+        self.set_pos(the_new_position)
 
 
 class Warrior(Adventurer):
