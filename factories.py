@@ -1,5 +1,6 @@
+import random
 from adventurers import Warrior, Priest, Thief
-from monsters import Ogre, Goblin, Skeleton
+from monsters import Ogre, Gremlin, Skeleton
 
 
 class Factory:
@@ -23,13 +24,13 @@ class Factory:
 
     @staticmethod
     def make_gremlin(the_name = "Nekrogoblikon", the_position = (0,0)):
-        return Goblin(the_name, the_position,
+        return Gremlin(the_name, the_position,
                        70, 5, 0.8, (15, 30),
                        0.4, (20, 40))
 
     @staticmethod
     def make_skeleton(the_name = "Whitechapel", the_position = (0,0)):
-        return Thief(the_name, the_position,
+        return Skeleton(the_name, the_position,
                        100, 3, 0.8, (30, 50),
                        0.3)
 
@@ -52,3 +53,14 @@ class Factory:
         return Thief(the_name, the_position,
                           75, 6, 0.8, (20, 40),
                           0.4)
+
+# m = Factory.make_ogre()
+# a = Factory.make_warrior()
+# print(m.get_name(), ":", m.get_hp())
+# print(a.get_name(), ":", a.get_hp())
+# while(m.is_alive() and a.is_alive()):
+#     print(m.attack(a))
+#     print(a.attack(m))
+#     print(m.get_name(), ":", m.get_hp(), a.get_name(), ":", a.get_hp())
+# print(m.get_name(), ":", m.get_hp())
+# print(a.get_name(), ":", a.get_hp())
