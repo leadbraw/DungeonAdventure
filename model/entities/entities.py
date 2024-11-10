@@ -5,7 +5,7 @@ from typing import final
 
 # utilizes template design pattern
 class Entity:
-    # TODO look into attributes
+    # TODO update method visibility
 
     def __init__(self, the_name, the_position,
                  the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range):
@@ -22,16 +22,16 @@ class Entity:
 
     @final
     def is_alive(self):
-        return self.get_hp() > 0
+        return self.hp > 0
 
     @final
     def attack(self, the_target):
         message = ""
 
-        for i in range(self._calculate_attack_num(the_target)):
+        for i in range(self.__calculate_attack_num(the_target)):
 
             if not self.is_alive():
-                message += self._has_fainted_msg()
+                message += self.__has_fainted_msg()
                 break
 
             if not the_target.is_alive():
@@ -39,22 +39,22 @@ class Entity:
                 break
 
             # attack roll (random float within the hit chance)
-            if random.uniform(0,1) <= self.get_hit_chance():
+            if random.uniform(0,1) <= self.hit_chance:
                 # damage roll (random int within damage_range)
-                damage = random.randint(self.__my_damage_range[0], self.__my_damage_range[1])
+                damage = random.randint(self.damage_range[0], self.damage_range[1])
                 # set health
-                message += f"\n{self.get_name()} hit {the_target.get_name()} for {damage} points!"
+                message += f"\n{self.name} hit {the_target.name} for {damage} points!"
                 message += the_target._hit_response(damage)
 
             else:
-                message += f"\n{self.get_name()}'s attack missed {the_target.get_name()}."
+                message += f"\n{self.name}'s attack missed {the_target.name}."
 
         return message[1:] # skips the first /n character
 
     @final
-    def _calculate_attack_num(self, the_target):
+    def __calculate_attack_num(self, the_target):
         # determine number of attacks
-        attacks_per_turn = int(self.get_attack_speed() / the_target.get_attack_speed())
+        attacks_per_turn = int(self.attack_speed / the_target.attack_speed)
         if attacks_per_turn == 0:
             attacks_per_turn = 1
 
@@ -62,59 +62,81 @@ class Entity:
 
     @final
     def _update_hp(self, the_diff):
-        if self.__my_hp - the_diff < 0:
-            self.set_hp(0)
-        elif self.__my_hp - the_diff > self.__my_max_hp:
-            self.set_hp(self.__my_max_hp)
+        if self.hp - the_diff < 0:
+            self.hp = 0
+        elif self.hp - the_diff > self.max_hp:
+            self.hp = self.max_hp
         else:
-            self.set_hp(self.__my_hp - the_diff)
+            self.hp = self.hp - the_diff
 
-    def _has_fainted_msg(self):
-        return f"\n{self.get_name()} fainted."
+    @final
+    def __has_fainted_msg(self):
+        return f"\n{self.name} fainted."
 
     @abstractmethod
-    def _hit_response(self, the_dmg):
+    def __hit_response(self, the_dmg):
         # implemented in subclasses
         pass
 
-    def get_name(self):
+    @property
+    def name(self):
         return self.__my_name
 
-    def get_pos(self):
+    @property
+    def pos(self):
         return self.__my_position
 
-    def get_attack_speed(self):
+    @property
+    def max_hp(self):
+        return self.__my_max_hp
+
+    @property
+    def attack_speed(self):
         return self.__my_attack_speed
 
-    def get_hit_chance(self):
+    @property
+    def hit_chance(self):
         return self.__my_chance_to_hit
 
-    def get_damage_range(self):
+    @property
+    def damage_range(self):
         return self.__my_damage_range
 
-    def get_hp(self):
+    @property
+    def hp(self):
         return self.__my_hp
 
-    def set_name(self, the_name):
+    @name.setter
+    def name(self, the_name):
         self.__my_name = the_name
 
-    def set_pos(self, the_position):
+    @pos.setter
+    def pos(self, the_position):
         self.__my_position = the_position
 
-    def set_attack_speed(self, the_attack_speed):
+    @max_hp.setter
+    def max_hp(self, the_hp):
+        if self.__my_max_hp >= the_hp >= 0:
+            self.__my_hp = the_hp
+
+    @attack_speed.setter
+    def attack_speed(self, the_attack_speed):
         self.__my_attack_speed = the_attack_speed
 
-    def set_hit_chance(self, the_chance_to_hit):
+    @hit_chance.setter
+    def hit_chance(self, the_chance_to_hit):
         if 1 >= the_chance_to_hit >= 0:
             self.__my_chance_to_hit = the_chance_to_hit
 
-    def set_damage_range(self, the_damage_range):
+    @damage_range.setter
+    def damage_range(self, the_damage_range):
         self.__my_damage_range = the_damage_range
 
-    def set_hp(self, the_hp):
+    @hp.setter
+    def hp(self, the_hp):
         if self.__my_max_hp >= the_hp >= 0:
             self.__my_hp = the_hp
 
     def __str__(self):
-        return f"Name: {self.get_name()}; HP: {self.get_hp()}; Pos: {self.get_pos()}"
+        return f"Name: {self.name()}; HP: {self.hp()}; Pos: {self.pos()}"
 
