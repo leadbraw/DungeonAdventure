@@ -1,5 +1,5 @@
 import random
-from entities import Entity
+from model.entities.entities import Entity
 
 
 class Adventurer(Entity):

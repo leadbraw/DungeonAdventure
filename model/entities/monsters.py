@@ -1,8 +1,7 @@
 import random
 from typing import final
 
-from adventurers import Adventurer
-from entities import Entity
+from model.entities.entities import Entity
 
 
 class Monster(Entity):
