@@ -1,4 +1,6 @@
 import random
+from abc import abstractmethod
+from typing import final
 from model.entities.entities import Entity
 
 
@@ -12,6 +14,7 @@ class Adventurer(Entity):
         # adventurer specific attributes (from database)
         self.__my_chance_to_block = the_chance_to_block
 
+    @final
     def _hit_response(self, the_dmg):
         message = ""
 
@@ -23,36 +26,64 @@ class Adventurer(Entity):
 
         return message
 
+    @final
     def _block_msg(self):
-        return f"\n{self.get_name()} blocked the attack."
+        return f"\n{self.name} blocked the attack."
 
+    @final
     def _block(self):
         blocked = False
         # chance to block (random float within block chance)
-        if random.uniform(0,1) <= self.__my_chance_to_block:
+        if random.uniform(0,1) <= self.chance_to_block:
             blocked = True
 
         return blocked
 
-    def get_block_chance(self):
+    @property
+    def chance_to_block(self):
         return self.__my_chance_to_block
 
-    def set_block_chance(self, the_chance_to_block):
+    @chance_to_block.setter
+    def chance_to_block(self, the_chance_to_block):
         if 1 >= the_chance_to_block >= 0:
             self.__my_chance_to_block = the_chance_to_block
 
+    @final
     def move(self, the_new_position):
-        self.set_pos(the_new_position)
+        self.pos = the_new_position
+
+    @abstractmethod
+    def special_action(self):
+        # defined in adventurer subclasses
+        pass
 
 
 class Warrior(Adventurer):
-    pass
+    @abstractmethod
+    def special_action(self):
+        # defined in adventurer subclasses
+        pass
 
 class Priest(Adventurer):
-    pass
+    @abstractmethod
+    def special_action(self):
+        # defined in adventurer subclasses
+        pass
 
 class Thief(Adventurer):
-    pass
+    @abstractmethod
+    def special_action(self):
+        # defined in adventurer subclasses
+        pass
 
 class Bard(Adventurer):
-    pass
+    @abstractmethod
+    def special_action(self):
+        # defined in adventurer subclasses
+        pass
+
+
+# p = Bard("this guy", (0,0), 10,
+#                  6, 0.7, (1,5), 0.3)
+# print(p.attack(p))
+# print(p.name, p.hp)

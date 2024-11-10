@@ -1,5 +1,3 @@
-
-import random
 from model.entities.adventurers import Warrior, Priest, Thief, Bard
 from model.entities.monsters import Ogre, Gremlin, Skeleton
 #importing the sqlite
@@ -162,12 +160,14 @@ class Factory:
         Factory.__set_hero(bard)
         return bard
 
-# m = Factory.make_ogre()
+
+# m = Factory.get_monster_list()[0]
 # a = Factory.make_thief()
-# print(m.get_name(), ":", m.get_hp())
-# print(a.get_name(), ":", a.get_hp())
-# while(m.is_alive() and a.is_alive()):
-#     print(m.attack(a))
-#     print(a.attack(m))
-#     print(m.get_name(), ":", m.get_hp(), ":", m.is_alive())
-#     print(a.get_name(), ":", a.get_hp(), ":", a.is_alive())
+# b = Factory.make_bard()
+# print(b.name, ":", b.hp)
+# print(a.name, ":", a.hp)
+# while(b.is_alive() and a.is_alive()):
+#     print(b.attack(a))
+#     print(a.attack(b))
+#     print(b.name, ":", b.hp, ":", b.is_alive())
+#     print(a.name, ":", a.hp, ":", a.is_alive())
