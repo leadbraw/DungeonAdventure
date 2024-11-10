@@ -1,5 +1,5 @@
 import random
-from adventurers import Warrior, Priest, Thief
+from adventurers import Warrior, Priest, Thief, Bard
 from monsters import Ogre, Gremlin, Skeleton
 #importing the sqplite
 import sqlite3
@@ -68,6 +68,7 @@ class Factory:
     #TODO random name/position, random monster, random adventurer
 
     __monster_list = []
+    __hero = None
 
     @staticmethod
     def get_monsters_db():
@@ -79,83 +80,86 @@ class Factory:
         monsters = cursor.fetchall()
         conn.close()
 
-        monster_objects = []
         for (name, hit_points, attack_speed, chance_to_hit, min_damage, max_damage, chance_to_heal, min_heal_points,
              max_heal_points) in monsters:
             if name == "Corpsegrinder":
-                monster_objects.append(
-                    Ogre(name, (0, 0), hit_points, attack_speed, chance_to_hit, (min_damage, max_damage),
-                         chance_to_heal, (min_heal_points, max_heal_points)))
+                Factory.__monster_list.append(Factory.make_ogre(name, (0,0), hit_points, attack_speed, chance_to_hit,
+                         (min_damage, max_damage), chance_to_heal, (min_heal_points, max_heal_points)))
             elif name == "Nekrogoblikon":
-                monster_objects.append(
-                    Gremlin(name, (0, 0), hit_points, attack_speed, chance_to_hit, (min_damage, max_damage),
+                Factory.__monster_list.append(Factory.make_gremlin(name, (0, 0), hit_points, attack_speed, chance_to_hit, (min_damage, max_damage),
                             chance_to_heal, (min_heal_points, max_heal_points)))
             elif name == "Whitechapel":
-                monster_objects.append(
-                    Skeleton(name, (0, 0), hit_points, attack_speed, chance_to_hit, (min_damage, max_damage),
+                Factory.__monster_list.append(Factory.make_skeleton(name, (0, 0), hit_points, attack_speed, chance_to_hit, (min_damage, max_damage),
                              chance_to_heal, (min_heal_points, max_heal_points)))
-
-        return monster_objects
-
-    @staticmethod
-    def sql_something():
-        pass
 
     @staticmethod
     def get_monster_list():
         if len(Factory.__monster_list) == 0:
             # populate list
-            Factory.__monster_list.append(Factory.make_ogre())
-            Factory.__monster_list.append(Factory.make_gremlin())
-            Factory.__monster_list.append(Factory.make_skeleton())
+            Factory.get_monsters_db()
 
         return Factory.__monster_list
 
+    @staticmethod
+    def get_hero():
+        return Factory.__hero
+
+    @staticmethod
+    def __set_hero(the_hero):
+        Factory.__hero = the_hero
 
     ############# MONSTER CONSTRUCTORS #############
     @staticmethod
-    def make_ogre(the_name = "Corpsegrinder", the_position = (0,0)):
-        return Ogre(the_name, the_position,
-                       200, 2, 0.6, (30, 60),
-                       0.1, (30, 60))
+    def make_ogre(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
+                 the_chance_to_heal, the_heal_range):
+        return Ogre(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
+                 the_chance_to_heal, the_heal_range)
 
     @staticmethod
-    def make_gremlin(the_name = "Nekrogoblikon", the_position = (0,0)):
-        return Gremlin(the_name, the_position,
-                       70, 5, 0.8, (15, 30),
-                       0.4, (20, 40))
+    def make_gremlin(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
+                 the_chance_to_heal, the_heal_range):
+        return Gremlin(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
+                 the_chance_to_heal, the_heal_range)
 
     @staticmethod
-    def make_skeleton(the_name = "Whitechapel", the_position = (0,0)):
-        return Skeleton(the_name, the_position,
-                       100, 3, 0.8, (30, 50),
-                       0.3, (30, 50))
+    def make_skeleton(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
+                 the_chance_to_heal, the_heal_range):
+        return Skeleton(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
+                 the_chance_to_heal, the_heal_range)
 
 
     ############# ADVENTURER CONSTRUCTORS #############
     @staticmethod
     def make_warrior(the_name="Mark", the_position=(0, 0)):
-        return Warrior(the_name, the_position,
+        warrior = Warrior(the_name, the_position,
                           125, 4, 0.8, (35, 60),
                           0.3)
+        Factory.__set_hero(warrior)
+        return warrior
 
     @staticmethod
     def make_priest(the_name="Noah", the_position=(0, 0)):
-        return Priest(the_name, the_position,
+        priest = Priest(the_name, the_position,
                           75, 5, 0.7, (25, 45),
                           0.3)
+        Factory.__set_hero(priest)
+        return priest
 
     @staticmethod
     def make_thief(the_name="Jayne", the_position=(0, 0)):
-        return Thief(the_name, the_position,
+        thief = Thief(the_name, the_position,
                           75, 6, 0.8, (20, 40),
                           0.4)
+        Factory.__set_hero(thief)
+        return thief
 
     @staticmethod
     def make_bard(the_name="Sean", the_position=(0, 0)):
-        return Thief(the_name, the_position,
+        bard = Bard(the_name, the_position,
                      85, 5, 0.8, (30, 50),
                      0.4)
+        Factory.__set_hero(bard)
+        return bard
 
 # m = Factory.make_ogre()
 # a = Factory.make_thief()
