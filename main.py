@@ -1,6 +1,7 @@
 import sys
 import pygame
 
+
 def main():
     # initialize the pygame
     pygame.init()
@@ -121,12 +122,52 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+        # Clear the screen and display "CHOOSE ADVENTURER"
         screen.fill(dark_grey)
         screen.blit(char_select, (screen.get_width() / 2 - char_select.get_width() / 2,
                             screen.get_height() / 6 - char_select.get_height() / 2))
         # TODO: Add buttons/portraits for each adventurer.
+        noah_button = pygame.Rect(screen.get_width() / 4 - 70, screen.get_height() / 3, menu_button_width, menu_button_height)
+        jayne_button = pygame.Rect(3 * screen.get_width() / 4 - 70, screen.get_height() / 3, menu_button_width, menu_button_height)
+        sean_button = pygame.Rect(screen.get_width() / 4 - 70, 2 * screen.get_height() / 3, menu_button_width, menu_button_height)
+        mark_button = pygame.Rect(3 * screen.get_width() / 4 - 70, 2 * screen.get_height() / 3, menu_button_width, menu_button_height)
+
+        pygame.draw.rect(screen, dark_grey, noah_button)
+        pygame.draw.rect(screen, dark_grey, jayne_button)
+        pygame.draw.rect(screen, dark_grey, sean_button)
+        pygame.draw.rect(screen, dark_grey, mark_button)
+
+        noah_rect = noah_text.get_rect(center=noah_button.center)
+        jayne_rect = jayne_text.get_rect(center=jayne_button.center)
+        sean_rect = sean_text.get_rect(center=sean_button.center)
+        mark_rect = sean_text.get_rect(center=mark_button.center)
+
+        screen.blit(noah_text, noah_rect)
+        screen.blit(jayne_text, jayne_rect)
+        screen.blit(sean_text, sean_rect)
+        screen.blit(mark_text, mark_rect)
+
+        if clicked:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+            if noah_button.collidepoint(mouse_x, mouse_y):
+                print("Noah selected")
+                #TODO Implement character selection logic
+            elif jayne_button.collidepoint(mouse_x, mouse_y):
+                print("Jayne selected")
+                #TODO Implement character selection logic
+            elif sean_button.collidepoint(mouse_x, mouse_y):
+                print("Sean selected")
+                # TODO Implement character selection logic
+            else:
+                print("Mark selected")
+                #TODO Implement character selection logic
+            clicked = False
+
         pygame.display.flip()
 # TODO: Make separate button class to make things easier.
+
 
 if __name__ == '__main__':
     main()
