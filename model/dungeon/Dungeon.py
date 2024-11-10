@@ -45,11 +45,10 @@ class Dungeon:
         self.__populate_map()
 
     def __str__(self):
+        result = ""
         for row in self.map:
-            for item in row:
-                print(item, end=' ')
-            print()
-    # TODO: change so this returns a string, not print
+            result += " ".join(str(item) for item in row) + "\n"
+        return result
 
     @staticmethod
     def __distance(a_x, a_y, b_x, b_y):
