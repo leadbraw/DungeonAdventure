@@ -2,7 +2,7 @@ import sys
 import pygame
 
 class Button:
-    def __init__(self, color, x, y, width, height, font, text_color, text=''):
+    def __init__(self, color, x, y, width, height, font=None, text_color=None, text=''):
         """Constructor, instantiates fields"""
         self.color = color
         self.x = x
@@ -67,6 +67,7 @@ def main():
                               menu_button_width, menu_button_height, font_small, off_white, 'LOAD GAME')
     manual_button = Button(dark_grey, screen.get_width() / 2 - 70 + 165, 2 * screen.get_height() / 3,
                               menu_button_width, menu_button_height, font_small, off_white, 'MANUAL')
+    manual_menu = Button(dark_grey, 75, 75,625, 425)
     manual_large_text = font.render("MANUAL", True, off_white)
     title = font.render("DUNGEON ADVENTURE", True, light_blue)
     char_select = font.render("CHOOSE ADVENTURER", True, light_blue)
@@ -108,12 +109,11 @@ def main():
                     while in_manual:
                         clicked = False
                         # TODO: Move logic out into methods to avoid duplicated stuff like this
-                        mouse_x2, mouse_y2 = pygame.mouse.get_pos()
-                        manual_menu = pygame.Rect(75, 75, 625, 425)
+                        mouse_pos = pygame.mouse.get_pos()
+                        manual_menu.draw(screen)
                         # TODO: Make some constants to reduce function calls
-                        manual_menu.center = (screen.get_width() / 2, screen.get_height() / 2)
-                        manual_exit = pygame.Rect(668, 88, 45, 45)
-                        pygame.draw.rect(screen, dark_grey, manual_menu)
+                        # TODO: Make exit button a Button proper
+                        manual_exit = pygame.Rect(655, 75, 45, 45)
                         pygame.draw.rect(screen, off_white, manual_exit)
                         exit_submenu_rect.center = manual_exit.center
                         exit_submenu_button_area = screen.blit(exit_submenu, exit_submenu_rect)
@@ -125,7 +125,7 @@ def main():
                             if event2.type == pygame.QUIT:
                                 pygame.quit()
                                 sys.exit()
-                            if clicked and exit_submenu_button_area.collidepoint(mouse_x2, mouse_y2):
+                            if clicked and exit_submenu_button_area.collidepoint(mouse_pos):
                                 in_manual = False
                         pygame.display.flip()
         pygame.display.flip()
