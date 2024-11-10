@@ -7,10 +7,30 @@ class RoomSeeder:
     def populate_door_configurations(self):
         """Populates the door_configurations table with 24 unique entries."""
         door_data = [
-            # TODO: Populate with 24 unique door configurations
-            # Example:
-            # (True, False, False, True),  # North and West doors open
-            # Add remaining 23 configurations here
+            (True, True, True, True),
+            (True, True, True, False),
+            (True, True, False, True),
+            (True, False, True, True),
+            (False, True, True, True),
+            (True, True, False, False),
+            (True, False, True, False),
+            (False, True, True, False),
+            (True, False, False, True),
+            (False, True, False, True),
+            (False, False, True, True),
+            (True, False, False, False),
+            (False, True, False, False),
+            (False, False, True, False),
+            (False, False, False, True),
+            (True, True, True, True),
+            (True, True, True, False),
+            (True, True, False, True),
+            (True, False, True, True),
+            (False, True, True, True),
+            (True, False, False, False),
+            (False, True, False, False),
+            (False, False, True, False),
+            (False, False, False, True)
         ]
 
         insert_query = """

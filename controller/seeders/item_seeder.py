@@ -7,15 +7,15 @@ class ItemSeeder:
     def populate_items(self):
         """Inserts initial item data into the items table."""
         items_data = [
-            # TODO: Populate with item data
-            # Example data format for unique items:
-            # ("Pillar of Composition", "Randomly raises 3 attributes.", "hp:10, min_dmg:10, attack_speed:3", False, True)
-            # ("Pillar of Encapsulation", "Raises HP by 25.", "hp:25", False, True)
-            # ("Pillar of Abstraction", "Reveals all visited rooms on map.", "effect handled externally", False, True)
-            # Example data format for limited items:
-            # ("Agile Potion", "Removes walls in the current room to adjacent rooms.", "effect handled externally", True, False)
-            # ("Energy Drink", "Heals 5-10 health points per turn.", "hp:5", True, False)
-            # Columns: (name, description, ability, temporary, unique)
+            # Pillars of OO
+            ("Pillar of Abstraction", "One of the four Pillars of OO required to win the game.", "effect handled externally", False, True),
+            ("Pillar of Encapsulation", "One of the four Pillars of OO required to win the game.", "effect handled externally", False, True),
+            ("Pillar of Inheritance", "One of the four Pillars of OO required to win the game.", "effect handled externally", False, True),
+            ("Pillar of Polymorphism", "One of the four Pillars of OO required to win the game.", "effect handled externally", False, True),
+
+            #Potions (temporary items)
+            ("Healing Potion", "Heals he adventurer by 5-15 hit points.", "hp:5-15", True, False),
+            ("Vision Potion", "Reveals surrounding rooms in the dungeon.", "effect handles externally", True, False)
         ]
 
         insert_query = """

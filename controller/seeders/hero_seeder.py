@@ -7,11 +7,9 @@ class HeroSeeder:
     def populate_heroes(self):
         """Inserts initial hero data into the heroes table."""
         heroes_data = [
-            # TODO: Populate with hero data
-            # Example data format:
-            # ("HeroName", "Warrior", 75, 5, 0.75, 5, 15, 0.2, "Power Strike")
-            # Columns: (name, type, max_HP, attack_speed, chance_to_hit,
-            #           attack_damage_min, attack_damage_max, chance_to_block, special_attack)
+            ("Mark the shark", "Warrior", 125, 4, 0.8, 35, 60, 0.2, "Crushing Blow"),
+            ("Noah the priestess", "Priestess", 75, 5, 0.7, 25, 45, 0.3, "Heal"),
+            ("Jayne the thief", "Thief", 75, 6, 0.8, 20, 40, 0.4, "Surprise Attack")
         ]
 
         insert_query = """
