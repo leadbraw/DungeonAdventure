@@ -1,12 +1,11 @@
-import random
-from adventurers import Warrior, Priest, Thief
-from monsters import Ogre, Gremlin, Skeleton
-#importing the sqplite
+from model.entities.adventurers import Warrior, Priest, Thief
+from model.entities.monsters import Ogre, Gremlin, Skeleton
+#importing the sqlite
 import sqlite3
 
 ###############SQL Database##############################
 # Connect to the SQLite database (it will create 'dungeon_game.db' if it doesn't exist)
-conn = sqlite3.connect('dungeon_game.db')
+conn = sqlite3.connect('../../data/dungeon_game.db')
 # Create a cursor to execute SQL commands
 cursor = conn.cursor()
 
@@ -71,7 +70,7 @@ class Factory:
 
     @staticmethod
     def get_monsters_db():
-        conn = sqlite3.connect('dungeon_game.db')
+        conn = sqlite3.connect('../../data/dungeon_game.db')
         cursor = conn.cursor()
         cursor.execute("SELECT name, hit_points, attack_speed, chance_to_hit, "
                        "min_damage, max_damage, chance_to_heal, "

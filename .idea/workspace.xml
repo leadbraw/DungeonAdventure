@@ -4,7 +4,43 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5cc33468-999e-4042-89f8-44cebd99499b" name="Changes" comment="" />
+    <list default="true" id="5cc33468-999e-4042-89f8-44cebd99499b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/controller/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/database_init.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/seeders/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/seeders/hero_seeder.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/seeders/item_seeder.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/seeders/monster_seeder.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/seeders/room_seeder.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/dungeon/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/entities/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/factories/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/factories/item.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/managers/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/managers/adventurer_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/managers/database_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/managers/game_state_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/managers/monster_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/managers/room_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/managers/sprite_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/view/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/DungeonAdventure.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DungeonAdventure.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dungeon.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/dungeon/Dungeon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DungeonBuilder.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/factories/DungeonBuilder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adventurers.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/entities/adventurers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dice.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/dice.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_game.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/dungeon_game.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/entities.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/entities/entities.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/factories.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/factories/factories.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hero.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/hero.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/factories/item_factory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/managers/item_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/monsters.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/entities/monsters.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +61,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Acsegio&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/leadbraw/DungeonAdventure.git&quot;,
+    &quot;accountId&quot;: &quot;53af90ad-8bbd-464e-b6cc-70ce0ea975fb&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
@@ -36,23 +84,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.factories.executor": "Run",
-    "Python.main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.factories.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/UWT/AUT 24/TCSS 360/DungeonAdventure/DungeonAdventure/assets/images&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\UWT\AUT 24\TCSS 360\DungeonAdventure\DungeonAdventure\assets\images" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\mark\PycharmProjects\Dungeon Adventure" />
+      <recent name="D:\UWT\AUT 24\TCSS 360\DungeonAdventure\DungeonAdventure\model\factories" />
+      <recent name="D:\UWT\AUT 24\TCSS 360\DungeonAdventure\DungeonAdventure\model\managers" />
+      <recent name="D:\UWT\AUT 24\TCSS 360\DungeonAdventure\DungeonAdventure\model" />
+      <recent name="D:\UWT\AUT 24\TCSS 360\DungeonAdventure\DungeonAdventure\model\entities" />
+      <recent name="D:\UWT\AUT 24\TCSS 360\DungeonAdventure\DungeonAdventure\model\dungeon" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-0509580d9d50-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.14494.241" />
+        <option value="bundled-python-sdk-0e3be3396995-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23339.19" />
       </set>
     </attachedChunks>
   </component>
@@ -107,6 +165,7 @@
     <MESSAGE value="Gui main progress..." />
     <MESSAGE value="Gui main progress 2..." />
     <MESSAGE value="Added basic SQl database, starting with adding 3 example columns of data, the database is tracking data from monsters and its stats/features." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added basic SQl database, starting with adding 3 example columns of data, the database is tracking data from monsters and its stats/features." />
+    <MESSAGE value="Initial upload of Item and ItemManager classes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial upload of Item and ItemManager classes" />
   </component>
 </project>

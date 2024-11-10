@@ -20,7 +20,7 @@ def main():
 
     # Title and Icon
     pygame.display.set_caption("Dungeon Adventure")
-    dungeon_icon = pygame.image.load('dice.png')
+    dungeon_icon = pygame.image.load('assets/images/dice.png')
     pygame.display.set_icon(dungeon_icon)
 
     # Loading default pygame font, display splash screen
