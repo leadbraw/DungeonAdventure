@@ -8,14 +8,14 @@ class Entity:
     # TODO update method visibility
 
     def __init__(self, the_name, the_position,
-                 the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range):
+                 the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
         self.__my_name = the_name                       # str
         self.__my_position = the_position               # tuple
 
         # entity shared attributes (from database)
         self.__my_max_hp = the_max_hp                   # int
         self.__my_attack_speed = the_attack_speed       # int
-        self.__my_chance_to_hit = the_chance_to_hit     # float
+        self.__my_hit_chance = the_hit_chance           # float
         self.__my_damage_range = the_damage_range       # tuple
 
         self.__my_hp = self.__my_max_hp                 # int
@@ -30,12 +30,7 @@ class Entity:
 
         for i in range(self.__calculate_attack_num(the_target)):
 
-            if not self.is_alive():
-                message += self.__has_fainted_msg()
-                break
-
-            if not the_target.is_alive():
-                message += the_target._has_fainted_msg()
+            if not the_target.is_alive() or not self.is_alive():
                 break
 
             # attack roll (random float within the hit chance)
@@ -43,13 +38,13 @@ class Entity:
                 # damage roll (random int within damage_range)
                 damage = random.randint(self.damage_range[0], self.damage_range[1])
                 # set health
-                message += f"\n{self.name} hit {the_target.name} for {damage} points!"
+                message += f"{self.name} hit {the_target.name} for {damage} points!\n"
                 message += the_target._hit_response(damage)
 
             else:
-                message += f"\n{self.name}'s attack missed {the_target.name}."
+                message += f"{self.name}'s attack missed {the_target.name}.\n"
 
-        return message[1:] # skips the first /n character
+        return message[:len(message) - 1]
 
     @final
     def __calculate_attack_num(self, the_target):
@@ -70,8 +65,8 @@ class Entity:
             self.hp = self.hp - the_diff
 
     @final
-    def __has_fainted_msg(self):
-        return f"\n{self.name} fainted."
+    def has_fainted_msg(self):
+        return f"{self.name} fainted."
 
     @abstractmethod
     def __hit_response(self, the_dmg):
@@ -96,7 +91,7 @@ class Entity:
 
     @property
     def hit_chance(self):
-        return self.__my_chance_to_hit
+        return self.__my_hit_chance
 
     @property
     def damage_range(self):
@@ -124,9 +119,9 @@ class Entity:
         self.__my_attack_speed = the_attack_speed
 
     @hit_chance.setter
-    def hit_chance(self, the_chance_to_hit):
-        if 1 >= the_chance_to_hit >= 0:
-            self.__my_chance_to_hit = the_chance_to_hit
+    def hit_chance(self, the_hit_chance):
+        if 1 >= the_hit_chance >= 0:
+            self.__my_hit_chance = the_hit_chance
 
     @damage_range.setter
     def damage_range(self, the_damage_range):
@@ -138,5 +133,5 @@ class Entity:
             self.__my_hp = the_hp
 
     def __str__(self):
-        return f"Name: {self.name()}; HP: {self.hp()}; Pos: {self.pos()}"
+        return f"Name: {self.name}; HP: {self.hp}; Pos: {self.pos}"
 

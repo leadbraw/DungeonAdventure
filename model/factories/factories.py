@@ -162,12 +162,20 @@ class Factory:
 
 
 # m = Factory.get_monster_list()[0]
-# a = Factory.make_thief()
-# b = Factory.make_bard()
+# a = Factory.make_warrior()
+# b = Factory.make_priest()
 # print(b.name, ":", b.hp)
 # print(a.name, ":", a.hp)
-# while(b.is_alive() and a.is_alive()):
+# while(True):
 #     print(b.attack(a))
 #     print(a.attack(b))
-#     print(b.name, ":", b.hp, ":", b.is_alive())
-#     print(a.name, ":", a.hp, ":", a.is_alive())
+#     print(b)
+#     print(a)
+#     if not b.is_alive() or not a.is_alive():
+#         break
+#     print(b.special_action(a))
+#     print(a.special_action(b))
+#     print(b)
+#     print(a)
+#     if not b.is_alive() or not a.is_alive():
+#         break
