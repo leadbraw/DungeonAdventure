@@ -6,13 +6,13 @@ from model.entities.entities import Entity
 
 class Adventurer(Entity):
     def __init__(self, the_name, the_position, the_max_hp,
-                 the_attack_speed, the_chance_to_hit, the_damage_range,
-                 the_chance_to_block):
+                 the_attack_speed, the_hit_chance, the_damage_range,
+                 the_block_chance):
         super().__init__(the_name, the_position, the_max_hp,
-                         the_attack_speed, the_chance_to_hit, the_damage_range)
+                         the_attack_speed, the_hit_chance, the_damage_range)
 
         # adventurer specific attributes (from database)
-        self.__my_chance_to_block = the_chance_to_block
+        self.__my_block_chance = the_block_chance
 
     @final
     def _hit_response(self, the_dmg):
@@ -28,62 +28,115 @@ class Adventurer(Entity):
 
     @final
     def _block_msg(self):
-        return f"\n{self.name} blocked the attack."
+        return f"{self.name} blocked the attack.\n"
 
     @final
     def _block(self):
         blocked = False
         # chance to block (random float within block chance)
-        if random.uniform(0,1) <= self.chance_to_block:
+        if random.uniform(0,1) <= self.block_chance:
             blocked = True
 
         return blocked
 
     @property
-    def chance_to_block(self):
-        return self.__my_chance_to_block
+    def block_chance(self):
+        return self.__my_block_chance
 
-    @chance_to_block.setter
-    def chance_to_block(self, the_chance_to_block):
-        if 1 >= the_chance_to_block >= 0:
-            self.__my_chance_to_block = the_chance_to_block
+    @block_chance.setter
+    def block_chance(self, the_block_chance):
+        if 1 >= the_block_chance >= 0:
+            self.__my_block_chance = the_block_chance
 
     @final
     def move(self, the_new_position):
         self.pos = the_new_position
 
     @abstractmethod
-    def special_action(self):
-        # defined in adventurer subclasses
+    def special_action(self, the_target):
+        # defined in subclasses
         pass
 
 
 class Warrior(Adventurer):
-    @abstractmethod
-    def special_action(self):
-        # defined in adventurer subclasses
-        pass
+    __my_special_hit_chance = 0.4
+    __my_special_dmg_range = (75, 175)
+    __my_special_attack_speed = 1
+
+    def special_action(self, the_target):
+        message = ""
+        if not self.is_alive():
+            return message
+
+        # crushing blow 75 to 175 dmg 0.4 chance to hit
+        # save current stats
+        old_hit_chance = self.hit_chance
+        old_dmg_range = self.damage_range
+        old_attack_speed = self.attack_speed
+
+        # use action specific stats
+        self.hit_chance = self.__my_special_hit_chance
+        self.damage_range = self.__my_special_dmg_range
+        self.attack_speed = self.__my_special_attack_speed
+
+        message += self.__special_action_msg(the_target)
+        message += self.attack(the_target)
+
+        # restore original stats
+        self.hit_chance = old_hit_chance
+        self.damage_range = old_dmg_range
+        self.attack_speed = old_attack_speed
+
+        return message[:len(message)] # utilizes Entity attack method trimming
+
+    def __special_action_msg(self, the_target):
+        return f"{self.name} uses Crushing Blow on {the_target.name}!\n"
+
 
 class Priest(Adventurer):
-    @abstractmethod
-    def special_action(self):
-        # defined in adventurer subclasses
-        pass
+    __my_special_heal_range_percentage = (0.4, 0.7)
+
+    def special_action(self, the_target):
+        message = ""
+        if not self.is_alive():
+            return message
+
+        # heal number (random percentage of max hp within the specified range)
+        heal = random.randint(int(self.__my_special_heal_range_percentage[0] * self.max_hp),
+                              int(self.__my_special_heal_range_percentage[1] * self.max_hp))
+        # set health
+        self._update_hp(-heal)
+        message += self.__special_action_msg(heal)
+
+        return message[:len(message) - 1]
+
+    def __special_action_msg(self, the_heal):
+        return f"{self.name} uses Divine Prayer and heals for {the_heal}!\n"
 
 class Thief(Adventurer):
-    @abstractmethod
-    def special_action(self):
-        # defined in adventurer subclasses
+    def special_action(self, the_target):
+        if not self.is_alive():
+            return ""
         pass
+
+    def __special_action_msg(self, the_target):
+        return f"{self.name} uses Sneak Attack on {the_target.name}!\n"
 
 class Bard(Adventurer):
-    @abstractmethod
-    def special_action(self):
-        # defined in adventurer subclasses
+    def special_action(self, the_target):
+        if not self.is_alive():
+            return
         pass
 
+    def __special_action_msg(self, the_target):
+        return f"{self.name} uses Discombobulating Thought on {the_target.name}!"
 
-# p = Bard("this guy", (0,0), 10,
+
+# p = Warrior("war guy", (0,0), 10,
 #                  6, 0.7, (1,5), 0.3)
-# print(p.attack(p))
-# print(p.name, p.hp)
+#
+# q = Priest("heal guy", (0,0), 10,
+#                  3, 0.7, (1,5), 0.3)
+# # q.hp = 0
+# print(q.special_action(p))
+# print(p, q)
