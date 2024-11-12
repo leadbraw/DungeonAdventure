@@ -38,7 +38,7 @@ class Entity:
                 # damage roll (random int within damage_range)
                 damage = random.randint(self.damage_range[0], self.damage_range[1])
                 # set health
-                message += f"{self.name} hit {the_target.name} for {damage} points!\n"
+                message += f"{self.name} hit {the_target.name} for {damage} points.\n"
                 message += the_target._hit_response(damage)
 
             else:

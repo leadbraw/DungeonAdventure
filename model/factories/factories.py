@@ -64,7 +64,7 @@ class Factory:
     # will hold sql probing behaviors and create a lit
     # of sample monster objects at the beginning of each game
 
-    #TODO random name/position, random monster, random adventurer
+    #TODO random name
 
     __monster_list = []
     __hero = None
@@ -162,8 +162,8 @@ class Factory:
 
 
 # m = Factory.get_monster_list()[0]
-# a = Factory.make_warrior()
-# b = Factory.make_priest()
+# a = Factory.make_thief()
+# b = Factory.make_bard()
 # print(b.name, ":", b.hp)
 # print(a.name, ":", a.hp)
 # while(True):
