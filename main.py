@@ -31,6 +31,56 @@ class Button:
                 return True
         return False
 
+class CharacterScreen:
+    def __init__(self, screen, font, hero_name, hero_stats, hero_abilities, hero_image):
+        self.screen = screen
+        self.font = font
+        self.hero_name = hero_name
+        self.hero_stats = hero_stats
+        self.hero_abilities = hero_abilities
+        self.hero_image = pygame.image.load(hero_image)
+
+        self.hero_image = pygame.transform.scale(self.hero_image, (400, 400))
+
+        #Buttons for 'Select' and 'Back'
+        self.select_button = Button((60, 180, 75), 550, 500, 100, 40, font, (255, 255, 255), "Select")
+        self.back_button = Button((180, 60, 60), 670, 500, 100, 40, font, (255, 255, 255), "Back")
+
+    def draw(self):
+        # clear screen with a darker background
+        dark_grey = (60, 60, 60)
+        self.screen.fill(dark_grey)
+
+        # Display hero image on the right
+        image_rect = self.hero_image.get_rect(center=(550, 250))
+        self.screen.blit(self.hero_image, image_rect)
+
+        #Display hero name at the top left
+        name_text = self.font.render(self.hero_name, True, (255, 255, 255))
+        self.screen.blit(name_text, (50, 50))
+
+        #Display hero stats
+        stats_text = self.font.render("Stats: " + self.hero_stats, True, (200, 200, 200))
+        self.screen.blit(stats_text, (50, 100))
+
+        abilities_text = self.font.render("Abilities: " + self.hero_abilities, True, (200, 200, 200))
+        self.screen.blit(abilities_text, (50, 150))
+
+        #Draw "Select and "Back" buttons
+        self.select_button.draw(self.screen)
+        self.back_button.draw(self.screen)
+
+    def handle_event(self, event):
+        """Handles button clicks for select and back buttons"""
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_pos = pygame.mouse.get_pos()
+            if( self.select_button.is_hovered(mouse_pos)):
+                print(f"{self.hero_name} selected")
+                return "select"
+            elif self.back_button.is_hovered(mouse_pos):
+                print("Returning to character selection.")
+                return "back"
+        return None
 def main():
     # initialize the pygame
     pygame.init()
@@ -131,6 +181,21 @@ def main():
         pygame.display.flip()
 
     # New game button pressed: enter main loop
+
+    # Adventurer selection buttons
+    noah_button = Button(dark_grey, screen.get_width() / 4 - 70, screen.get_height() / 3, menu_button_width,
+                         menu_button_height, font_small, off_white, 'NOAH')
+    jayne_button = Button(dark_grey, 3 * screen.get_width() / 4 - 70, screen.get_height() / 3, menu_button_width,
+                          menu_button_height, font_small, off_white, 'JAYNE')
+    sean_button = Button(dark_grey, screen.get_width() / 4 - 70, 2 * screen.get_height() / 3, menu_button_width,
+                         menu_button_height, font_small, off_white, 'SEAN')
+    mark_button = Button(dark_grey, 3 * screen.get_width() / 4 - 70, 2 * screen.get_height() / 3, menu_button_width,
+                         menu_button_height, font_small, off_white, 'MARK')
+
+    # Store the character screen instance if a hero is selected
+    on_character_screen = False
+    character_screen = None
+
     while True:
         clicked = False
         for event in pygame.event.get():
@@ -140,47 +205,56 @@ def main():
                 pygame.quit()
                 sys.exit()
 
+                # Handle character screen events
+            if on_character_screen and character_screen:
+                action = character_screen.handle_event(event)
+                if action == "back":
+                    on_character_screen = False  # Go back to adventurer selection
+                elif action == "select":
+                    print(f"{character_screen.hero_name} has been selected!")
+                    #TODO implement further action after selection needed
+                continue
+
         # Clear the screen and display "CHOOSE ADVENTURER"
         screen.fill(dark_grey)
-        screen.blit(char_select, (screen.get_width() / 2 - char_select.get_width() / 2,
+
+        # Display the appropriate screen
+        if on_character_screen and character_screen:
+            character_screen.draw()
+        else:
+            char_select = font.render("CHOOSE ADVENTURER", True, light_blue)
+            screen.blit(char_select, (screen.get_width() / 2 - char_select.get_width() / 2,
                             screen.get_height() / 6 - char_select.get_height() / 2))
-        # TODO: Change these to use the Button class. Perhaps put all the buttons in an array then do a foreach loop to draw
-        noah_button = pygame.Rect(screen.get_width() / 4 - 70, screen.get_height() / 3, menu_button_width, menu_button_height)
-        jayne_button = pygame.Rect(3 * screen.get_width() / 4 - 70, screen.get_height() / 3, menu_button_width, menu_button_height)
-        sean_button = pygame.Rect(screen.get_width() / 4 - 70, 2 * screen.get_height() / 3, menu_button_width, menu_button_height)
-        mark_button = pygame.Rect(3 * screen.get_width() / 4 - 70, 2 * screen.get_height() / 3, menu_button_width, menu_button_height)
 
-        pygame.draw.rect(screen, dark_grey, noah_button)
-        pygame.draw.rect(screen, dark_grey, jayne_button)
-        pygame.draw.rect(screen, dark_grey, sean_button)
-        pygame.draw.rect(screen, dark_grey, mark_button)
+            # TODO: Change these to use the Button class. Perhaps put all the buttons in an array then do a foreach loop to draw
+            # Draw adventurer selection buttons
+            noah_button.draw(screen)
+            jayne_button.draw(screen)
+            sean_button.draw(screen)
+            mark_button.draw(screen)
 
-        noah_rect = noah_text.get_rect(center=noah_button.center)
-        jayne_rect = jayne_text.get_rect(center=jayne_button.center)
-        sean_rect = sean_text.get_rect(center=sean_button.center)
-        mark_rect = sean_text.get_rect(center=mark_button.center)
+            # Handle button clicks for each character
+            if clicked:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if noah_button.is_hovered((mouse_x, mouse_y)):
+                    character_screen = CharacterScreen(screen, font_small, "Noah", "HP: 100, MP: 50", "Sword Mastery",
+                                                       "assets/images/noah.png")
+                    on_character_screen = True
+                elif jayne_button.is_hovered((mouse_x, mouse_y)):
+                    character_screen = CharacterScreen(screen, font_small, "Jayne", "HP: 80, MP: 60", "Bow Expertise",
+                                                       "assets/images/jayne.png")
+                    on_character_screen = True
+                elif sean_button.is_hovered((mouse_x, mouse_y)):
+                    character_screen = CharacterScreen(screen, font_small, "Sean", "HP: 90, MP: 40", "Stealth",
+                                                       "assets/images/sean.png")
+                    on_character_screen = True
+                elif mark_button.is_hovered((mouse_x, mouse_y)):
+                    character_screen = CharacterScreen(screen, font_small, "Mark", "HP: 120, MP: 30", "Shield Defense",
+                                                       "assets/images/mark.png")
+                    on_character_screen = True
+                clicked = False
 
-        screen.blit(noah_text, noah_rect)
-        screen.blit(jayne_text, jayne_rect)
-        screen.blit(sean_text, sean_rect)
-        screen.blit(mark_text, mark_rect)
 
-        if clicked:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-
-            if noah_button.collidepoint(mouse_x, mouse_y):
-                print("Noah selected")
-                # TODO: Implement character selection logic
-            elif jayne_button.collidepoint(mouse_x, mouse_y):
-                print("Jayne selected")
-                # TODO: Implement character selection logic
-            elif sean_button.collidepoint(mouse_x, mouse_y):
-                print("Sean selected")
-                # TODO: Implement character selection logic
-            else:
-                print("Mark selected")
-                # TODO: Implement character selection logic
-            clicked = False
 
         pygame.display.flip()
 
