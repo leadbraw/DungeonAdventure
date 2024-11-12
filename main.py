@@ -237,19 +237,19 @@ def main():
             if clicked:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 if noah_button.is_hovered((mouse_x, mouse_y)):
-                    character_screen = CharacterScreen(screen, font_small, "Noah", "HP: 100, MP: 50", "Sword Mastery",
+                    character_screen = CharacterScreen(screen, font_small, "Noah", "HP: 75, MP: 50", "Heal",
                                                        "assets/images/noah.png")
                     on_character_screen = True
                 elif jayne_button.is_hovered((mouse_x, mouse_y)):
-                    character_screen = CharacterScreen(screen, font_small, "Jayne", "HP: 80, MP: 60", "Bow Expertise",
+                    character_screen = CharacterScreen(screen, font_small, "Jayne", "HP: 75, MP: 60", "Suprise Attack",
                                                        "assets/images/jayne.png")
                     on_character_screen = True
                 elif sean_button.is_hovered((mouse_x, mouse_y)):
-                    character_screen = CharacterScreen(screen, font_small, "Sean", "HP: 90, MP: 40", "Stealth",
+                    character_screen = CharacterScreen(screen, font_small, "Sean", "HP: 90, MP: 40", "Music",
                                                        "assets/images/sean.png")
                     on_character_screen = True
                 elif mark_button.is_hovered((mouse_x, mouse_y)):
-                    character_screen = CharacterScreen(screen, font_small, "Mark", "HP: 120, MP: 30", "Shield Defense",
+                    character_screen = CharacterScreen(screen, font_small, "Mark", "HP: 125, MP: 30", "Crushing Blow",
                                                        "assets/images/mark.png")
                     on_character_screen = True
                 clicked = False
