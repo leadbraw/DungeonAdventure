@@ -58,11 +58,8 @@ class CharacterScreen:
         #Display hero name at the top left
         name_text = self.font.render(self.hero_name, True, (255, 255, 255))
         self.screen.blit(name_text, (50, 50))
-
-        #Display hero stats
         stats_text = self.font.render("Stats: " + self.hero_stats, True, (200, 200, 200))
         self.screen.blit(stats_text, (50, 100))
-
         abilities_text = self.font.render("Abilities: " + self.hero_abilities, True, (200, 200, 200))
         self.screen.blit(abilities_text, (50, 150))
 
@@ -117,6 +114,10 @@ def main():
                               menu_button_width, menu_button_height, font_small, off_white, 'LOAD GAME')
     manual_button = Button(dark_grey, screen.get_width() / 2 - 70 + 165, 2 * screen.get_height() / 3,
                               menu_button_width, menu_button_height, font_small, off_white, 'MANUAL')
+
+
+
+
     manual_menu = Button(dark_grey, 75, 75,625, 425)
     manual_large_text = font.render("MANUAL", True, off_white)
     title = font.render("DUNGEON ADVENTURE", True, light_blue)
@@ -130,22 +131,33 @@ def main():
     exit_submenu_rect = exit_submenu.get_rect()
     main_menu = True
 
+
     while main_menu:
         clicked = False
         mouse_pos = pygame.mouse.get_pos()
         screen.fill(background_grey)
         # display title
-        screen.blit(title, (screen.get_width() / 2 - title.get_width() / 2,
-                            screen.get_height() / 3 - title.get_height() / 2))
-        new_game_button.draw(screen)
-        load_game_button.draw(screen)
-        manual_button.draw(screen)
+        #screen.blit(title, (screen.get_width() / 2 - title.get_width() / 2,
+        #                    screen.get_height() / 3 - title.get_height() / 2))
+        #new_game_button.draw(screen)
+        #load_game_button.draw(screen)
+        #manual_button.draw(screen)
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: # left click
                 clicked = True
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+        # display title
+        if main_menu:
+        # display title
+            screen.blit(title, (screen.get_width() / 2 - title.get_width() / 2,
+                                screen.get_height() / 3 - title.get_height() / 2))
+            new_game_button.draw(screen)
+            load_game_button.draw(screen)
+            manual_button.draw(screen)
+
             if clicked:
                 if new_game_button.is_hovered(mouse_pos):
                     print('new game button pushed')
@@ -192,6 +204,9 @@ def main():
     mark_button = Button(dark_grey, 3 * screen.get_width() / 4 - 70, 2 * screen.get_height() / 3, menu_button_width,
                          menu_button_height, font_small, off_white, 'MARK')
 
+
+
+
     # Store the character screen instance if a hero is selected
     on_character_screen = False
     character_screen = None
@@ -209,7 +224,8 @@ def main():
             if on_character_screen and character_screen:
                 action = character_screen.handle_event(event)
                 if action == "back":
-                    on_character_screen = False  # Go back to adventurer selection
+                    on_character_screen = False
+                    main_menu = True
                 elif action == "select":
                     print(f"{character_screen.hero_name} has been selected!")
                     #TODO implement further action after selection needed
@@ -218,9 +234,11 @@ def main():
         # Clear the screen and display "CHOOSE ADVENTURER"
         screen.fill(dark_grey)
 
+
         # Display the appropriate screen
         if on_character_screen and character_screen:
             character_screen.draw()
+
         else:
             char_select = font.render("CHOOSE ADVENTURER", True, light_blue)
             screen.blit(char_select, (screen.get_width() / 2 - char_select.get_width() / 2,
@@ -232,6 +250,7 @@ def main():
             jayne_button.draw(screen)
             sean_button.draw(screen)
             mark_button.draw(screen)
+
 
             # Handle button clicks for each character
             if clicked:
@@ -252,6 +271,8 @@ def main():
                     character_screen = CharacterScreen(screen, font_small, "Mark", "HP: 125, MP: 30", "Crushing Blow",
                                                        "assets/images/mark.png")
                     on_character_screen = True
+
+
                 clicked = False
 
 
