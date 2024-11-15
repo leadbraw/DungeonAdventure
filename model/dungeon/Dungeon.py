@@ -9,14 +9,15 @@ ENTRANCE: Starting room
 ITEM: Room containing an item, picked up upon entry
 BLOCKED: Inaccessible room
 '''
-RoomType = Enum('MONSTER', 'BOSS', 'EXIT', 'TRAP', 'ENTRANCE', 'ITEM', 'PILLAR', 'BLOCKED', 'RANDOM')
+RoomType = Enum('MONSTER', 'ELITE', 'EXIT', 'TRAP', 'ENTRANCE', 'ITEM', 'PILLAR', 'BLOCKED', 'RANDOM')
 
 class Room:
     def __init__(self, room_type='BLOCKED'):
         self.type = (room_type if room_type != 'RANDOM'
-                     else random.choices(population=['MONSTER', 'TRAP', 'BOSS', 'ITEM'],
+                     else random.choices(population=['MONSTER', 'TRAP', 'ELITE', 'ITEM'],
                                          weights=[0.45, 0.2, 0.1, 0.25],
                                          k=1)[0])
+        self.valid_directions = [False, False, False, False] # Up, Right, Down, Left
         '''
         45% chance for a random room to be a monster,
         20% for trap
@@ -33,6 +34,13 @@ class Room:
     def get_type(self):
         return self.type
 
+    def define_valid_directions(self, length, width, dungeon, x, y):
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+        count = 0
+        for i in directions:
+            if 0 <= x + i[0] < length and 0 <= y + i[1] < width and dungeon[x + i[0]][y + i[1]].type != 'BLOCKED':
+                self.valid_directions[count] = True
+            count += 1
 
 class Dungeon:
 
@@ -43,6 +51,12 @@ class Dungeon:
         self.width = floor_number + 4
         self.map = [[Room('BLOCKED') for _ in range(self.length)] for _ in range(self.width)] # Rooms by default are blocked
         self.__populate_map()
+
+    def get_width(self):
+        return self.width
+
+    def get_length(self):
+        return self.length
 
     def __str__(self):
         result = ""
@@ -80,8 +94,11 @@ class Dungeon:
         # print('~')
         offshoot_rooms = self.__generate_offshoots(path)
         populated_rooms = path + offshoot_rooms
+        for a in populated_rooms:
+            x, y = (a[0], a[1])
+            self.map[x][y].define_valid_directions(self.length, self.width, self.map, x, y)
         self.__place_pillar(populated_rooms, exit_x, exit_y)
-        # self.__str__()
+        # print(self.__str__())
 
     def __generate_offshoots(self, path):
         offshoot_length = self.length - 2
@@ -111,6 +128,7 @@ class Dungeon:
         current_x = entrance_x
         current_y = entrance_y
         path = []
+        path.append((current_x, current_y))
         '''Path from entrance to exit horizontally, then vertically, creating random rooms along the way.
         The path from entrance to exit is stored to generate offshoots later.'''
         while current_y != exit_y:
@@ -137,5 +155,4 @@ class Dungeon:
                 self.map[new_x][new_y].type == 'BLOCKED')
 
 # for testing...
-# d = Dungeon(4)
-
+# d = Dungeon(3)
