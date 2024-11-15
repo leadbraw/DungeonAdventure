@@ -14,8 +14,17 @@ class Monster(Entity):
         self.__my_heal_chance = the_heal_chance         # float
         self.__my_heal_range = the_heal_range           # tuple
 
+    ### INTERNAL METHODS ###
+
     @final
     def _hit_response(self, the_dmg):
+        """
+        Updates HP and heals on a successful regen.
+        Does nothing if self is dead.
+
+        :param the_dmg: received damage.
+        :return: regen message on success.
+        """
         message = ""
 
         self._update_hp(the_dmg)
@@ -29,9 +38,21 @@ class Monster(Entity):
         return message
 
     def _regen_msg(self, the_heal):
+        """
+        Returns a successful regen message.
+
+        :param the_heal: the number of points healed.
+        :return: regen message.
+        """
         return f"{self.name} healed for {the_heal} points!\n"
 
     def _regen(self):
+        """
+        Randomly determines if a regen is successful (within regen chance).
+        Randomly generates the number of points healed within the heal range.
+
+        :return: number of points healed.
+        """
         heal = 0
 
         # chance to heal (random float within heal chance)
@@ -43,6 +64,8 @@ class Monster(Entity):
 
         return heal
 
+    ### PROPERTIES ###
+
     @property
     def heal_chance(self):
         return self.__my_heal_chance
@@ -52,7 +75,7 @@ class Monster(Entity):
         return self.__my_heal_range
 
     @heal_chance.setter
-    def chance_to_heal(self, the_heal_chance):
+    def heal_chance(self, the_heal_chance):
         if 1 >= the_heal_chance >= 0:
             self.__my_heal_chance = the_heal_chance
 
@@ -60,13 +83,14 @@ class Monster(Entity):
     def heal_range(self, the_heal_range):
         self.__my_heal_range = the_heal_range
 
+
+### MONSTER CLASSES ###
+
 class Ogre(Monster):
     pass
 
-
 class Gremlin(Monster):
     pass
-
 
 class Skeleton(Monster):
     pass
