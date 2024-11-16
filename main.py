@@ -224,13 +224,13 @@ def gameplay(hero_name):
         pygame.draw.rect(screen, background_grey, bottom_rect)
         pygame.draw.rect(screen, background_grey, right_rect)
         match hero_name:
-            case "NOAH":
+            case "Noah":
                 portrait = pygame.image.load("assets/images/noah_portrait.png").convert_alpha()
-            case "SEAN":
+            case "Sean":
                 portrait = pygame.image.load("assets/images/sean_portrait.png").convert_alpha()
-            case "JAYNE":
+            case "Jayne":
                 portrait = pygame.image.load("assets/images/jayne_portrait.png").convert_alpha()
-            case "MARK":
+            case "Mark":
                 portrait = pygame.image.load("assets/images/mark_portrait.png").convert_alpha()
             case _:
                 portrait = pygame.image.load("assets/images/hero.png").convert_alpha()
