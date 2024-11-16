@@ -35,7 +35,7 @@ class Room:
         return self.type
 
     def define_valid_directions(self, length, width, dungeon, x, y):
-        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)] # Up, Right, Down, Left
         count = 0
         for i in directions:
             if 0 <= x + i[0] < length and 0 <= y + i[1] < width and dungeon[x + i[0]][y + i[1]].type != 'BLOCKED':
