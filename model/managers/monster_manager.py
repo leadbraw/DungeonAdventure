@@ -32,7 +32,7 @@ class MonsterManager:
             damage_range = (row[6], row[7])
             chance_to_heal = row[8]
             heal_range = (row[9], row[10])
-            initial_position = (-2, -2)
+            initial_position = (-2, -2) # Make sure to never use this until the monster has an actual position.
 
             # Initialize monster based on type
             monster_type = row[2]

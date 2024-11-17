@@ -3,6 +3,7 @@ import pygame
 import controller.database_init
 
 class Button:
+    """Self-explanatory. Used to represent clickable buttons on screen."""
     def __init__(self, color, x, y, width, height, font=None, text_color=None, text=''):
         """Constructor, instantiates fields"""
         self.color = color
@@ -32,16 +33,16 @@ class Button:
                 return True
         return False
 class CharacterScreen:
-    def __init__(self, screen, font, hero_name, hero_stats, hero_abilities, hero_image):
-        self.screen = screen
-        self.font = font
+    """Represents the state of the character screen (not the character select screen)."""
+    def __init__(self, window, chosen_font, hero_name, hero_stats, hero_abilities, hero_image):
+        """Constructor. Instantiates fields"""
+        self.screen = window
+        self.font = chosen_font
         self.hero_name = hero_name
         self.hero_stats = hero_stats
         self.hero_abilities = hero_abilities
         self.hero_image = pygame.image.load(hero_image)
-
         self.hero_image = pygame.transform.scale(self.hero_image, (400, 400))
-
         #Buttons for 'Select' and 'Back'
         self.select_button = Button((60, 180, 75), 550, 500, 100, 40,
                                     font, (255, 255, 255), "Select")
@@ -49,8 +50,8 @@ class CharacterScreen:
                                   font, (255, 255, 255), "Back")
 
     def draw(self):
-        # clear screen with a darker background
-        dark_grey = (60, 60, 60)
+        """Responsible for drawing the character screen, complete with name, image, stats."""
+        # Clear screen with a darker background
         self.screen.fill(dark_grey)
 
         # Display hero image on the right
@@ -65,7 +66,7 @@ class CharacterScreen:
         abilities_text = self.font.render("Abilities: " + self.hero_abilities, True, (200, 200, 200))
         self.screen.blit(abilities_text, (50, 150))
 
-        #Draw "Select and "Back" buttons
+        # Draw "Select" and "Back" buttons
         self.select_button.draw(self.screen)
         self.back_button.draw(self.screen)
 
@@ -124,6 +125,7 @@ def main_menu():
                 character_select()
             elif load_game_button.is_hovered(mouse_pos):
                 print('load game button pushed')
+                # TODO: Load game functionality.
             elif manual_button.is_hovered(mouse_pos):
                 print('manual button pushed')
                 in_manual = True
@@ -189,7 +191,6 @@ def character_select():
             char_select = font.render("CHOOSE ADVENTURER", True, light_blue)
             screen.blit(char_select, (screen.get_width() / 2 - char_select.get_width() / 2,
                                       screen.get_height() / 6 - char_select.get_height() / 2))
-            # TODO: Change these to use the Button class. Perhaps put all the buttons in an array then do a foreach loop to draw
             # Draw adventurer selection buttons
             noah_button.draw(screen)
             jayne_button.draw(screen)
@@ -223,7 +224,8 @@ def gameplay(hero_name):
     """Handles the main gameplay loop."""
     controller.database_init.main() # Make database.
     while True:
-        # The space not drawn
+        '''The space not drawn over by the two dark rectangles along the bottom/right is where the dungeon images
+        and prompts to move from room to room will be shown.'''
         screen.fill(dark_grey)
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         right_rect = pygame.Rect(650, 0, 150, 450)
