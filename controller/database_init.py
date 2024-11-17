@@ -3,11 +3,34 @@ import sqlite3
 
 class DatabaseInitializer:
     def __init__(self, db_path='data/dungeon_game.db'):
-        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+        """
+        Initializes the DatabaseInitializer with the given database path.
+        Ensures the `data` directory exists.
+        :param db_path: Path to the SQLite database file.
+        """
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)  # Ensure the 'data' directory exists
         self.db_path = db_path
 
+    def database_exists(self):
+        """
+        Check if the database file exists.
+        :return: True if the database file exists, False otherwise.
+        """
+        return os.path.exists(self.db_path)
+
+    def initialize_database(self):
+        """
+        Initializes the database only if it doesn't already exist.
+        """
+        if not self.database_exists():
+            print("Database not found. Creating and initializing...")
+            self.create_tables()
+            print("Database initialized successfully.")
+        else:
+            print("Database already exists. Skipping initialization.")
+
     def create_tables(self):
-        """Creates all necessary tables in the database with error handling."""
+        """Creates all necessary tables in the database."""
         table_commands = {
             "heroes": """
                 CREATE TABLE IF NOT EXISTS heroes (
@@ -44,33 +67,17 @@ class DatabaseInitializer:
                     name TEXT NOT NULL,
                     description TEXT,
                     ability TEXT,
-                    temporary BOOLEAN,
-                    unique BOOLEAN
+                    temporary INTEGER, -- Use INTEGER instead of BOOLEAN
+                    unique_item INTEGER -- Use INTEGER instead of BOOLEAN
                 );
             """,
-            "door_configurations": """
-                CREATE TABLE IF NOT EXISTS door_configurations (
-                    id INTEGER PRIMARY KEY,
-                    door_north BOOLEAN NOT NULL,
-                    door_east BOOLEAN NOT NULL,
-                    door_south BOOLEAN NOT NULL,
-                    door_west BOOLEAN NOT NULL
-                );
-            """,
-            "room_types": """
-                CREATE TABLE IF NOT EXISTS room_types (
-                    id INTEGER PRIMARY KEY,
-                    room_type TEXT NOT NULL
-                );
-            """,
-            "room_configurations": """
-                CREATE TABLE IF NOT EXISTS room_configurations (
-                    id INTEGER PRIMARY KEY,
-                    room_type_id INTEGER,
-                    door_configuration_id INTEGER,
-                    sprite_path TEXT NOT NULL,
-                    FOREIGN KEY (room_type_id) REFERENCES room_types(id),
-                    FOREIGN KEY (door_configuration_id) REFERENCES door_configurations(id)
+            "rooms": """
+                CREATE TABLE IF NOT EXISTS rooms (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    doors TEXT NOT NULL,
+                    image_path TEXT NOT NULL,
+                    rotation INTEGER NOT NULL,
+                    UNIQUE(doors)
                 );
             """,
             "game_saves": """
@@ -91,27 +98,39 @@ class DatabaseInitializer:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 for table, command in table_commands.items():
-                    try:
-                        print(f"Creating table: {table}")
-                        cursor.execute(command)
-                    except sqlite3.Error as e:
-                        print(f"Error creating table {table}: {e}")
+                    cursor.execute(command)
                 conn.commit()
-            print("All tables created successfully.")
+                print("All tables created successfully.")
         except sqlite3.Error as e:
-            print(f"Database connection error: {e}")
+            print(f"Error creating tables: {e}")
 
-    def initialize_database(self):
-        """Run the database initialization process with error handling."""
-        print("Starting database initialization...")
-        try:
+    def reset_database(self):
+        """
+        Drops and recreates all tables in the database. Useful for testing and debugging.
+        """
+        if self.database_exists():
+            print("Resetting the database...")
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("DROP TABLE IF EXISTS heroes")
+                cursor.execute("DROP TABLE IF EXISTS monsters")
+                cursor.execute("DROP TABLE IF EXISTS items")
+                cursor.execute("DROP TABLE IF EXISTS rooms")
+                cursor.execute("DROP TABLE IF EXISTS game_saves")
             self.create_tables()
-            print("Database setup complete.")
-        except Exception as e:
-            print(f"Error during database initialization: {e}")
-def main():
-    initializer = DatabaseInitializer()
-    initializer.initialize_database()
+            print("Database reset successfully.")
+        else:
+            print("No database to reset. Creating a new one...")
+            self.create_tables()
+
 
 if __name__ == "__main__":
-    print('do not run this file directly please.')
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "reset":
+        print("Resetting the database...")
+        db_initializer = DatabaseInitializer()
+        db_initializer.reset_database()
+    else:
+        print("Initializing the database if it doesn't exist...")
+        db_initializer = DatabaseInitializer()
+        db_initializer.initialize_database()

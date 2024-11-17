@@ -8,18 +8,23 @@ class ItemSeeder:
         """Inserts initial item data into the items table."""
         items_data = [
             # Pillars of OO
-            ("Pillar of Abstraction", "One of the four Pillars of OO required to win the game.", "effect handled externally", False, True),
-            ("Pillar of Encapsulation", "One of the four Pillars of OO required to win the game.", "effect handled externally", False, True),
-            ("Pillar of Inheritance", "One of the four Pillars of OO required to win the game.", "effect handled externally", False, True),
-            ("Pillar of Polymorphism", "One of the four Pillars of OO required to win the game.", "effect handled externally", False, True),
+            ("Pillar of Abstraction", "One of the four Pillars of OO required to win the game.",
+             "effect handled externally", 0, 1),  # Use 0/1 for False/True
+            ("Pillar of Encapsulation", "One of the four Pillars of OO required to win the game.",
+             "effect handled externally", 0, 1),
+            ("Pillar of Inheritance", "One of the four Pillars of OO required to win the game.",
+             "effect handled externally", 0, 1),
+            ("Pillar of Polymorphism", "One of the four Pillars of OO required to win the game.",
+             "effect handled externally", 0, 1),
 
-            #Potions (temporary items)
-            ("Healing Potion", "Heals he adventurer by 5-15 hit points.", "hp:5-15", True, False),
-            ("Vision Potion", "Reveals surrounding rooms in the dungeon.", "effect handles externally", True, False)
+            # Potions (temporary items)
+            ("Data Spike", "Deals 20-25 Damage to a Monster.", "effect handles externally", 0, 0),
+            ("Healing Potion", "Heals the adventurer by 5-15 hit points.", "hp:5-15", 1, 0),
+            ("Vision Potion", "Reveals surrounding rooms in the dungeon.", "effect handles externally", 1, 0)
         ]
 
         insert_query = """
-            INSERT INTO items (name, description, ability, temporary, unique)
+            INSERT INTO items (name, description, ability, temporary, unique_item)
             VALUES (?, ?, ?, ?, ?)
         """
 

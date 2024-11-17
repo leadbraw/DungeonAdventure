@@ -1,115 +1,60 @@
 import sqlite3
+import json
 
 class RoomSeeder:
     def __init__(self, db_path='data/dungeon_game.db'):
+        """
+        Initializes the RoomSeeder with the database path.
+        :param db_path: Path to the SQLite database file.
+        """
         self.db_path = db_path
 
-    def populate_door_configurations(self):
-        """Populates the door_configurations table with 24 unique entries."""
-        door_data = [
-            (True, True, True, True),
-            (True, True, True, False),
-            (True, True, False, True),
-            (True, False, True, True),
-            (False, True, True, True),
-            (True, True, False, False),
-            (True, False, True, False),
-            (False, True, True, False),
-            (True, False, False, True),
-            (False, True, False, True),
-            (False, False, True, True),
-            (True, False, False, False),
-            (False, True, False, False),
-            (False, False, True, False),
-            (False, False, False, True),
-            (True, True, True, True),
-            (True, True, True, False),
-            (True, True, False, True),
-            (True, False, True, True),
-            (False, True, True, True),
-            (True, False, False, False),
-            (False, True, False, False),
-            (False, False, True, False),
-            (False, False, False, True)
-        ]
-
-        insert_query = """
-            INSERT INTO door_configurations (door_north, door_east, door_south, door_west)
-            VALUES (?, ?, ?, ?)
+    def populate_rooms(self):
         """
+        Populates the rooms table with door configurations, associated images, and required rotations.
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
 
-        try:
-            with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.cursor()
-                cursor.executemany(insert_query, door_data)
-                conn.commit()
-            print("Door configurations table populated.")
-        except sqlite3.Error as e:
-            print(f"Error populating door configurations: {e}")
+            # Define the room data: (doors, image_path, rotation)
+            room_data = [
+                # Four doors open (1 configuration)
+                ([True, True, True, True], "assets/images/dungeon_four.png", 0),
 
-    def populate_room_types(self):
-        """Populates the room_types table with 10 unique room types."""
-        room_types = [
-            # Example room types
-            ("Monster",),
-            ("Boss",),
-            ("Entry",),
-            ("Exit Closed",),
-            ("Exit Open",),
-            ("Trap",),
-            ("Item",),
-            ("Pillar",),
-            ("Solid",),
-            ("Empty",)
-        ]
+                # Three doors open (4 configurations)
+                ([True, True, True, False], "assets/images/dungeon_three.png", 0),  # Top, right, bottom
+                ([True, True, False, True], "assets/images/dungeon_three.png", 90),  # Top, right, left
+                ([True, False, True, True], "assets/images/dungeon_three.png", 180),  # Top, bottom, left
+                ([False, True, True, True], "assets/images/dungeon_three.png", 270),  # Right, bottom, left
 
-        insert_query = "INSERT INTO room_types (room_type) VALUES (?)"
+                # Two doors open (6 configurations)
+                ([True, True, False, False], "assets/images/dungeon_two.png", 0),  # Top, right
+                ([True, False, True, False], "assets/images/dungeon_op_two_b.png", 0),  # Top, bottom
+                ([True, False, False, True], "assets/images/dungeon_two.png", 90),  # Top, left
+                ([False, True, True, False], "assets/images/dungeon_two.png", 270),  # Right, bottom
+                ([False, True, False, True], "assets/images/dungeon_op_two_a.png", 90),  # Right, left
+                ([False, False, True, True], "assets/images/dungeon_two.png", 180),  # Bottom, left
 
-        try:
-            with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.cursor()
-                cursor.executemany(insert_query, room_types)
-                conn.commit()
-            print("Room types table populated.")
-        except sqlite3.Error as e:
-            print(f"Error populating room types: {e}")
+                # One door open (4 configurations)
+                ([True, False, False, False], "assets/images/dungeon_one.png", 0),  # Top
+                ([False, True, False, False], "assets/images/dungeon_one.png", 270),  # Right
+                ([False, False, True, False], "assets/images/dungeon_one.png", 180),  # Bottom
+                ([False, False, False, True], "assets/images/dungeon_one.png", 90),  # Left
+            ]
 
-    def populate_room_configurations(self):
-        """Populates the room_configurations table by combining room types and door configurations."""
-        try:
-            with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.cursor()
-
-                # Fetch room types and door configurations
-                cursor.execute("SELECT id, room_type FROM room_types")
-                room_types = cursor.fetchall()
-
-                cursor.execute("SELECT id FROM door_configurations")
-                door_configs = cursor.fetchall()
-
-                configurations_data = []
-                for room_id, room_type in room_types:
-                    for door_config_id in door_configs:
-                        sprite_path = f"assets/sprites/{room_type}_{door_config_id[0]}.png"
-                        configurations_data.append((room_id, door_config_id[0], sprite_path))
-
-                insert_query = """
-                    INSERT INTO room_configurations (room_type_id, door_configuration_id, sprite_path)
+            # Insert data into the database
+            for doors, image_path, rotation in room_data:
+                # Convert the doors list to a JSON string for database storage
+                cursor.execute("""
+                    INSERT OR IGNORE INTO rooms (doors, image_path, rotation)
                     VALUES (?, ?, ?)
-                """
-                cursor.executemany(insert_query, configurations_data)
-                conn.commit()
-            print("Room configurations table populated.")
-        except sqlite3.Error as e:
-            print(f"Error populating room configurations: {e}")
+                """, (json.dumps(doors), image_path, rotation))
 
-    def seed_all(self):
-        self.populate_door_configurations()
-        self.populate_room_types()
-        self.populate_room_configurations()
+            # Commit the transaction to save changes
+            conn.commit()
+            print(f"Inserted {len(room_data)} room configurations into the database.")
 
 
-# Run the seeder
 if __name__ == "__main__":
     seeder = RoomSeeder()
-    seeder.seed_all()
+    seeder.populate_rooms()
