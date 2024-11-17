@@ -272,6 +272,8 @@ def gameplay(hero_name):
         if position:
             break
 
+    #TODO implement the gameplay interactions in the while loop
+
     while True:
         '''The space not drawn over by the two dark rectangles along the bottom/right is where the dungeon images
         and prompts to move from room to room will be shown.'''
