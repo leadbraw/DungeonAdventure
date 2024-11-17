@@ -236,19 +236,19 @@ def gameplay(hero_name):
     dungeon = model.Dungeon(floor_number=1)
     print(dungeon)
 
-    #populate monsters and items
+    # populate monsters and items
     all_rooms = []
     for row in dungeon.map:
         for room in row:
             all_rooms.append(room)
 
-    #filter monster rooms
+    # filter monster rooms
     monster_rooms = []
     for room in all_rooms:
         if room.type == 'MONSTER':
             monster_rooms.append(room)
 
-    #filter item rooms
+    # filter item rooms
     item_rooms = []
     for room in all_rooms:
         if room.type == 'ITEM':
