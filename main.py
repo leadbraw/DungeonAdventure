@@ -1,5 +1,6 @@
 import sys
 import pygame
+import controller.database_init
 
 class Button:
     def __init__(self, color, x, y, width, height, font=None, text_color=None, text=''):
@@ -80,6 +81,7 @@ class CharacterScreen:
                 return "back"
         return None
 def main():
+    """Displays splash screen, calls main_menu()"""
     # Display splash screen
     splash_message = font.render("TEAM 5", True, pastel_red)
     screen.blit(splash_message, (screen.get_width()/2 - splash_message.get_width()/2,
@@ -88,6 +90,7 @@ def main():
     pygame.time.delay(1000)
     main_menu()
 def main_menu():
+    """Handles the main menu (and manual)"""
     new_game_button = Button(dark_grey, screen.get_width() / 2 - 70, 2 * screen.get_height() / 3,
                              menu_button_width, menu_button_height, font_small, off_white, 'NEW GAME')
     load_game_button = Button(dark_grey, screen.get_width() / 2 - 70 - 165, 2 * screen.get_height() / 3,
@@ -148,6 +151,7 @@ def main_menu():
                     pygame.display.flip()
         pygame.display.flip()
 def character_select():
+    """Handles the character select logic. User chooses a character, then must confirm their choice."""
     noah_button = Button(dark_grey, screen.get_width() / 4 - 70, screen.get_height() / 3, menu_button_width,
                          menu_button_height, font_small, off_white, 'NOAH')
     jayne_button = Button(dark_grey, 3 * screen.get_width() / 4 - 70, screen.get_height() / 3, menu_button_width,
@@ -215,15 +219,17 @@ def character_select():
                                                        "assets/images/mark.png")
                     on_character_screen = True
         pygame.display.flip()
-
 def gameplay(hero_name):
+    """Handles the main gameplay loop."""
+    controller.database_init.main() # Make database.
     while True:
+        # The space not drawn
         screen.fill(dark_grey)
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         right_rect = pygame.Rect(650, 0, 150, 450)
         pygame.draw.rect(screen, background_grey, bottom_rect)
         pygame.draw.rect(screen, background_grey, right_rect)
-        match hero_name:
+        match hero_name: # Grab the proper portrait for the selected hero
             case "Noah":
                 portrait = pygame.image.load("assets/images/noah_portrait.png").convert_alpha()
             case "Sean":
@@ -232,9 +238,9 @@ def gameplay(hero_name):
                 portrait = pygame.image.load("assets/images/jayne_portrait.png").convert_alpha()
             case "Mark":
                 portrait = pygame.image.load("assets/images/mark_portrait.png").convert_alpha()
-            case _:
+            case _: # fallback
                 portrait = pygame.image.load("assets/images/hero.png").convert_alpha()
-        portrait = pygame.transform.scale(portrait, (150, 150))
+        portrait = pygame.transform.scale(portrait, (150, 150)) # Scale to fit in bottom right
         screen.blit(portrait, (650, 450))
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left click
@@ -243,6 +249,7 @@ def gameplay(hero_name):
                 pygame.quit()
                 sys.exit()
         pygame.display.flip()
+
 # ENTRY POINT IS HERE.
 # initialize the pygame
 pygame.init()

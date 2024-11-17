@@ -109,7 +109,9 @@ class DatabaseInitializer:
             print("Database setup complete.")
         except Exception as e:
             print(f"Error during database initialization: {e}")
-
-if __name__ == "__main__":
+def main():
     initializer = DatabaseInitializer()
     initializer.initialize_database()
+
+if __name__ == "__main__":
+    print('do not run this file directly please.')

@@ -37,7 +37,6 @@ class RoomManager:
 
     def load_room_types(self):
         """Loads all room types from the database."""
-        room_types = []
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
