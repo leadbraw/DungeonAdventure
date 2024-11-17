@@ -21,23 +21,20 @@ class GameController:
         print(self.dungeon)
 
         # Populate rooms with monsters and items
-        # all_rooms = [room for row in self.dungeon.map for room in row]
-        # monster_rooms = [room for room in all_rooms if room.type == 'MONSTER']
-        # item_rooms = [room for room in all_rooms if room.type == 'ITEM']
+        all_rooms = self.dungeon.get_room_list() # get_room_list returns a list of tuples that are room coordinates
+        monster_rooms = [coords for coords in all_rooms if self.dungeon.fetch_room(coords[0], coords[1]).type == 'MONSTER']
+        item_rooms = [coords for coords in all_rooms if self.dungeon.fetch_room(coords[0], coords[1]).type == 'ITEM']
         #
         # for room in monster_rooms:
-        #     monster = self.monster_manager.get_random_monster()
-        #     print(f"Placed {monster.get_name()} in a MONSTER room.")
+        #    monster = self.monster_manager.get_random_monster()
+        #    print(f"Placed {monster.name()} in a MONSTER room.") # TODO: fix error here!
         #
-        # for room in item_rooms:
-        #     item = self.item_manager.get_random_non_unique_item()
-        #     print(f"Placed {item.get_name()} in an ITEM room.")
+        #for room in item_rooms:
+        #   item = self.item_manager.get_random_non_unique_item()
+        #   print(f"Placed {item.get_name()} in an ITEM room.")
 
-        # Find entrance position
-        self.position = next(
-            ((r_idx, c_idx) for r_idx, row in enumerate(self.dungeon.map)
-             for c_idx, room in enumerate(row) if room.type == 'ENTRANCE'), None
-        )
+        # get entrance position
+        self.position = self.dungeon.entrance_loc
 
     def display_game(self):
         """Main gameplay loop."""

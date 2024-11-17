@@ -1,5 +1,6 @@
 from enum import Enum
 import random
+from copy import deepcopy
 
 '''
 MONSTER: Room with monster, battle begins upon entry
@@ -9,7 +10,6 @@ ENTRANCE: Starting room
 ITEM: Room containing an item, picked up upon entry
 BLOCKED: Inaccessible room
 '''
-RoomType = Enum('MONSTER', 'ELITE', 'EXIT', 'TRAP', 'ENTRANCE', 'ITEM', 'PILLAR', 'BLOCKED', 'RANDOM')
 
 class Room:
     def __init__(self, room_type='BLOCKED'):
@@ -43,20 +43,42 @@ class Room:
             count += 1
 
 class Dungeon:
-
     def __init__(self, floor_number):
         """Constructor for Dungeon. Instantiates it."""
         # 5x5, 6x6, 7x7, 8x8
         self.length = floor_number + 4
         self.width = floor_number + 4
         self.map = [[Room('BLOCKED') for _ in range(self.length)] for _ in range(self.width)] # Rooms by default are blocked
+        # These three fields will be initialized in populate_map()
+        self.entrance_loc = None
+        self.exit_loc = None
+        self.room_list = None
+        '''Populates the map, in addition to instantiating the entrance_loc, exit_loc, and room_list fields'''
         self.__populate_map()
 
-    def get_width(self):
+    def get_width(self) -> int:
+        """Returns width"""
         return self.width
 
-    def get_length(self):
+    def get_length(self) -> int:
+        """Returns length"""
         return self.length
+
+    def get_room_list(self) -> list[tuple[int, int]]:
+        """Returns deep copy of room coordinate list"""
+        return deepcopy(self.room_list)
+
+    def get_entrance_coords(self) -> tuple[int, int]:
+        """Returns coordinates of entrance room"""
+        return self.entrance_loc
+
+    def get_exit_coords(self) -> tuple[int, int]:
+        """Returns coordinates of exit room"""
+        return self.exit_loc
+
+    def fetch_room(self, x, y) -> Room:
+        """Fetches room at given coordinates"""
+        return self.map[x][y]
 
     def __str__(self):
         result = ""
@@ -80,11 +102,13 @@ class Dungeon:
     def __populate_map(self):
         """Responsible for populating a fresh map with an entrance, exit, pillar, et cetera"""
         entrance_x, entrance_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
+        self.entrance_loc = (entrance_x, entrance_y) # Initializing a field!
         exit_x, exit_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
         distance = self.__distance(entrance_x, entrance_y, exit_x, exit_y)
         while distance <= self.length - 2:
             exit_x, exit_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
             distance = self.__distance(entrance_x, entrance_y, exit_x, exit_y)
+        self.exit_loc = (exit_x, exit_y) # Initializing a field!
         self.map[entrance_x][entrance_y] = Room('ENTRANCE')
         self.map[exit_x][exit_y] = Room('EXIT')
         # self.__str__()
@@ -94,6 +118,7 @@ class Dungeon:
         # print('~')
         offshoot_rooms = self.__generate_offshoots(path)
         populated_rooms = path + offshoot_rooms
+        self.room_list = populated_rooms # Initializing a field!
         for a in populated_rooms:
             x, y = (a[0], a[1])
             self.map[x][y].define_valid_directions(self.length, self.width, self.map, x, y)
