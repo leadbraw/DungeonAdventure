@@ -1,7 +1,10 @@
 import sys
 import pygame
 import controller.database_init
-
+from model.managers.room_manager import RoomManager
+from model.managers.monster_manager import MonsterManager
+from model.managers.item_manager import ItemManager
+import model.dungeon.Dungeon
 class Button:
     """Self-explanatory. Used to represent clickable buttons on screen."""
     def __init__(self, color, x, y, width, height, font=None, text_color=None, text=''):
@@ -44,10 +47,11 @@ class CharacterScreen:
         self.hero_image = pygame.image.load(hero_image)
         self.hero_image = pygame.transform.scale(self.hero_image, (400, 400))
         #Buttons for 'Select' and 'Back'
+        button_font = pygame.font.Font(None, 30)
         self.select_button = Button((60, 180, 75), 550, 500, 100, 40,
-                                    font, (255, 255, 255), "Select")
+                                    button_font, (255, 255, 255), "Select")
         self.back_button = Button((180, 60, 60), 670, 500, 100, 40,
-                                  font, (255, 255, 255), "Back")
+                                  button_font, (255, 255, 255), "Back")
 
     def draw(self):
         """Responsible for drawing the character screen, complete with name, image, stats."""
@@ -223,6 +227,51 @@ def character_select():
 def gameplay(hero_name):
     """Handles the main gameplay loop."""
     controller.database_init.main() # Make database.
+
+    room_manager = RoomManager.get_instance()
+    monster_manager = MonsterManager.get_instance()
+    item_manager = ItemManager.get_instance()
+
+    #create dungeon
+    dungeon = model.Dungeon(floor_number=1)
+    print(dungeon)
+
+    #populate monsters and items
+    all_rooms = []
+    for row in dungeon.map:
+        for room in row:
+            all_rooms.append(room)
+
+    #filter monster rooms
+    monster_rooms = []
+    for room in all_rooms:
+        if room.type == 'MONSTER':
+            monster_rooms.append(room)
+
+    #filter item rooms
+    item_rooms = []
+    for room in all_rooms:
+        if room.type == 'ITEM':
+            item_rooms.append(room)
+
+    # place monsters in rooms
+    for room in monster_rooms:
+        monster = monster_manager.get_random_monster()
+        print(f"Placed {monster.get_name()} in a MONSTER room.")
+    for room in item_rooms:
+        item = item_manager.get_random_non_unique_item()
+        print(f"Placed {item.get_name()} in a ITEM room.")
+
+    # the adventurer's intial position
+    position = None
+    for row_index, row in enumerate(dungeon.map):
+        for column_index, room in enumerate(row):
+            if room.type == 'ENTRANCE':
+                position = (row_index, column_index)
+                break
+        if position:
+            break
+
     while True:
         '''The space not drawn over by the two dark rectangles along the bottom/right is where the dungeon images
         and prompts to move from room to room will be shown.'''
