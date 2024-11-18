@@ -1,28 +1,45 @@
-from .database_manager import DatabaseManager
-from model.entities.adventurers import Warrior, Priest, Thief, Bard  # Import specific adventurer classes as needed
-
+from model.entities.adventurers import Warrior, Priest, Thief, Bard
 
 class AdventurerManager:
     _instance = None  # Singleton instance
 
     @staticmethod
-    def get_instance():
+    def get_instance(adventurers_data=None):
+        """
+        Retrieve the singleton instance of AdventurerManager, initializing it if necessary.
+        :param adventurers_data: List of tuples representing adventurer data from the database.
+        :return: The singleton instance of AdventurerManager.
+        """
         if AdventurerManager._instance is None:
-            AdventurerManager._instance = AdventurerManager()
+            if adventurers_data is None:
+                raise ValueError("AdventurerManager requires 'adventurers_data' for initialization.")
+            AdventurerManager._instance = AdventurerManager(adventurers_data)
         return AdventurerManager._instance
 
-    def __init__(self):
+    def __init__(self, adventurers_data):
         if AdventurerManager._instance is not None:
-            raise Exception("This class is a singleton!")
+            raise Exception("This class is a singleton! Use get_instance() to access the instance.")
+
         self.adventurer = None  # Placeholder for the single selected adventurer
-        self.adventurer_options = {}  # Dictionary to hold all adventurer options for display
+        self.adventurer_options = {}  # Dictionary to hold all adventurer options
 
-    def load_adventurer_options(self):
-        """Loads all adventurer options from the database for the menu display."""
-        query = "SELECT * FROM heroes"
-        results = DatabaseManager.get_instance().execute_query(query)
+        # Map adventurer types to their classes
+        self.adventurer_classes = {
+            "Warrior": Warrior,
+            "Priest": Priest,
+            "Thief": Thief,
+            "Bard": Bard,
+        }
 
-        for row in results:
+        # Load adventurers from the provided data
+        self.load_adventurer_options(adventurers_data)
+
+    def load_adventurer_options(self, adventurers_data):
+        """
+        Loads all adventurer options from preloaded data.
+        :param adventurers_data: List of tuples representing adventurer data.
+        """
+        for row in adventurers_data:
             name = row[1]
             max_hp = row[3]
             attack_speed = row[4]
@@ -31,20 +48,13 @@ class AdventurerManager:
             chance_to_block = row[8]
             initial_position = (-3, -3)  # Temporary position outside the dungeon
 
-            # Determine the adventurer class type and add to the options dictionary
+            # Dynamically create the adventurer instance based on its type
             adventurer_type = row[2]
-            if adventurer_type == "Warrior":
-                self.adventurer_options["Warrior"] = Warrior(name, initial_position, max_hp, attack_speed,
-                                                             chance_to_hit, damage_range, chance_to_block)
-            elif adventurer_type == "Priest":
-                self.adventurer_options["Priest"] = Priest(name, initial_position, max_hp, attack_speed, chance_to_hit,
-                                                           damage_range, chance_to_block)
-            elif adventurer_type == "Thief":
-                self.adventurer_options["Thief"] = Thief(name, initial_position, max_hp, attack_speed, chance_to_hit,
-                                                         damage_range, chance_to_block)
-            elif adventurer_type == "Bard":
-                self.adventurer_options["Bard"] = Bard(name, initial_position, max_hp, attack_speed, chance_to_hit,
-                                                       damage_range, chance_to_block)
+            adventurer_class = self.adventurer_classes.get(adventurer_type)
+            if adventurer_class:
+                self.adventurer_options[adventurer_type] = adventurer_class(
+                    name, initial_position, max_hp, attack_speed, chance_to_hit, damage_range, chance_to_block
+                )
 
     def get_adventurer_options(self):
         """Returns a dictionary of all adventurer options for the menu."""

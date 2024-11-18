@@ -6,40 +6,59 @@ class ItemManager:
     _instance = None  # Singleton instance
 
     @staticmethod
-    def get_instance():
+    def get_instance(items_data=None):
+        """
+        Retrieve the singleton instance of ItemManager, initializing it if necessary.
+        :param items_data: List of tuples representing items from the database (used only on first initialization).
+        :return: The singleton instance of ItemManager.
+        """
         if ItemManager._instance is None:
-            ItemManager._instance = ItemManager()
+            if items_data is None:
+                raise ValueError("ItemManager requires 'items_data' for initialization.")
+            ItemManager._instance = ItemManager(items_data)
         return ItemManager._instance
 
-    def __init__(self):
+    def __init__(self, items_data):
         if ItemManager._instance is not None:
-            raise Exception("This class is a singleton!")
-        self.item_factory = ItemFactory()  # Initialize the factory
+            raise Exception("This class is a singleton! Use get_instance() to access the instance.")
+
+        # Separate data into two dictionaries
+        self.one_time_items = {}
+        self.other_items = {}
+
+        for row in items_data:
+            item_name = row[1]  # Assuming the name is at index 1
+            if row[5]:  # Assuming the one_time_item flag is at index 5
+                self.one_time_items[item_name] = row
+            else:
+                self.other_items[item_name] = row
+
         self.unique_items_acquired = set()  # Track unique items acquired by the adventurer
-        self.item_cache = self.item_factory.item_cache  # Cache for all items
 
     def get_unique_item(self, item_name):
-        """Returns a unique item only if it hasn't been acquired before."""
         if item_name in self.unique_items_acquired:
             return None  # Item has already been acquired
-        item = self.item_cache.get(item_name)
-        if item and item.my_item_unique:
-            self.unique_items_acquired.add(item_name)
-            return deepcopy(item)  # Return a copy to avoid modifying the original
-        return None
+
+        raw_data = self.one_time_items.get(item_name)
+        if not raw_data:
+            return None
+
+        self.unique_items_acquired.add(item_name)
+        return ItemFactory.create_item_from_raw(raw_data)
 
     def get_limited_item(self, item_name):
-        """Returns a clone of a limited-instance item from the cache."""
-        item = self.item_cache.get(item_name)
-        return deepcopy(item) if item else None
+        raw_data = self.other_items.get(item_name)
+        return ItemFactory.create_item_from_raw(raw_data) if raw_data else None
 
-    def get_random_non_unique_item(self):
-        """Returns a random non-unique item from the cache."""
-        non_unique_items = [item for item in self.item_cache.values() if not item.my_item_unique]
-        if not non_unique_items:
-            return None  # No non-unique items available
-        return deepcopy(random.choice(non_unique_items))
+    def get_random_non_temporary_item(self):
+        non_temporary_data = [
+            raw_data for raw_data in self.other_items.values() if not raw_data[4]  # Assuming index 4 is 'temporary'
+        ]
+        if not non_temporary_data:
+            return None  # No non-temporary items available
+
+        raw_data = random.choice(non_temporary_data)
+        return ItemFactory.create_item_from_raw(raw_data)
 
     def reset_unique_items(self):
-        """Resets tracking of unique items, useful for new games."""
         self.unique_items_acquired.clear()
