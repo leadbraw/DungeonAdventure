@@ -1,6 +1,6 @@
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY
+from constants import BACKGROUND_COLOR, DARK_GREY, PILLAR_NAMES
 from model.factories.item import Item
 from model.managers.room_manager import RoomManager
 from model.managers.monster_manager import MonsterManager
@@ -14,48 +14,56 @@ class GameController:
         self.room_manager = RoomManager.get_instance()
         self.monster_manager = MonsterManager.get_instance()
         self.item_manager = ItemManager.get_instance()
-        self.dungeon = None
+        self.dungeon = [] # List of floors
+        self.current_floor = 1
         self.position = None
 
     def initialize_dungeon(self):
-        """Create and populate the dungeon."""
-        self.dungeon = Dungeon(floor_number=1)  # Updated reference
+        """Creates all four floors of the dungeon."""
+        '''Create and populate the dungeon.'''
+        self.dungeon = [Dungeon(1), Dungeon(2), Dungeon(3), Dungeon(4)]  # Updated reference
         print("Dungeon Generated:")
-        print(self.dungeon)
+        print(self.dungeon[0])
+        for i in range (4):
+            # Populate rooms with monsters and items
+            all_rooms = self.dungeon[i].get_room_list()  # List of room coordinates
+            monster_rooms = [
+                coords
+                for coords in all_rooms
+                if self.dungeon[i].fetch_room(coords[0], coords[1]).type == 'MONSTER'
+            ]
+            item_rooms = [
+                coords
+                for coords in all_rooms
+                if self.dungeon[i].fetch_room(coords[0], coords[1]).type == 'ITEM'
+            ]
+            # TODO: Account for elite rooms! Don't put normal monsters in there!
+            # Place monsters in designated MONSTER rooms
+            for room_coords in monster_rooms:
+                monster = self.monster_manager.get_random_monster()
+                if monster:
+                    self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_monster(monster)
+                    print(f"Placed {monster.name} in a MONSTER room at {room_coords}.")
+                else:
+                    print(f"Failed to place monster in room at {room_coords}: No monster available.")
 
-        # Populate rooms with monsters and items
-        all_rooms = self.dungeon.get_room_list()  # List of room coordinates
-        monster_rooms = [
-            coords
-            for coords in all_rooms
-            if self.dungeon.fetch_room(coords[0], coords[1]).type == 'MONSTER'
-        ]
-        item_rooms = [
-            coords
-            for coords in all_rooms
-            if self.dungeon.fetch_room(coords[0], coords[1]).type == 'ITEM'
-        ]
-
-        # Place monsters in designated MONSTER rooms
-        for room_coords in monster_rooms:
-            monster = self.monster_manager.get_random_monster()
-            if monster:
-                self.dungeon.fetch_room(room_coords[0], room_coords[1]).set_monster(monster)
-                print(f"Placed {monster.name} in a MONSTER room at {room_coords}.")
+            # Place items in designated ITEM rooms
+            for room_coords in item_rooms:
+                item = self.item_manager.get_random_non_temporary_item()
+                if item:
+                    self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_item(item)
+                    print(f"Placed {item.get_name()} in an ITEM room at {room_coords}.")
+                else:
+                    print(f"Failed to place item in room at {room_coords}: No item available.")
+            pillar = self.item_manager.get_unique_item(PILLAR_NAMES[i])
+            pillar_coords = all_rooms[2] # Pillar room is always the third room in the floor's room_list
+            if pillar:
+                self.dungeon[i].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar)
+                print(f"Placed {pillar.get_name()} in a PILLAR room at {pillar_coords}.")
             else:
-                print(f"Failed to place monster in room at {room_coords}: No monster available.")
-
-        # Place items in designated ITEM rooms
-        for room_coords in item_rooms:
-            item = self.item_manager.get_random_non_temporary_item()
-            if item:
-                self.dungeon.fetch_room(room_coords[0], room_coords[1]).set_item(item)
-                print(f"Placed {item.get_name()} in an ITEM room at {room_coords}.")
-            else:
-                print(f"Failed to place item in room at {room_coords}: No item available.")
-
+                print(f"Failed to place pillar in room at {self.dungeon[i].room_list[2]}: No pillar available.")
         # Set the initial player position
-        self.position = self.dungeon.entrance_loc
+        self.position = self.dungeon[0].entrance_loc
         print(f"Player starting position: {self.position}")
 
     def display_game(self):
@@ -97,7 +105,7 @@ class GameController:
             direction_index = direction_indices[key]
 
             # Get the current room and check valid directions
-            current_room = self.dungeon.fetch_room(self.position[0], self.position[1])
+            current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
             if current_room.valid_directions[direction_index]:
                 # Update the position if the direction is valid
                 new_position = (self.position[0] + dx, self.position[1] + dy)
@@ -109,7 +117,7 @@ class GameController:
 
     def room_interaction(self):
         """Interact with the current room."""
-        current_room = self.dungeon.fetch_room(self.position[0], self.position[1])
+        current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
         print(f"Entered room at {self.position}: {current_room.type}")
 
         if current_room.type == "MONSTER" and current_room.has_monster():
@@ -118,10 +126,17 @@ class GameController:
         elif current_room.type == "ITEM" and current_room.has_item():
             item = current_room.get_item()
             print(f"You found a {item.get_name()}!")
+            current_room.item = None
         elif current_room.type == "EXIT":
             print("You found the exit! Congratulations!")
         elif current_room.type == "ENTRANCE":
             print("You are back at the entrance.")
+        elif current_room.type == "PILLAR":
+            pillar = current_room.get_item()
+            print(f"You've found the {pillar.get_name()}! Wow!")
+            current_room.item = None
+        elif current_room.type == "EMPTY":
+            print("You've found an empty room. It smells in here.")
 
     def draw_ui(self):
         """Draws the game's user interface."""
@@ -134,7 +149,7 @@ class GameController:
         self.screen.blit(portrait, (650, 450))
 
         # Display the current room type
-        current_room = self.dungeon.fetch_room(self.position[0], self.position[1])
+        current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
         room_text = pygame.font.Font(None, 30).render(
             f"Room: {current_room.type}", True, (255, 255, 255)
         )

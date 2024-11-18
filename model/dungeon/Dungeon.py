@@ -106,8 +106,7 @@ class Dungeon:
         self.map = [[Room('BLOCKED') for _ in range(self.length)] for _ in range(self.width)] # Rooms by default are blocked
         self.entrance_loc = None
         self.exit_loc = None
-        self.room_list = None
-        self.non_blocked_rooms = []  # List to store non-blocked room coordinates
+        self.room_list = []  # List to store non-blocked room coordinates
         '''Populates the map, in addition to instantiating the entrance_loc, exit_loc, and room_list fields'''
         self.__populate_map()
 
@@ -130,10 +129,6 @@ class Dungeon:
     def get_exit_coords(self) -> tuple[int, int]:
         """Returns coordinates of exit room"""
         return self.exit_loc
-
-    def get_non_blocked_rooms(self) -> list[tuple[int, int]]:
-        """Returns a deep copy of the list of non-blocked room coordinates."""
-        return deepcopy(self.non_blocked_rooms)
 
     def fetch_room(self, x, y) -> Room:
         """Fetches room at given coordinates"""
@@ -198,8 +193,8 @@ class Dungeon:
         )
         essential_rooms.append(pillar_coords)  # Add pillar as the third room in the list
 
-        # Finalize the non_blocked_rooms list
-        self.non_blocked_rooms = essential_rooms + [room for room in other_rooms if room not in essential_rooms]
+        # Finalize the room list
+        self.room_list = essential_rooms + [room for room in other_rooms if room not in essential_rooms]
 
     def __generate_offshoots(self, path):
         offshoot_length = self.length - 2
@@ -242,9 +237,9 @@ class Dungeon:
         x, y = random.choice(rooms[1:])  # excludes entrance room
         while x == exit_x and y == exit_y:
             x, y = random.choice(rooms)
-        self.map[x][y] = Room('PILLAR')
-        if (x, y) not in self.non_blocked_rooms:
-            self.non_blocked_rooms.append((x, y))  # Add to non-blocked list
+        self.map[x][y].set_type("PILLAR")
+        if (x, y) not in self.room_list:
+            self.room_list.append((x, y))  # Add to non-blocked list
 
     def __valid_direction_for_offshoot(self, direction, x, y) -> bool:
         new_x, new_y = x + direction[0], y + direction[1]
@@ -255,4 +250,4 @@ if __name__ == "__main__":
     # Testing code
     d = Dungeon(1)
     print(d.__str__())
-    print(f"Non-blocked rooms ({len(d.non_blocked_rooms)}): {d.non_blocked_rooms}")
+    print(f"Non-blocked rooms ({len(d.room_list)}): {d.room_list}")

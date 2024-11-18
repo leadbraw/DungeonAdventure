@@ -11,6 +11,9 @@ BACKGROUND_COLOR = (24, 24, 24)
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
+# Pillar Names (used in game_controller)
+PILLAR_NAMES = ["Pillar of Abstraction", "Pillar of Polymorphism", "Pillar of Inheritance", "Pillar of Encapsulation"]
+
 # Button Sizes
 MENU_BUTTON_WIDTH = 140
 MENU_BUTTON_HEIGHT = 40
