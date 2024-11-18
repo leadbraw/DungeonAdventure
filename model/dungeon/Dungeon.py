@@ -229,7 +229,8 @@ class Dungeon:
         return (0 <= new_x < self.length and 0 <= new_y < self.width and
                 self.map[new_x][new_y].type == 'BLOCKED')
 
-# for testing...
-d = Dungeon(1)
-print(d.__str__())
-print(f"Non-blocked rooms ({len(d.non_blocked_rooms)}): {d.non_blocked_rooms}")
+if __name__ == "__main__":
+    # Testing code
+    d = Dungeon(1)
+    print(d.__str__())
+    print(f"Non-blocked rooms ({len(d.non_blocked_rooms)}): {d.non_blocked_rooms}")
