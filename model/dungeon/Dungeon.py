@@ -45,6 +45,9 @@ class Room:
             self.type = room_type
 
         self.valid_directions = [False, False, False, False]  # Up, Right, Down, Left
+        #Attributes
+        self.monster = None
+        self.item = None
 
     def __str__(self):
         # Assign colors to specific room types
@@ -60,6 +63,25 @@ class Room:
         }
         color = colors.get(self.type, Fore.RESET)  # Default to no color
         return f"{color}{self.type:<8}{Style.RESET_ALL}"
+
+    def set_monster(self, monster):
+        self.monster = monster
+
+    def get_monster(self):
+        return self.monster
+
+    def has_monster(self):
+        return self.monster is not None
+
+    # Item-related methods
+    def set_item(self, item):
+        self.item = item
+
+    def get_item(self):
+        return self.item
+
+    def has_item(self):
+        return self.item is not None
 
     def set_type(self, new_type):
         self.type = new_type
