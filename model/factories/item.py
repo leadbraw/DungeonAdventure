@@ -1,16 +1,21 @@
 class Item:
-    def __init__(self, the_item_id, the_item_name, the_item_description, the_item_attributes, the_item_temporary, the_item_unique):
-        """Initializer for Item with static attributes."""
-        self.my_item_id = the_item_id
-        self.my_item_name = the_item_name
-        self.my_item_description = the_item_description
-        self.my_item_attributes = the_item_attributes  # e.g., {"hp": 10}
-        self.my_item_temporary = the_item_temporary
-        self.my_item_unique = the_item_unique
-        self.my_item_remaining_turns = 5 if the_item_temporary else None
+    def __init__(self, item_id, name, description, ability, temporary, one_time_item):
+        """
+        Represents an item in the game.
+        :param item_id: Unique identifier for the item.
+        :param name: Name of the item.
+        :param description: Description of the item's effect.
+        :param ability: Effect or ability provided by the item.
+        :param temporary: Boolean indicating if the item is temporary.
+        :param one_time_item: Boolean indicating if the item is a one-time unique item.
+        """
+        self.item_id = item_id
+        self.name = name
+        self.description = description
+        self.ability = ability
+        self.temporary = bool(temporary)
+        self.one_time_item = bool(one_time_item)
 
-    # def __repr__(self):
-    #     """item debugging"""
-    #     return (f"Item(id={self.my_item_id}, name='{self.my_item_name}', "
-    #             f"description='{self.my_item_description}', attributes={self.my_item_attributes}, "
-    #             f"temporary={self.my_item_temporary})")
+    def get_name(self):
+        """Returns the name of the item."""
+        return self.name
