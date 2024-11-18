@@ -1,6 +1,8 @@
 from controller.database_init import DatabaseInitializer
 from model.managers.item_manager import ItemManager
 from model.managers.room_manager import RoomManager
+from model.managers.monster_manager import MonsterManager
+from model.managers.adventurer_manager import AdventurerManager
 from controller.seeders.hero_seeder import HeroSeeder
 from controller.seeders.item_seeder import ItemSeeder
 from controller.seeders.monster_seeder import MonsterSeeder
@@ -12,6 +14,8 @@ class GameSetup:
     def __init__(self):
         self.item_manager = None
         self.room_manager = None
+        self.monster_manager = None
+        self.adventurer_manager = None
 
     def setup(self):
         # Step 1: Initialize the DatabaseInitializer
@@ -32,16 +36,22 @@ class GameSetup:
         MonsterSeeder().populate_monsters()
         RoomSeeder().populate_rooms()
 
-        # Step 4: Close the database connection
-        print("Closing the database connection...")
+        # Step 4: Fetch data from the database
+        print("Fetching data for managers...")
         db_manager = DatabaseManager.get_instance()
+        db_manager.connect()
+        items_data = db_manager.fetch_items()
+        rooms_data = db_manager.fetch_rooms()
+        monsters_data = db_manager.fetch_monsters()
+        adventurers_data = db_manager.fetch_adventurers()  # Fetch adventurer data
         db_manager.close_connection()
 
-        # Step 5: Initialize managers
+        # Step 5: Initialize managers with the fetched data
         print("Initializing managers...")
-        # Uncomment these lines if you want to initialize managers here
-        # self.item_manager = ItemManager.get_instance()
-        # self.room_manager = RoomManager.get_instance()
+        self.item_manager = ItemManager.get_instance(items_data)
+        self.room_manager = RoomManager.get_instance(rooms_data)
+        self.monster_manager = MonsterManager.get_instance(monsters_data)
+        self.adventurer_manager = AdventurerManager.get_instance(adventurers_data)
 
         print("Game setup complete!")
-        return self.item_manager, self.room_manager
+        return self.item_manager, self.room_manager, self.monster_manager, self.adventurer_manager
