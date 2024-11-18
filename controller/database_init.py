@@ -68,7 +68,7 @@ class DatabaseInitializer:
                     description TEXT,
                     ability TEXT,
                     temporary INTEGER, -- Use INTEGER instead of BOOLEAN
-                    unique_item INTEGER -- Use INTEGER instead of BOOLEAN
+                    one_time_item INTEGER -- Use INTEGER instead of BOOLEAN
                 );
             """,
             "rooms": """

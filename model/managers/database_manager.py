@@ -31,6 +31,7 @@ class DatabaseManager:
             return result
         except sqlite3.Error as e:
             print(f"Database error: {e}")
+            return []
         finally:
             self.close_connection()
 
@@ -41,3 +42,37 @@ class DatabaseManager:
             self.connection.close()
             self.connection = None
             self.cursor = None
+
+    def fetch_items(self):
+        """Fetches all items from the items table."""
+        query = """
+        SELECT id, name, description, ability, temporary, one_time_item
+        FROM items
+        """
+        return self.execute_query(query)
+
+    def fetch_rooms(self):
+        """Fetches all room configurations from the rooms table."""
+        query = """
+        SELECT doors, image_path, rotation
+        FROM rooms
+        """
+        return self.execute_query(query)
+
+    def fetch_monsters(self):
+        query = """
+        SELECT id, name, type, HP, attack_speed, chance_to_hit, 
+               attack_min, attack_max, chance_to_heal, heal_range_min, heal_range_max
+        FROM monsters
+        """
+        monsters = self.execute_query(query)
+        print(f"DatabaseManager: Fetched {len(monsters)} monsters.")
+        return monsters
+
+    def fetch_adventurers(self):
+        """Fetches all adventurers from the adventurers table."""
+        query = """
+        SELECT id, name, type, max_hp, attack_speed, chance_to_hit, min_damage, max_damage, chance_to_block
+        FROM heroes
+        """
+        return self.execute_query(query)

@@ -24,7 +24,7 @@ class ItemSeeder:
         ]
 
         insert_query = """
-            INSERT INTO items (name, description, ability, temporary, unique_item)
+            INSERT INTO items (name, description, ability, temporary, one_time_item)
             VALUES (?, ?, ?, ?, ?)
         """
 
