@@ -3,203 +3,131 @@ from abc import abstractmethod
 from typing import final
 
 
-""" Provides the default behavior shared by all entities.
-    
-    Attributes:
-    
-    Passed in:
-    name (string): entity's name.
-    pos (tuple): entity's position.
-    max_hp (int): entity's max hp.
-    hit_chance (float): entity's attack hit chance percentage (0 and 1).
-    damage_range (tuple): entity's attack min and max damage.
-    
-    Self-initialized:
-    hp (int): entity's hp tracker. Initialized to max_hp.
-    
-    Methods:
-    is_alive(): returns the entity's life status.
-    attack(the_target): performs attacks on the target.    
-"""
 class Entity:
+    def __init__(self, the_name, the_position, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
+        # Private fields
+        self.__my_name = the_name.strip() if the_name else "Unnamed Entity"  # Validate name
+        self.__my_position = the_position if isinstance(the_position, tuple) else (0, 0)
 
-    def __init__(self, the_name, the_position,
-                 the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
-        self.__my_name = the_name                       # str
-        self.__my_position = the_position               # tuple
+        # Entity attributes with validation
+        self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
+        self.__my_attack_speed = max(1, the_attack_speed)  # Ensure non-zero attack speed
+        self.__my_hit_chance = min(max(0, the_hit_chance), 1)  # Clamp between 0 and 1
+        self.__my_damage_range = (
+            max(0, the_damage_range[0]),
+            max(0, the_damage_range[1])
+        ) if the_damage_range and len(the_damage_range) == 2 else (0, 1)
 
-        # entity shared attributes (from database)
-        self.__my_max_hp = the_max_hp                   # int
-        self.__my_attack_speed = the_attack_speed       # int
-        self.__my_hit_chance = the_hit_chance           # float
-        self.__my_damage_range = the_damage_range       # tuple
-
-        self.__my_hp = self.__my_max_hp                 # int
+        self.__my_hp = self.__my_max_hp  # Initialize HP to max HP
 
     def __str__(self):
-        """
-        Returns a string representation of the Entity.
-
-        :return: string containing name, HP, and position.
-        """
-        return f"{self.name} {self.hp} {self.pos}"
+        """Returns a string representation of the Entity."""
+        return f"{self.name} {self.hp}/{self.max_hp} at {self.pos}"
 
     ### PUBLIC METHODS ###
-
     @final
     def is_alive(self):
-        """
-        Returns entity's life status.
-
-        :return: True if the entity is alive; False otherwise.
-        """
+        """Returns entity's life status."""
         return self.hp > 0
 
     @final
     def attack(self, the_target):
-        """
-        Performs an appropriate number of attacks based on own and the target's
-        attack speeds. Randomly determines if an attack is successful (within attack
-        chance) and triggers the target's hit response on success.
-        Tracks the battle sequence and represents it as a string of performed
-        attacks, missed attacks, successful hit responses, and faint messages.
-        Does nothing if self or target is dead.
+        """Performs an attack on the target, respecting attack speed and hit chance."""
+        if not self.is_alive():
+            return f"{self.name} cannot attack because it is not alive."
 
-        :param the_target: attack target.
-        :return: string of battle actions performed by entity and target.
-        """
+        if not the_target.is_alive():
+            return f"{the_target.name} is already defeated."
+
         message = ""
 
-        for i in range(self.__calculate_attack_num(the_target)):
-
-            if not the_target.is_alive() or not self.is_alive():
-                break
-
-            # attack roll (random float within the hit chance)
-            if random.uniform(0,1) <= self.hit_chance:
-                # damage roll (random int within damage_range)
+        # Perform attacks based on attack speeds
+        for _ in range(self.__calculate_attack_num(the_target)):
+            if random.uniform(0, 1) <= self.hit_chance:  # Attack hit
                 damage = random.randint(self.damage_range[0], self.damage_range[1])
-                # set health
                 message += f"{self.name} hit {the_target.name} for {damage} points.\n"
                 message += the_target._hit_response(damage)
-
-            else:
+            else:  # Attack missed
                 message += f"{self.name}'s attack missed {the_target.name}.\n"
 
-        return message[:len(message) - 1]
+        return message.strip()
 
     ### INTERNAL METHODS ###
-
     @final
     def __calculate_attack_num(self, the_target):
-        """
-        Returns the number of attacks based on the integer quotient of the entity's
-        and target's attack speeds (min 1).
-
-        :param the_target: attack target.
-        :return: number of attacks.
-        """
-        # determine number of attacks
-        attacks_per_turn = int(self.attack_speed / the_target.attack_speed)
-        if attacks_per_turn == 0:
-            attacks_per_turn = 1
-
-        return attacks_per_turn
+        """Calculates the number of attacks based on attack speed."""
+        return max(1, self.attack_speed // the_target.attack_speed)
 
     @final
     def _update_hp(self, the_diff):
         """
-        Subtracts the passed in difference from the entity's HP and updates the HP.
-        Does not update HP to below 0 or above the HP max.
-
-        :param the_diff: the HP difference.
-        :return: faint message if HP reaches 0.
+        Adjusts HP based on the given difference.
+        Does not allow HP to exceed max HP or drop below 0.
         """
-
-        message = ""
-
-        if self.hp - the_diff < 0:
-            self.hp = 0
-            message += self._has_fainted_msg()
-        elif self.hp - the_diff > self.max_hp:
-            self.hp = self.max_hp
-        else:
-            self.hp = self.hp - the_diff
-
-        return message
+        new_hp = max(0, min(self.hp - the_diff, self.max_hp))
+        if new_hp == 0 and self.hp > 0:
+            return self._has_fainted_msg()
+        self.hp = new_hp
+        return ""
 
     @final
     def _has_fainted_msg(self):
-        """
-        Returns the faint message for the entity.
-
-        :return: faint message.
-        """
+        """Returns the faint message for the entity."""
         return f"{self.name} has fainted.\n"
 
     @abstractmethod
     def _hit_response(self, the_dmg):
-        # implemented in subclasses
+        """Abstract method to be implemented in subclasses."""
         pass
 
     ### PROPERTIES ###
-
     @property
     def name(self):
+        """Getter for the name."""
         return self.__my_name
 
     @property
     def pos(self):
+        """Getter for the position."""
         return self.__my_position
 
     @property
     def max_hp(self):
+        """Getter for max HP."""
         return self.__my_max_hp
 
     @property
     def attack_speed(self):
+        """Getter for attack speed."""
         return self.__my_attack_speed
 
     @property
     def hit_chance(self):
+        """Getter for hit chance."""
         return self.__my_hit_chance
 
     @property
     def damage_range(self):
+        """Getter for damage range."""
         return self.__my_damage_range
 
     @property
     def hp(self):
+        """Getter for current HP."""
         return self.__my_hp
 
-    @name.setter
-    def name(self, the_name):
-        self.__my_name = the_name
+    @hp.setter
+    def hp(self, value):
+        """Setter for HP with validation."""
+        if 0 <= value <= self.__my_max_hp:
+            self.__my_hp = value
+        else:
+            raise ValueError("HP must be between 0 and max HP.")
 
     @pos.setter
-    def pos(self, the_position):
-        self.__my_position = the_position
-
-    @max_hp.setter
-    def max_hp(self, the_hp):
-        if self.__my_max_hp >= the_hp >= 0:
-            self.__my_hp = the_hp
-
-    @attack_speed.setter
-    def attack_speed(self, the_attack_speed):
-        self.__my_attack_speed = the_attack_speed
-
-    @hit_chance.setter
-    def hit_chance(self, the_hit_chance):
-        if 1 >= the_hit_chance >= 0:
-            self.__my_hit_chance = the_hit_chance
-
-    @damage_range.setter
-    def damage_range(self, the_damage_range):
-        self.__my_damage_range = the_damage_range
-
-    @hp.setter
-    def hp(self, the_hp):
-        if self.__my_max_hp >= the_hp >= 0:
-            self.__my_hp = the_hp
-
+    def pos(self, value):
+        """Setter for position with validation."""
+        if isinstance(value, tuple) and len(value) == 2 and all(isinstance(x, int) for x in value):
+            self.__my_position = value
+        else:
+            raise ValueError("Position must be a tuple of two integers.")
