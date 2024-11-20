@@ -18,6 +18,7 @@ class GameController:
         self.current_floor = 1
         self.position = None
 
+
     def initialize_dungeon(self):
         """Creates all four floors of the dungeon."""
         '''Create and populate the dungeon.'''
@@ -122,21 +123,98 @@ class GameController:
 
         if current_room.type == "MONSTER" and current_room.has_monster():
             monster = current_room.get_monster()
-            print(f"A wild {monster.name} appears! Prepare for battle!")
+            self.start_battle(current_room.get_monster())
+
+
         elif current_room.type == "ITEM" and current_room.has_item():
             item = current_room.get_item()
             print(f"You found a {item.get_name()}!")
             current_room.item = None
+
         elif current_room.type == "EXIT":
-            print("You found the exit! Congratulations!")
+
+            if self.current_floor == len(self.dungeon):
+                print("You found the exit! Congratulations!")
+                pygame.quit()
+                sys.exit()
+            else:
+                print(f"You have completed floor {self.current_floor}! Proceeding to the next floor.")
+                self.current_floor += 1
+                self.position = self.dungeon[self.current_floor - 1].entrance_loc
+                print(f"Entering floor {self.current_floor} at position {self.position}.")
+
         elif current_room.type == "ENTRANCE":
             print("You are back at the entrance.")
+
         elif current_room.type == "PILLAR":
             pillar = current_room.get_item()
             print(f"You've found the {pillar.get_name()}! Wow!")
             current_room.item = None
+
         elif current_room.type == "EMPTY":
             print("You've found an empty room. It smells in here.")
+
+    def start_battle(self, monster):
+        """Starts and Handles battle action with player vs monster"""
+        print(f"A wild {monster.name} appears! Prepare for battle!")
+
+        while monster.hp > 0 and self.hero.hp > 0:
+            print(f"Monster HP: {monster.hp}")
+            print(f"Your HP: {self.hero.hp}")
+            print("What are you going to do?:")
+            print("1. Are you going to Fight")
+            print("2. Are you going to use Item")
+
+            # get the player input
+            action = input("Enter 1 to Fight or 2 to use Item: ").strip()
+
+            if action == "1": # player chooses to fight the monster
+
+                player_turns = self.hero.attack_speed // monster.attack_speed
+                #Ensure at least 1 attack
+                if player_turns == 0:
+                    player_turns = 1
+
+                for turn in range(player_turns):
+                    # if monster still alive
+                    if monster.hp > 0:
+                        damage = self.hero.attack(monster)
+                        print(f"You attacked and dealt {damage} damage to {monster.name}.")
+
+                    else:
+                        break
+
+                #Use item
+            elif action == "2":
+
+                if self.hero.use_item():
+                    print(f"You used {self.hero.use_item.get_name}.")
+                else:
+                    print("You don't have any usable items, Bummer.")
+
+            else:
+                print("Invalid action, please choose again.")
+                # retry
+                continue
+
+            # now the monster turn
+            if monster.hp > 0:
+                print(f"{monster.name} is attacking!")
+                damage = monster.attack(self.hero)
+                print(f"{monster.name} dealt {damage} damage to you.")
+
+        #check outcome of battle
+        if monster.hp <= 0:
+            print(f"You defeated {monster.name}, Well done!")
+            current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
+            #clear monster from room
+            current_room.set_monster(None)
+
+        elif self.hero.hp <= 0:
+            print("Your were defeated, GAMEOVER:(")
+            pygame.quit()
+            sys.exit()
+
 
     def draw_ui(self):
         """Draws the game's user interface."""
