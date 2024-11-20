@@ -146,7 +146,7 @@ class GameController:
         elif current_room.type == "ENTRANCE":
             print("You are back at the entrance.")
 
-        elif current_room.type == "PILLAR":
+        elif current_room.type == "PILLAR" and current_room.has_item():
             pillar = current_room.get_item()
             print(f"You've found the {pillar.get_name()}! Wow!")
             current_room.item = None

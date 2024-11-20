@@ -236,7 +236,7 @@ class Dungeon:
         """Places one pillar somewhere on the map (excluding entrance/exit)"""
         x, y = random.choice(rooms[1:])  # excludes entrance room
         while x == exit_x and y == exit_y:
-            x, y = random.choice(rooms)
+            x, y = random.choice(rooms[1:])
         self.map[x][y].set_type("PILLAR")
         if (x, y) not in self.room_list:
             self.room_list.append((x, y))  # Add to non-blocked list
