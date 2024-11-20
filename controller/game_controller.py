@@ -25,7 +25,7 @@ class GameController:
         self.dungeon = [Dungeon(1), Dungeon(2), Dungeon(3), Dungeon(4)]  # Updated reference
         print("Dungeon Generated:")
         print(self.dungeon[0])
-        for i in range (4):
+        for i in range(4):
             # Populate rooms with monsters and items
             all_rooms = self.dungeon[i].get_room_list()  # List of room coordinates
             monster_rooms = [
@@ -157,19 +157,19 @@ class GameController:
     def start_battle(self, monster):
         """Starts and Handles battle action with player vs monster"""
         print(f"A wild {monster.name} appears! Prepare for battle!")
-
+        # TODO: Use adventurer manager to access hero/hero attributes
         while monster.hp > 0 and self.hero.hp > 0:
             print(f"Monster HP: {monster.hp}")
             print(f"Your HP: {self.hero.hp}")
             print("What are you going to do?:")
             print("1. Are you going to Fight")
             print("2. Are you going to use Item")
-
+            # TODO: Get user choice/print info to GUI, not console
             # get the player input
             action = input("Enter 1 to Fight or 2 to use Item: ").strip()
 
             if action == "1": # player chooses to fight the monster
-
+                # TODO: attack() in adventurer handles the attack speed calculations itself.
                 player_turns = self.hero.attack_speed // monster.attack_speed
                 #Ensure at least 1 attack
                 if player_turns == 0:
@@ -186,7 +186,7 @@ class GameController:
 
                 #Use item
             elif action == "2":
-
+                # TODO: Implement item uses/effects
                 if self.hero.use_item():
                     print(f"You used {self.hero.use_item.get_name}.")
                 else:
