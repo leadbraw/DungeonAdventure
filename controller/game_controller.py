@@ -4,19 +4,25 @@ from constants import BACKGROUND_COLOR, DARK_GREY, PILLAR_NAMES
 from model.factories.item import Item
 from model.managers.room_manager import RoomManager
 from model.managers.monster_manager import MonsterManager
+from model.managers.adventurer_manager import AdventurerManager
 from model.managers.item_manager import ItemManager
 from model.dungeon.Dungeon import Dungeon
 
 class GameController:
-    def __init__(self, screen, hero_name):
+    def __init__(self, screen, hero_name, adventurers_data):
         self.screen = screen
         self.hero_name = hero_name
         self.room_manager = RoomManager.get_instance()
         self.monster_manager = MonsterManager.get_instance()
         self.item_manager = ItemManager.get_instance()
+        self.adventurer_manager = AdventurerManager.get_instance(adventurers_data)
         self.dungeon = [] # List of floors
         self.current_floor = 1
         self.position = None
+        self.active_adventurer = None
+
+        #self.adventurer_manager.load.adventurer("Warrior") # Default to Warrior
+        #self.active_adventurer = self.adventurer_manager.get_adventurer()
 
 
     def initialize_dungeon(self):
@@ -148,7 +154,7 @@ class GameController:
 
         elif current_room.type == "PILLAR" and current_room.has_item():
             pillar = current_room.get_item()
-            print(f"You've found the {pillar.get_name()}! Wow!")
+            print(f"You've found the {pillar}! Wow!")
             current_room.item = None
 
         elif current_room.type == "EMPTY":
@@ -157,10 +163,15 @@ class GameController:
     def start_battle(self, monster):
         """Starts and Handles battle action with player vs monster"""
         print(f"A wild {monster.name} appears! Prepare for battle!")
-        # TODO: Use adventurer manager to access hero/hero attributes
-        while monster.hp > 0 and self.hero.hp > 0:
+
+        if not self.active_adventurer:
+            print("No adventurer is active. Please select one.")
+            return
+
+        adventurer = self.active_adventurer
+        while monster.hp > 0 and adventurer.hp > 0:
             print(f"Monster HP: {monster.hp}")
-            print(f"Your HP: {self.hero.hp}")
+            print(f"Your HP: {adventurer.hp}")
             print("What are you going to do?:")
             print("1. Are you going to Fight")
             print("2. Are you going to use Item")
@@ -170,7 +181,7 @@ class GameController:
 
             if action == "1": # player chooses to fight the monster
                 # TODO: attack() in adventurer handles the attack speed calculations itself.
-                player_turns = self.hero.attack_speed // monster.attack_speed
+                player_turns = adventurer.attack_speed // monster.attack_speed
                 #Ensure at least 1 attack
                 if player_turns == 0:
                     player_turns = 1
@@ -178,7 +189,7 @@ class GameController:
                 for turn in range(player_turns):
                     # if monster still alive
                     if monster.hp > 0:
-                        damage = self.hero.attack(monster)
+                        damage = adventurer.attack(monster)
                         print(f"You attacked and dealt {damage} damage to {monster.name}.")
 
                     else:
@@ -187,8 +198,8 @@ class GameController:
                 #Use item
             elif action == "2":
                 # TODO: Implement item uses/effects
-                if self.hero.use_item():
-                    print(f"You used {self.hero.use_item.get_name}.")
+                if adventurer.use_item():
+                    print(f"You used {adventurer.use_item.get_name}.")
                 else:
                     print("You don't have any usable items, Bummer.")
 
@@ -200,7 +211,7 @@ class GameController:
             # now the monster turn
             if monster.hp > 0:
                 print(f"{monster.name} is attacking!")
-                damage = monster.attack(self.hero)
+                damage = monster.attack(adventurer)
                 print(f"{monster.name} dealt {damage} damage to you.")
 
         #check outcome of battle
@@ -210,10 +221,19 @@ class GameController:
             #clear monster from room
             current_room.set_monster(None)
 
-        elif self.hero.hp <= 0:
+        elif adventurer.hp <= 0:
             print("Your were defeated, GAMEOVER:(")
             pygame.quit()
             sys.exit()
+
+    def set_active_adventurer(self, adventurer_type):
+        """Switches the active adventurer."""
+        self.adventurer_manager.load_adventurer(adventurer_type)
+        self.active_adventurer = self.adventurer_manager.get_adventurer()
+        if self.active_adventurer:
+            print(f"Active adventurer set to {self.active_adventurer.name}.")
+        else:
+            print(f"Adventurer type '{adventurer_type}' not found!")
 
 
     def draw_ui(self):
