@@ -104,7 +104,7 @@ class Entity:
         return f"{self.name} has fainted.\n"
 
     @abstractmethod
-    def _hit_response(self, the_dmg):
+    def hit_response(self, the_dmg):
         # implemented in subclasses
         pass
 
@@ -134,6 +134,18 @@ class Entity:
     def hp(self, the_hp):
         if self.__my_max_hp >= the_hp >= 0:
             self.__my_hp = the_hp
+
+    @property
+    def hit_chance(self):
+        return self.__my_hit_chance
+
+    @property
+    def damage_range(self):
+        return self.__my_damage_range
+
+    @property
+    def attack_speed(self):
+        return self.__my_attack_speed
 
     ### PUBLIC METHODS ###
     '''
@@ -167,16 +179,6 @@ class Entity:
 
     hp:
         Gets or sets the entity's current HP, ensuring valid bounds. '''
-
-    ### REMOVED METHODS ###
-    '''
-    # Below methods were removed from the earlier version.
-
-    # def has_fainted_msg(self):
-    #     \"\"\"
-    #     Returns a simple faint message for the entity.
-    #     \"\"\"
-    #     return f"{self.name} fainted." '''
 
     ### JAYNE ORIGINAL CODE ###
 
@@ -227,7 +229,7 @@ class Entity:
     #         Tracks the battle sequence and represents it as a string of performed
     #         attacks, missed attacks, successful hit responses, and faint messages.
     #         Does nothing if self or target is dead.
-    #         :param the_target: attack target.
+    #         param the_target: attack target.
     #         :return: string of battle actions performed by entity and target.
     #         """
     #         message = ""
@@ -250,7 +252,7 @@ class Entity:
     #         """
     #         Returns the number of attacks based on the integer quotient of the entity's
     #         and target's attack speeds (min 1).
-    #         :param the_target: attack target.
+    #         param the_target: attack target.
     #         :return: number of attacks.
     #         """
     #         # determine number of attacks
@@ -349,14 +351,4 @@ class Entity:
     #         Returns the entity's maximum HP.
     #
     #     hp:
-    #         Gets or sets the entity's current HP, ensuring valid bounds. '''
-    #
-    #     ### REMOVED METHODS ###
-    #     '''
-    #     # Below methods were removed from the earlier version.
-    #
-    #     # def has_fainted_msg(self):
-    #     #     \"\"\"
-    #     #     Returns a simple faint message for the entity.
-    #         \"\"\"
-    #         return f"{self.name} fainted." '''
+    #         Gets or sets the entity's current HP, ensuring valid bounds.
