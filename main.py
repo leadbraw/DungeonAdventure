@@ -32,6 +32,7 @@ def main():
         (4, "Bard", "Bard", 75, 9, 0.65, 10, 18, 0.3),
     ]
 
+
     # Show splash screen while running the game setup
     splash_screen = SplashScreen(screen, font_large)
     splash_screen.display("TEAM 5", game_setup.setup)
@@ -61,7 +62,13 @@ def main():
             if isinstance(result, str):
                 # Hero selected and confirmed
                 selected_hero = result
-                state = "GAMEPLAY"
+                #state = "GAMEPLAY"
+                if not selected_hero:
+                    print(f"Invalid hero name selected: {result}")
+                else:
+                    print(f"Hero selected: {selected_hero}")
+                    state = "GAMEPLAY"
+
             elif result is None:
                 # Player returned to main menu
                 state = "MAIN_MENU"
@@ -69,7 +76,7 @@ def main():
         elif state == "GAMEPLAY":
             # Initialize and start the game
             if selected_hero:
-                game_controller = GameController(screen, adventurers_data)
+                game_controller = GameController(screen, selected_hero, adventurers_data)
                 game_controller.set_active_adventurer(selected_hero)
                 game_controller.initialize_dungeon()
                 game_controller.display_game()

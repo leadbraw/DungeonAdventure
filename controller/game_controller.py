@@ -15,14 +15,14 @@ class GameController:
         self.room_manager = RoomManager.get_instance()
         self.monster_manager = MonsterManager.get_instance()
         self.item_manager = ItemManager.get_instance()
+        print(f"Adventurers data passed to AdventurerManager: {adventurers_data}")
         self.adventurer_manager = AdventurerManager.get_instance(adventurers_data)
         self.dungeon = [] # List of floors
         self.current_floor = 1
         self.position = None
         self.active_adventurer = None
 
-        #self.adventurer_manager.load.adventurer("Warrior") # Default to Warrior
-        #self.active_adventurer = self.adventurer_manager.get_adventurer()
+        self.set_active_adventurer(hero_name)
 
 
     def initialize_dungeon(self):
@@ -226,14 +226,17 @@ class GameController:
             pygame.quit()
             sys.exit()
 
-    def set_active_adventurer(self, adventurer_type):
+    def set_active_adventurer(self, adventurer_name):
         """Switches the active adventurer."""
-        self.adventurer_manager.load_adventurer(adventurer_type)
+        print(f"Attempting to set adventurer: {adventurer_name}")
+
+        self.adventurer_manager.load_adventurer(adventurer_name)
         self.active_adventurer = self.adventurer_manager.get_adventurer()
+
         if self.active_adventurer:
             print(f"Active adventurer set to {self.active_adventurer.name}.")
         else:
-            print(f"Adventurer type '{adventurer_type}' not found!")
+            print(f"Adventurer type '{adventurer_name}' not found!")
 
 
     def draw_ui(self):
