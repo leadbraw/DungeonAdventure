@@ -4,12 +4,13 @@ from model.entities.entities import Entity
 
 
 class Monster(Entity):
-    def __init__(self, the_name, the_position, the_max_hp,
+    def __init__(self, the_name, the_type, the_position, the_max_hp,
                  the_attack_speed, the_hit_chance, the_damage_range,
-                 the_heal_chance, the_heal_range, the_type=None):
+                 the_heal_chance, the_heal_range):
         """
         Represents a generic monster in the game.
         :param the_name: The name of the monster.
+        :param the_type: The type of the monster (for display or behavior differentiation).
         :param the_position: Initial position of the monster.
         :param the_max_hp: Maximum health points of the monster.
         :param the_attack_speed: Attack speed of the monster.
@@ -17,14 +18,14 @@ class Monster(Entity):
         :param the_damage_range: Damage range of the monster.
         :param the_heal_chance: Heal chance of the monster.
         :param the_heal_range: Heal range of the monster.
-        :param the_type: The type of the monster (optional, for display or behavior differentiation).
         """
         super().__init__(the_name, the_position, the_max_hp,
                          the_attack_speed, the_hit_chance, the_damage_range)
 
-        # monster specific attributes (from database)
-        self.__my_heal_chance = the_heal_chance         # float
-        self.__my_heal_range = the_heal_range           # tuple
+        # Monster-specific attributes
+        self.__my_type = the_type                  # str
+        self.__my_heal_chance = the_heal_chance    # float
+        self.__my_heal_range = the_heal_range      # tuple
 
     ### INTERNAL METHODS ###
     @final
@@ -61,7 +62,7 @@ class Monster(Entity):
         """
         heal = 0
 
-        # chance to heal (random float within heal chance)
+        # Chance to heal (random float within heal chance)
         if random.uniform(0, 1) <= self.heal_chance:
             heal = random.randint(*self.heal_range)
 
@@ -85,52 +86,17 @@ class Monster(Entity):
     def heal_range(self, the_heal_range):
         self.__my_heal_range = the_heal_range
 
-### PUBLIC METHODS ###
-'''
-No public methods are defined at the Monster class level. All functionality is inherited from Entity.
+    @property
+    def type(self):
+        """
+        :return: The type of the monster.
+        """
+        return self.__my_type
 
-### INTERNAL METHODS ###
-_hit_response:
-    Handles the monster's response to being hit. Includes the ability to regenerate HP on a successful regen.
-
-_regen_msg:
-    Generates a message indicating the monster successfully regenerated HP.
-
-_regen:
-    Determines whether regeneration occurs and calculates the amount of HP recovered. '''
-
-### PROPERTIES ###
-'''
-heal_chance:
-    Gets or sets the monster's chance to regenerate HP after being hit.
-
-heal_range:
-    Gets or sets the range of HP that the monster can regenerate. '''
-
-### REMOVED METHODS ###
-'''
-# Below methods were removed from the earlier version.
-
-# def special_behavior(self):
-#     """
-#     Placeholder for special monster-specific behaviors. To be defined in subclasses.
-#     """
-#     pass
-
-# class Ogre(Monster):
-#     """
-#     Represents a basic Ogre monster.
-#     """
-#     pass
-
-# class Gremlin(Monster):
-#     """
-#     Represents a basic Gremlin monster.
-#     """
-#     pass
-
-# class Skeleton(Monster):
-#     """
-#     Represents a basic Skeleton monster.
-#     """
-#     pass '''
+    @type.setter
+    def type(self, the_type):
+        """
+        Sets the type of the monster.
+        :param the_type: The new type of the monster.
+        """
+        self.__my_type = the_type

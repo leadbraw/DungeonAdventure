@@ -104,7 +104,7 @@ class Entity:
         return f"{self.name} has fainted.\n"
 
     @abstractmethod
-    def hit_response(self, the_dmg):
+    def _hit_response(self, the_dmg):
         # implemented in subclasses
         pass
 
