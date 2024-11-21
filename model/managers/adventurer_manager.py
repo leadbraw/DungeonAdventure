@@ -20,6 +20,7 @@ class AdventurerManager:
         if AdventurerManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
 
+        print(f"Initializing AdventurerManager with data: {adventurers_data}")
         self.adventurer = None  # Placeholder for the single selected adventurer
         self.adventurer_options = {}  # Dictionary to hold all adventurer options
 
@@ -39,7 +40,9 @@ class AdventurerManager:
         Loads all adventurer options from preloaded data.
         :param adventurers_data: List of tuples representing adventurer data.
         """
+        print(f"Loading adventurer options with data: {adventurers_data}")
         for row in adventurers_data:
+            print(f"Processing row: {row}")
             name = row[1]
             max_hp = row[3]
             attack_speed = row[4]
@@ -50,19 +53,31 @@ class AdventurerManager:
 
             # Dynamically create the adventurer instance based on its type
             adventurer_type = row[2]
+            print(f"Loading adventurer: {name} ({adventurer_type})")
+            self.adventurer_options[name] = ...
+
             adventurer_class = self.adventurer_classes.get(adventurer_type)
             if adventurer_class:
-                self.adventurer_options[adventurer_type] = adventurer_class(
+                self.adventurer_options[name] = adventurer_class(
                     name, initial_position, max_hp, attack_speed, chance_to_hit, damage_range, chance_to_block
                 )
+                print(f"Added {name} to adventurer options")
+            else:
+                print(f"Adventurer class for type {adventurer_type} not found")
 
+        print("Adventurer options loaded:", self.adventurer_options.keys())
     def get_adventurer_options(self):
         """Returns a dictionary of all adventurer options for the menu."""
         return self.adventurer_options
 
-    def load_adventurer(self, adventurer_type):
+    def load_adventurer(self, adventurer_name):
         """Sets the selected adventurer as the player's choice."""
-        self.adventurer = self.adventurer_options.get(adventurer_type)
+        print(f"Attempting to load adventurer: {adventurer_name}")
+        self.adventurer = self.adventurer_options.get(adventurer_name)
+        if self.adventurer:
+            print(f"Adventurer {adventurer_name} loaded successfully.")
+        else:
+            print(f"Adventurer {adventurer_name} not found in options: {self.adventurer_options.keys()}")
 
     def get_adventurer(self):
         """Returns the currently selected adventurer instance."""
