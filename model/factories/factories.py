@@ -1,5 +1,5 @@
 from model.entities.adventurers import Warrior, Priest, Thief, Bard
-from model.entities.monsters import Ogre, Gremlin, Skeleton
+from model.entities.monsters import Monster
 #importing the sqlite
 import sqlite3
 
@@ -108,24 +108,6 @@ class Factory:
         Factory.__hero = the_hero
 
     ############# MONSTER CONSTRUCTORS #############
-    @staticmethod
-    def make_ogre(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
-                 the_chance_to_heal, the_heal_range):
-        return Ogre(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
-                 the_chance_to_heal, the_heal_range)
-
-    @staticmethod
-    def make_gremlin(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
-                 the_chance_to_heal, the_heal_range):
-        return Gremlin(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
-                 the_chance_to_heal, the_heal_range)
-
-    @staticmethod
-    def make_skeleton(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
-                 the_chance_to_heal, the_heal_range):
-        return Skeleton(the_name, the_pos, the_max_hp, the_attack_speed, the_chance_to_hit, the_damage_range,
-                 the_chance_to_heal, the_heal_range)
-
 
     ############# ADVENTURER CONSTRUCTORS #############
     @staticmethod
@@ -162,20 +144,20 @@ class Factory:
 
 
 # m = Factory.get_monster_list()[0]
-# a = Factory.make_thief()
-# b = Factory.make_bard()
-# print(b.name, ":", b.hp)
-# print(a.name, ":", a.hp)
-# while(True):
-#     print(b.attack(a))
-#     print(a.attack(b))
-#     print(b)
-#     print(a)
-#     if not b.is_alive() or not a.is_alive():
-#         break
-#     print(b.special_action(a))
-#     print(a.special_action(b))
-#     print(b)
-#     print(a)
-#     if not b.is_alive() or not a.is_alive():
-#         break
+a = Factory.make_thief()
+b = Factory.make_bard()
+print(b.name, ":", b.hp)
+print(a.name, ":", a.hp)
+while(True):
+    print(b.attack(a))
+    print(a.attack(b))
+    print(b)
+    print(a)
+    if not b.is_alive() or not a.is_alive():
+        break
+    print(b.special_action(a))
+    print(a.special_action(b))
+    print(b)
+    print(a)
+    if not b.is_alive() or not a.is_alive():
+        break
