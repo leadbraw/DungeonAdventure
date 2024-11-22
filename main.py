@@ -67,6 +67,7 @@ def main():
                     print(f"Invalid hero name selected: {result}")
                 else:
                     print(f"Hero selected: {selected_hero}")
+                    # TODO: INSTANTIATE HERO BASED ON CLASS NAME AAAAAAAAAAAAa
                     state = "GAMEPLAY"
 
             elif result is None:

@@ -78,6 +78,7 @@ class AdventurerManager:
             print(f"Adventurer {adventurer_name} loaded successfully.")
         else:
             print(f"Adventurer {adventurer_name} not found in options: {self.adventurer_options.keys()}")
+        # TODO: have this call the correct/corresponding factory method that makes the
 
     def get_adventurer(self):
         """Returns the currently selected adventurer instance."""
