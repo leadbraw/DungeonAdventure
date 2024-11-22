@@ -34,7 +34,6 @@ class MonsterManager:
             print(f"MonsterManager: Loading monster {row[1]} of type {row[2]}")
             name = row[1]
             monster_type = row[2]
-            initial_position = (-2, -2)
             max_hp = row[3]
             attack_speed = row[4]
             chance_to_hit = row[5]
@@ -47,7 +46,6 @@ class MonsterManager:
                 Monster(
                     name,
                     monster_type,
-                    initial_position,
                     max_hp,
                     attack_speed,
                     chance_to_hit,

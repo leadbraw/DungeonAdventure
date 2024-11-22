@@ -49,7 +49,6 @@ class AdventurerManager:
             chance_to_hit = row[5]
             damage_range = (row[6], row[7])
             chance_to_block = row[8]
-            initial_position = (-3, -3)  # Temporary position outside the dungeon
 
             # Dynamically create the adventurer instance based on its type
             adventurer_type = row[2]
@@ -59,7 +58,7 @@ class AdventurerManager:
             adventurer_class = self.adventurer_classes.get(adventurer_type)
             if adventurer_class:
                 self.adventurer_options[name] = adventurer_class(
-                    name, initial_position, max_hp, attack_speed, chance_to_hit, damage_range, chance_to_block
+                    name, max_hp, attack_speed, chance_to_hit, damage_range, chance_to_block
                 )
                 print(f"Added {name} to adventurer options")
             else:
