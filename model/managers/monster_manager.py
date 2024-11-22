@@ -34,18 +34,19 @@ class MonsterManager:
             print(f"MonsterManager: Loading monster {row[1]} of type {row[2]}")
             name = row[1]
             monster_type = row[2]
+            initial_position = (-2, -2)
             max_hp = row[3]
             attack_speed = row[4]
             chance_to_hit = row[5]
             damage_range = (row[6], row[7])
             chance_to_heal = row[8]
             heal_range = (row[9], row[10])
-            initial_position = (-2, -2)
 
             # Create and append a generic Monster
             self.monster_options.append(
                 Monster(
                     name,
+                    monster_type,
                     initial_position,
                     max_hp,
                     attack_speed,
@@ -53,7 +54,6 @@ class MonsterManager:
                     damage_range,
                     chance_to_heal,
                     heal_range,
-                    monster_type,
                 )
             )
         print(f"MonsterManager: Loaded {len(self.monster_options)} monsters.")
