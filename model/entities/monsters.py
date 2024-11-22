@@ -4,14 +4,13 @@ from model.entities.entities import Entity
 
 
 class Monster(Entity):
-    def __init__(self, the_name, the_type, the_position, the_max_hp,
+    def __init__(self, the_name, the_type, the_max_hp,
                  the_attack_speed, the_hit_chance, the_damage_range,
                  the_heal_chance, the_heal_range):
         """
         Represents a generic monster in the game.
         :param the_name: The name of the monster.
         :param the_type: The type of the monster (for display or behavior differentiation).
-        :param the_position: Initial position of the monster.
         :param the_max_hp: Maximum health points of the monster.
         :param the_attack_speed: Attack speed of the monster.
         :param the_hit_chance: Hit chance of the monster.
@@ -19,7 +18,7 @@ class Monster(Entity):
         :param the_heal_chance: Heal chance of the monster.
         :param the_heal_range: Heal range of the monster.
         """
-        super().__init__(the_name, the_position, the_max_hp,
+        super().__init__(the_name, the_max_hp,
                          the_attack_speed, the_hit_chance, the_damage_range)
 
         # Monster-specific attributes

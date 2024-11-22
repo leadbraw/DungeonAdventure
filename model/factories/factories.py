@@ -7,37 +7,37 @@ class Factory:
     # TODO implement constructors for monster, elite, adventurers getting info from managers
 
     @staticmethod
-    def make_monster():
+    def make_monster(data):
         pass
 
     @staticmethod
-    def make_elite():
+    def make_elite(data):
         pass
 
     @staticmethod
     def make_warrior(the_name="Mark", the_position=(0, 0)):
-        warrior = Warrior(the_name, the_position,
+        warrior = Warrior(the_name,
                           125, 4, 0.8, (35, 60),
                           0.3)
         return warrior
 
     @staticmethod
     def make_priest(the_name="Noah", the_position=(0, 0)):
-        priest = Priest(the_name, the_position,
-                          75, 5, 0.7, (25, 45),
+        priest = Priest(the_name,
+                        75, 5, 0.7, (25, 45),
                           0.3)
         return priest
 
     @staticmethod
     def make_thief(the_name="Jayne", the_position=(0, 0)):
-        thief = Thief(the_name, the_position,
+        thief = Thief(the_name,
                           75, 6, 0.8, (20, 40),
                           0.4)
         return thief
 
     @staticmethod
     def make_bard(the_name="Sean", the_position=(0, 0)):
-        bard = Bard(the_name, the_position,
+        bard = Bard(the_name,
                      85, 5, 0.8, (30, 50),
                      0.4)
         return bard

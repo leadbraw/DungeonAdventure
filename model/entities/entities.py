@@ -23,10 +23,9 @@ from typing import final
     attack(the_target): performs attacks on the target.    
 """
 class Entity:
-    def __init__(self, the_name, the_position, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
+    def __init__(self, the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
         # Private fields
         self.__my_name = the_name.strip() if the_name else "Unnamed Entity"  # Validate name
-        self.__my_position = the_position if isinstance(the_position, tuple) else (0, 0)
 
         # Entity attributes with validation
         self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
@@ -42,9 +41,9 @@ class Entity:
     def __str__(self):
         """
         Returns a string representation of the Entity.
-        :return: string containing name, HP, and position.
+        :return: string containing name, HP.
         """
-        return f"{self.name} {self.hp} {self.pos}"
+        return f"{self.name} {self.hp}"
 
     ### PUBLIC METHODS ###
     @final
@@ -135,10 +134,6 @@ class Entity:
         return self.__my_name
 
     @property
-    def pos(self):
-        return self.__my_position
-
-    @property
     def max_hp(self):
         return self.__my_max_hp
 
@@ -161,11 +156,6 @@ class Entity:
     @name.setter
     def name(self, the_name):
         self.__my_name = the_name
-
-    @pos.setter
-    def pos(self, the_position):
-        if isinstance(the_position, tuple) and len(the_position) == 2:
-            self.__my_position = the_position
 
     @max_hp.setter
     def max_hp(self, the_hp):
