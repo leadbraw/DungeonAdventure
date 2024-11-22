@@ -207,11 +207,11 @@ class Thief(Adventurer):
         if not self.is_alive():
             return message
 
-        roll = random.uniform(0, 1)
-        if roll <= self.__my_normal_attack_chance:
+        attack_roll = random.uniform(0, 1)
+        if attack_roll <= self.__my_normal_attack_chance:
             message += self.__special_action_msg(the_target)
             message += super().attack(the_target)
-        elif roll <= self.__my_normal_attack_chance + self.__my_normal_attack_chance:
+        elif attack_roll <= self.__my_normal_attack_chance + self.__my_normal_attack_chance:
             message += self.__special_action_msg(the_target)
             message += super().attack(the_target)
             message += super().attack(the_target)

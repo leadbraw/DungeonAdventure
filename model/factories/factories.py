@@ -1,5 +1,5 @@
 from model.entities.adventurers import Warrior, Priest, Thief, Bard
-from model.entities.monsters import Ogre, Gremlin, Skeleton
+from model.entities.monsters import Monster
 #importing the sqlite
 import sqlite3
 
@@ -162,20 +162,20 @@ class Factory:
 
 
 # m = Factory.get_monster_list()[0]
-# a = Factory.make_thief()
-# b = Factory.make_bard()
-# print(b.name, ":", b.hp)
-# print(a.name, ":", a.hp)
-# while(True):
-#     print(b.attack(a))
-#     print(a.attack(b))
-#     print(b)
-#     print(a)
-#     if not b.is_alive() or not a.is_alive():
-#         break
-#     print(b.special_action(a))
-#     print(a.special_action(b))
-#     print(b)
-#     print(a)
-#     if not b.is_alive() or not a.is_alive():
-#         break
+a = Factory.make_thief()
+b = Factory.make_bard()
+print(b.name, ":", b.hp)
+print(a.name, ":", a.hp)
+while(True):
+    print(b.attack(a))
+    print(a.attack(b))
+    print(b)
+    print(a)
+    if not b.is_alive() or not a.is_alive():
+        break
+    print(b.special_action(a))
+    print(a.special_action(b))
+    print(b)
+    print(a)
+    if not b.is_alive() or not a.is_alive():
+        break

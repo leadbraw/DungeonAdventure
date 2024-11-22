@@ -55,6 +55,7 @@ class Entity:
 
             if random.uniform(0, 1) <= self.hit_chance:
                 damage = random.randint(*self.damage_range)
+                message += f"{self.name} hit {the_target.name} for {damage} points.\n"
                 message += the_target._hit_response(damage)
             else:
                 message += f"{self.name} missed the attack.\n"
