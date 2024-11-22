@@ -9,14 +9,14 @@ from model.managers.item_manager import ItemManager
 from model.dungeon.Dungeon import Dungeon
 
 class GameController:
-    def __init__(self, screen, hero_name, adventurers_data):
+    def __init__(self, screen, hero_name):
         self.screen = screen
         self.hero_name = hero_name
         self.room_manager = RoomManager.get_instance()
         self.monster_manager = MonsterManager.get_instance()
         self.item_manager = ItemManager.get_instance()
-        print(f"Adventurers data passed to AdventurerManager: {adventurers_data}")
-        self.adventurer_manager = AdventurerManager.get_instance(adventurers_data)
+        # print(f"Adventurers data passed to AdventurerManager: {adventurers_data}")
+        self.adventurer_manager = AdventurerManager.get_instance()
         self.dungeon = [] # List of floors
         self.current_floor = 1
         self.position = None

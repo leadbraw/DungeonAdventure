@@ -3,7 +3,7 @@ from model.managers.item_manager import ItemManager
 from model.managers.room_manager import RoomManager
 from model.managers.monster_manager import MonsterManager
 from model.managers.adventurer_manager import AdventurerManager
-from controller.seeders.hero_seeder import HeroSeeder
+from controller.seeders.adventurer_seeder import AdventurerSeeder
 from controller.seeders.item_seeder import ItemSeeder
 from controller.seeders.monster_seeder import MonsterSeeder
 from controller.seeders.room_seeder import RoomSeeder
@@ -31,7 +31,7 @@ class GameSetup:
 
         # Step 3: Run seeders to populate the database
         print("Populating the database with seeders...")
-        HeroSeeder().populate_heroes()
+        AdventurerSeeder().populate_adventurers()
         ItemSeeder().populate_items()
         MonsterSeeder().populate_monsters()
         RoomSeeder().populate_rooms()
