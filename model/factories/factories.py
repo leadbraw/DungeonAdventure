@@ -144,8 +144,8 @@ class Factory:
 
 
 # m = Factory.get_monster_list()[0]
-a = Factory.make_thief()
-b = Factory.make_bard()
+a = Factory.make_warrior()
+b = Factory.make_priest()
 print(b.name, ":", b.hp)
 print(a.name, ":", a.hp)
 while(True):

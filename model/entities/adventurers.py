@@ -63,7 +63,6 @@ class Adventurer(Entity):
         if self._block():
             message += self._block_msg()
         else:
-            self._update_hp(the_dmg)
             message += self._update_hp(the_dmg)
 
         return message
@@ -108,8 +107,6 @@ class Adventurer(Entity):
     Methods:
     special_action(the_target): performs Crushing Blow.
 """
-
-
 class Warrior(Adventurer):
     __my_special_hit_chance = 0.4
     __my_special_dmg_range = (75, 175)
@@ -126,10 +123,18 @@ class Warrior(Adventurer):
         if not self.is_alive():
             return message
 
+        message += self.__special_action_msg(the_target)
+        # crushing blow 75 to 175 dmg 0.4 chance to hit
+        # attack roll (random float within the hit chance)
         if random.uniform(0, 1) <= self.__my_special_hit_chance:
+            # damage roll (random int within damage_range)
             damage = random.randint(*self.__my_special_dmg_range)
-            message += self.__special_action_msg(the_target)
+            # set health
+            message += f"{self.name} hit {the_target.name} for {damage} points.\n"
             message += the_target._hit_response(damage)
+
+        else:
+            message += f"{self.name} missed the attack.\n"
 
         return message[:len(message) - 1]
 
@@ -148,8 +153,6 @@ class Warrior(Adventurer):
     Methods:
     special_action(the_target): performs Divine Prayer.
 """
-
-
 class Priest(Adventurer):
     __my_special_heal_range_percentage = (0.4, 0.7)
 
@@ -166,8 +169,8 @@ class Priest(Adventurer):
             return message
 
         heal = int(random.uniform(*self.__my_special_heal_range_percentage) * self.max_hp)
+        self._update_hp(-heal)
         message += self.__special_action_msg(heal)
-        the_target._update_hp(-heal)
 
         return message[:len(message) - 1]
 
@@ -187,8 +190,6 @@ class Priest(Adventurer):
     Methods:
     special_action(the_target): performs Surprise Attack.
 """
-
-
 class Thief(Adventurer):
     # special hit chance = 0.4
     __my_normal_attack_chance = 0.4
@@ -207,18 +208,25 @@ class Thief(Adventurer):
         if not self.is_alive():
             return message
 
+        message += self.__special_action_msg(the_target)
+        # surprise attack 0.4 to hit, 0.4 to normal, 0.2 to skip
+        # attack roll (random float within the hit chance)
         attack_roll = random.uniform(0, 1)
-        if attack_roll <= self.__my_normal_attack_chance:
-            message += self.__special_action_msg(the_target)
-            message += super().attack(the_target)
-        elif attack_roll <= self.__my_normal_attack_chance + self.__my_normal_attack_chance:
-            message += self.__special_action_msg(the_target)
-            message += super().attack(the_target)
-            message += super().attack(the_target)
-        else:
-            message += f"{self.name} was detected and failed to attack.\n"
 
-        return message
+        if attack_roll >= self.__my_detection_chance:
+            # not detected: succeeds
+            if attack_roll >= self.__my_detection_chance + self.__my_normal_attack_chance:
+                # extra attack
+                message += f"{self.name} gets an extra attack!\n"
+                message += self.attack(the_target) + "\n"
+
+            # normal attack
+            message += self.attack(the_target)
+
+        else:
+            message += f"{self.name} was detected."  # end statement
+
+        return message  # utilizes Entity attack method trimming
 
     def __special_action_msg(self, the_target):
         """
@@ -253,6 +261,7 @@ class Bard(Adventurer):
         if not self.is_alive():
             return message
 
+        message += self.__special_action_msg(the_target)
         damage = random.randint(*self.__my_special_dmg_range)
         message += f"{self.name} hit {the_target.name} for {damage} points.\n"
         message += the_target._hit_response(damage)
