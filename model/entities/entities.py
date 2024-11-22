@@ -3,6 +3,8 @@ from abc import abstractmethod
 from typing import final
 
 """ Provides the default behavior shared by all entities.
+    Utilizes template method (attack calls hit response, which is implemented
+    in subclasses.
 
     Attributes:
 
