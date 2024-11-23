@@ -1,5 +1,3 @@
-from model.entities.adventurers import Warrior, Priest, Thief, Bard
-
 class AdventurerManager:
     _instance = None  # Singleton instance
 
@@ -21,68 +19,46 @@ class AdventurerManager:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
 
         print(f"Initializing AdventurerManager with data: {adventurers_data}")
-        self.adventurer = None  # Placeholder for the single selected adventurer
-        self.adventurer_options = {}  # Dictionary to hold all adventurer options
-
-        # Map adventurer types to their classes
-        self.adventurer_classes = {
-            "Warrior": Warrior,
-            "Priest": Priest,
-            "Thief": Thief,
-            "Bard": Bard,
-        }
+        self.adventurer_data = {}  # Dictionary to hold all raw adventurer data
+        self.active_adventurer = None  # Placeholder for the single selected adventurer
 
         # Load adventurers from the provided data
-        self.load_adventurer_options(adventurers_data)
+        self.load_adventurer_data(adventurers_data)
 
-    def load_adventurer_options(self, adventurers_data):
+    def load_adventurer_data(self, adventurers_data):
         """
-        Loads all adventurer options from preloaded data.
+        Loads all raw adventurer data.
         :param adventurers_data: List of tuples representing adventurer data.
         """
-        print(f"Loading adventurer options with data: {adventurers_data}")
+        print(f"Loading adventurer data with data: {adventurers_data}")
         for row in adventurers_data:
             print(f"Processing row: {row}")
             name = row[1]
-            max_hp = row[3]
-            attack_speed = row[4]
-            chance_to_hit = row[5]
-            damage_range = (row[6], row[7])
-            chance_to_block = row[8]
+            self.adventurer_data[name] = row  # Store raw data directly
+        print("Adventurer data loaded:", self.adventurer_data.keys())
 
-            # Dynamically create the adventurer instance based on its type
-            adventurer_type = row[2]
-            print(f"Loading adventurer: {name} ({adventurer_type})")
-            self.adventurer_options[name] = ...
+    def get_adventurer_data(self, name=None):
+        """
+        Retrieve raw adventurer data.
+        :param name: Name of the adventurer to retrieve, or None for all data.
+        :return: Raw adventurer data.
+        """
+        if name:
+            return self.adventurer_data.get(name)
+        return self.adventurer_data
 
-            adventurer_class = self.adventurer_classes.get(adventurer_type)
-            if adventurer_class:
-                self.adventurer_options[name] = adventurer_class(
-                    name, max_hp, attack_speed, chance_to_hit, damage_range, chance_to_block
-                )
-                print(f"Added {name} to adventurer options")
-            else:
-                print(f"Adventurer class for type {adventurer_type} not found")
-
-        print("Adventurer options loaded:", self.adventurer_options.keys())
-    def get_adventurer_options(self):
-        """Returns a dictionary of all adventurer options for the menu."""
-        return self.adventurer_options
-
-    def load_adventurer(self, adventurer_name):
-        """Sets the selected adventurer as the player's choice."""
-        print(f"Attempting to load adventurer: {adventurer_name}")
-        self.adventurer = self.adventurer_options.get(adventurer_name)
-        if self.adventurer:
-            print(f"Adventurer {adventurer_name} loaded successfully.")
+    def load_active_adventurer(self, name):
+        """
+        Sets the selected adventurer as the active choice.
+        :param name: Name of the adventurer.
+        """
+        print(f"Attempting to load adventurer: {name}")
+        self.active_adventurer = self.adventurer_data.get(name)
+        if self.active_adventurer:
+            print(f"Adventurer {name} loaded successfully.")
         else:
-            print(f"Adventurer {adventurer_name} not found in options: {self.adventurer_options.keys()}")
-        # TODO: have this call the correct/corresponding factory method that makes the
+            print(f"Adventurer {name} not found in data: {self.adventurer_data.keys()}")
 
-    def get_adventurer(self):
-        """Returns the currently selected adventurer instance."""
-        return self.adventurer
-
-    def reset_adventurer(self):
-        """Resets the adventurer instance (useful for new games or class changes)."""
-        self.adventurer = None
+    def reset_active_adventurer(self):
+        """Resets the active adventurer instance."""
+        self.active_adventurer = None

@@ -1,12 +1,15 @@
 import sys
 import pygame
 from constants import BACKGROUND_COLOR, DARK_GREY, PILLAR_NAMES
-from model.factories.item import Item
+from model.factories.adventurer_factory import AdventurerFactory
+from model.factories.monster_factory import MonsterFactory
+from model.factories.item_factory import ItemFactory
 from model.managers.room_manager import RoomManager
 from model.managers.monster_manager import MonsterManager
 from model.managers.adventurer_manager import AdventurerManager
 from model.managers.item_manager import ItemManager
 from model.dungeon.Dungeon import Dungeon
+
 
 class GameController:
     def __init__(self, screen, hero_name):
@@ -17,13 +20,12 @@ class GameController:
         self.item_manager = ItemManager.get_instance()
         # print(f"Adventurers data passed to AdventurerManager: {adventurers_data}")
         self.adventurer_manager = AdventurerManager.get_instance()
-        self.dungeon = [] # List of floors
+        self.dungeon = []  # List of floors
         self.current_floor = 1
         self.position = None
         self.active_adventurer = None
 
         self.set_active_adventurer(hero_name)
-
 
     def initialize_dungeon(self):
         """Creates all four floors of the dungeon."""
@@ -39,36 +41,55 @@ class GameController:
                 for coords in all_rooms
                 if self.dungeon[i].fetch_room(coords[0], coords[1]).type == 'MONSTER'
             ]
+            elite_rooms = [
+                coords
+                for coords in all_rooms
+                if self.dungeon[i].fetch_room(coords[0], coords[1]).type == 'ELITE'
+            ]
             item_rooms = [
                 coords
                 for coords in all_rooms
                 if self.dungeon[i].fetch_room(coords[0], coords[1]).type == 'ITEM'
             ]
-            # TODO: Account for elite rooms! Don't put normal monsters in there!
+
             # Place monsters in designated MONSTER rooms
             for room_coords in monster_rooms:
-                monster = self.monster_manager.get_random_monster()
+                raw_data = self.monster_manager.get_monster_data(monster_type="Normal")
+                monster = MonsterFactory.get_instance().make_monster(raw_data)
                 if monster:
                     self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_monster(monster)
                     print(f"Placed {monster.name} in a MONSTER room at {room_coords}.")
                 else:
                     print(f"Failed to place monster in room at {room_coords}: No monster available.")
 
+            # Place elite monsters in designated ELITE rooms
+            for room_coords in elite_rooms:
+                raw_data = self.monster_manager.get_monster_data(monster_type="Elite")
+                elite_monster = MonsterFactory.get_instance().make_monster(raw_data)
+                if elite_monster:
+                    self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_monster(elite_monster)
+                    print(f"Placed {elite_monster.name} in an ELITE room at {room_coords}.")
+                else:
+                    print(f"Failed to place elite monster in room at {room_coords}: No monster available.")
+
             # Place items in designated ITEM rooms
             for room_coords in item_rooms:
-                item = self.item_manager.get_random_non_temporary_item()
+                raw_data = self.item_manager.get_item_data()
+                item = ItemFactory.get_instance().create_item_from_raw(raw_data)
                 if item:
                     self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_item(item)
                     print(f"Placed {item.get_name()} in an ITEM room at {room_coords}.")
                 else:
                     print(f"Failed to place item in room at {room_coords}: No item available.")
-            pillar = self.item_manager.get_unique_item(PILLAR_NAMES[i])
-            pillar_coords = all_rooms[2] # Pillar room is always the third room in the floor's room_list
-            if pillar:
-                self.dungeon[i].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar)
-                print(f"Placed {pillar.get_name()} in a PILLAR room at {pillar_coords}.")
+            pillar = PILLAR_NAMES[i]
+            pillar_coords = all_rooms[2]  # Pillar room is always the third room in the floor's room_list
+            raw_data = self.item_manager.get_item_data(item_name=pillar)
+            if raw_data:
+                pillar_item = ItemFactory.get_instance().create_unique_item(raw_data)
+                self.dungeon[i].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar_item)
+                print(f"Placed {pillar_item.get_name()} in a PILLAR room at {pillar_coords}.")
             else:
-                print(f"Failed to place pillar in room at {self.dungeon[i].room_list[2]}: No pillar available.")
+                print(f"Failed to place pillar in room at {pillar_coords}: No pillar available.")
         # Set the initial player position
         self.position = self.dungeon[0].entrance_loc
         print(f"Player starting position: {self.position}")
@@ -130,7 +151,6 @@ class GameController:
         if current_room.type == "MONSTER" and current_room.has_monster():
             monster = current_room.get_monster()
             self.start_battle(current_room.get_monster())
-
 
         elif current_room.type == "ITEM" and current_room.has_item():
             item = current_room.get_item()
@@ -222,22 +242,17 @@ class GameController:
             current_room.set_monster(None)
 
         elif adventurer.hp <= 0:
-            print("Your were defeated, GAMEOVER:(")
+            print("Your were defeated, GAME OVER:(")
             pygame.quit()
             sys.exit()
 
     def set_active_adventurer(self, adventurer_name):
         """Switches the active adventurer."""
-        print(f"Attempting to set adventurer: {adventurer_name}")
-
-        self.adventurer_manager.load_adventurer(adventurer_name)
-        self.active_adventurer = self.adventurer_manager.get_adventurer()
-
-        if self.active_adventurer:
-            print(f"Active adventurer set to {self.active_adventurer.name}.")
+        raw_data = self.adventurer_manager.get_adventurer_data(name=adventurer_name)
+        if raw_data:
+            self.active_adventurer = AdventurerFactory.get_instance().make_adventurer(raw_data)
         else:
-            print(f"Adventurer type '{adventurer_name}' not found!")
-
+            print(f"Adventurer '{adventurer_name}' not found.")
 
     def draw_ui(self):
         """Draws the game's user interface."""
