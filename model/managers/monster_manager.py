@@ -1,7 +1,4 @@
 import random
-from copy import deepcopy
-from model.entities.monsters import Monster
-
 
 class MonsterManager:
     _instance = None  # Singleton instance
@@ -22,55 +19,48 @@ class MonsterManager:
     def __init__(self, monsters_data):
         if MonsterManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
-        self.monster_options = []  # Store all loaded monsters
-
-        # Dynamically load monsters from the provided data
+        self.monster_data = {"Normal": [], "Elite": []}  # Store monster data categorized by type
         self.load_monsters(monsters_data)
 
     def load_monsters(self, monsters_data):
+        """
+        Load monster data into the manager, categorized by type ('normal' or 'elite').
+        :param monsters_data: List of tuples containing monster attributes.
+        """
         if not monsters_data:
             print("MonsterManager: No monster data provided!")
         for row in monsters_data:
-            print(f"MonsterManager: Loading monster {row[1]} of type {row[2]}")
-            name = row[1]
             monster_type = row[2]
-            initial_position = (-2, -2)
-            max_hp = row[3]
-            attack_speed = row[4]
-            chance_to_hit = row[5]
-            damage_range = (row[6], row[7])
-            chance_to_heal = row[8]
-            heal_range = (row[9], row[10])
+            if monster_type not in self.monster_data:
+                print(f"MonsterManager: Unknown monster type '{monster_type}'! Skipping.")
+                continue
+            self.monster_data[monster_type].append(row)
+        print(f"MonsterManager: Loaded {sum(len(v) for v in self.monster_data.values())} monsters.")
 
-            # Create and append a generic Monster
-            self.monster_options.append(
-                Monster(
-                    name,
-                    monster_type,
-                    initial_position,
-                    max_hp,
-                    attack_speed,
-                    chance_to_hit,
-                    damage_range,
-                    chance_to_heal,
-                    heal_range,
-                )
-            )
-        print(f"MonsterManager: Loaded {len(self.monster_options)} monsters.")
-
-    def get_monster_clone(self, monster_name):
+    def get_monster_data(self, monster_name=None, monster_type="normal"):
         """
-        Returns a deep copy of a specified monster by name.
-        :param monster_name: The name of the monster to clone.
-        :return: A deep copy of the specified monster or None if not found.
+        Retrieve monster data by name or randomly.
+        :param monster_name: The name of the monster to retrieve, or None for random.
+        :param monster_type: The type of monster to retrieve ('normal' or 'elite').
+        :return: A tuple of monster data or None if not found.
         """
-        original = next((m for m in self.monster_options if m.name == monster_name), None)
-        return deepcopy(original) if original else None
-
-    def get_random_monster(self):
-        if not self.monster_options:
-            print("MonsterManager: No monsters available!")
-            return None
-        base_monster = random.choice(self.monster_options)
-        print(f"MonsterManager: Selected monster: {base_monster}")
-        return deepcopy(base_monster)
+        if monster_type not in self.monster_data:
+            raise ValueError(f"Unknown monster type: {monster_type}")
+        data = self.monster_data[monster_type]
+        if monster_name:
+            # Return specific monster data by name
+            monster = next((m for m in data if m[1] == monster_name), None)
+            if monster:
+                print(f"MonsterManager: Retrieved data for monster '{monster_name}'.")
+            else:
+                print(f"MonsterManager: Monster '{monster_name}' not found!")
+            return monster
+        else:
+            # Return random monster data
+            if data:
+                random_monster = random.choice(data)
+                print(f"MonsterManager: Selected random monster '{random_monster[1]}'.")
+                return random_monster
+            else:
+                print("MonsterManager: No monsters available!")
+                return None

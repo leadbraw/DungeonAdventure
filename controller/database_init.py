@@ -32,8 +32,8 @@ class DatabaseInitializer:
     def create_tables(self):
         """Creates all necessary tables in the database."""
         table_commands = {
-            "heroes": """
-                CREATE TABLE IF NOT EXISTS heroes (
+            "adventurers": """
+                CREATE TABLE IF NOT EXISTS adventurers (
                     id INTEGER PRIMARY KEY,
                     name TEXT NOT NULL,
                     type TEXT,
@@ -86,7 +86,7 @@ class DatabaseInitializer:
                     slot_number INTEGER UNIQUE,
                     save_name TEXT,
                     level INTEGER,
-                    hero_state TEXT,
+                    adventurer_state TEXT,
                     items_state TEXT,
                     monsters_state TEXT,
                     save_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -113,10 +113,11 @@ class DatabaseInitializer:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute("DROP TABLE IF EXISTS heroes")
+                cursor.execute("DROP TABLE IF EXISTS adventurers")
                 cursor.execute("DROP TABLE IF EXISTS monsters")
                 cursor.execute("DROP TABLE IF EXISTS items")
                 cursor.execute("DROP TABLE IF EXISTS rooms")
-                cursor.execute("DROP TABLE IF EXISTS game_saves")
+                # cursor.execute("DROP TABLE IF EXISTS game_saves")
             self.create_tables()
             print("Database reset successfully.")
         else:

@@ -1,6 +1,4 @@
 import random
-from copy import deepcopy
-from model.factories.item_factory import ItemFactory
 
 class ItemManager:
     _instance = None  # Singleton instance
@@ -22,7 +20,7 @@ class ItemManager:
         if ItemManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
 
-        # Separate data into two dictionaries
+        # Separate raw item data into two dictionaries
         self.one_time_items = {}
         self.other_items = {}
 
@@ -35,30 +33,44 @@ class ItemManager:
 
         self.unique_items_acquired = set()  # Track unique items acquired by the adventurer
 
-    def get_unique_item(self, item_name):
+    def get_unique_item_data(self, item_name):
+        """
+        Retrieve raw data for a unique item, ensuring it hasn't already been acquired.
+        :param item_name: The name of the unique item.
+        :return: Raw data for the item or None if already acquired or not found.
+        """
         if item_name in self.unique_items_acquired:
             return None  # Item has already been acquired
 
-        raw_data = self.one_time_items.get(item_name)
-        if not raw_data:
-            return None
+        return self.one_time_items.get(item_name)
 
+    def mark_item_acquired(self, item_name):
+        """
+        Mark a unique item as acquired.
+        :param item_name: The name of the item.
+        """
         self.unique_items_acquired.add(item_name)
-        return ItemFactory.create_item_from_raw(raw_data)
 
-    def get_limited_item(self, item_name):
-        raw_data = self.other_items.get(item_name)
-        return ItemFactory.create_item_from_raw(raw_data) if raw_data else None
+    def get_limited_item_data(self, item_name):
+        """
+        Retrieve raw data for a limited-instance item.
+        :param item_name: The name of the item.
+        :return: Raw data for the item or None if not found.
+        """
+        return self.other_items.get(item_name)
 
-    def get_random_non_temporary_item(self):
+    def get_random_non_temporary_item_data(self):
+        """
+        Retrieve raw data for a random non-temporary item.
+        :return: Raw data for the item or None if no items are available.
+        """
         non_temporary_data = [
             raw_data for raw_data in self.other_items.values() if not raw_data[4]  # Assuming index 4 is 'temporary'
         ]
-        if not non_temporary_data:
-            return None  # No non-temporary items available
-
-        raw_data = random.choice(non_temporary_data)
-        return ItemFactory.create_item_from_raw(raw_data)
+        return random.choice(non_temporary_data) if non_temporary_data else None
 
     def reset_unique_items(self):
+        """
+        Clear the set of unique items acquired, allowing them to be acquired again.
+        """
         self.unique_items_acquired.clear()

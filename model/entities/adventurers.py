@@ -8,41 +8,28 @@ from model.entities.entities import Entity
     Attributes:
 
     Entity shared:
-    name (string): entity's name.
-    pos (tuple): entity's position.
-    max_hp (int): entity's max hp.
-    hit_chance (float): entity's attack hit chance percentage (0 and 1).
-    damage_range (tuple): entity's attack min and max damage.
+    name (string): adventurer's name.
+    max_hp (int): adventurer's max hp.
+    hit_chance (float): adventurer's attack hit chance percentage (0 and 1).
+    damage_range (tuple): adventurer's attack min and max damage.
 
     Adventurer specific:
     block_chance (float): adventurer's block chance percentage (0 to 1).
 
     Methods:
-    move_to(the_new_position): updates the adventurer's position.
     special_action(the_target): performs a special action on the target (or self).
 """
 
 
 class Adventurer(Entity):
-    def __init__(self, the_name, the_position, the_max_hp,
+    def __init__(self, the_name, the_max_hp,
                  the_attack_speed, the_hit_chance, the_damage_range,
                  the_block_chance):
-        super().__init__(the_name, the_position, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
+        super().__init__(the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
         # adventurer specific attributes (from database)
         self.__my_block_chance = the_block_chance
 
     ### PUBLIC METHODS ###
-    @final
-    def move_to(self, the_new_position):
-        """
-        Updates the adventurer's position to the passed in position as long as
-        they are within 1 unit of each other (adventurer's movement is continuous).
-        :param the_new_position: new position.
-        """
-        if (abs(the_new_position[0] - self.pos[0]) <= 1
-                and abs(the_new_position[1] - self.pos[1]) <= 1):
-            self.pos = the_new_position
-
     @abstractmethod
     def special_action(self, the_target):
         # implemented in subclasses
@@ -177,7 +164,7 @@ class Priest(Adventurer):
     def __special_action_msg(self, the_heal):
         """
         Returns the Divine Prayer action message.
-        :param the_target: attack target.
+        :param the_heal: heal points.
         :return: Divine Prayer message.
         """
         return f"{self.name} uses Divine Prayer and heals for {the_heal}.\n"
@@ -277,53 +264,3 @@ class Bard(Adventurer):
         :return: Discombobulating Thought message.
         """
         return f"{self.name} uses Discombobulating Thought on {the_target.name}.\n"
-
-
-if __name__ == "__main__":
-    p = Warrior("war guy", (0, 0), 10, 6, 0.7, (1, 5), 0.3)
-    q = Priest("heal guy", (0, 0), 10, 3, 0.7, (1, 5), 0.3)
-
-    # Simulating a scenario
-    # q.hp = 0  # Uncomment to simulate Priest being dead
-    print(q.special_action(p))  # Priest performs a special action on Warrior
-    print(p, q)  # Prints the state of both Warrior and Priest
-
-### PUBLIC METHODS ###
-'''
-move_to:
-Updates
-the
-adventurer
-'s position to the passed-in position if they are within 1 unit.
-
-special_action:
-Performs a special action on the target( or self).Must be implemented by subclasses. '''
-
-### INTERNAL METHODS ###
-'''
-_hit_response:
-Handles
-the
-adventurer
-'s response to being hit. Checks for a successful block.
-
-_block_msg:
-Generates a message indicating a successful block. 
-
-_block:
-Determines whether a block is successful based on block chance. '''
-
-### PROPERTIES ###
-'''
-block_chance:
-    Get or set the adventurer's block chance, ensuring the value is between 0 and 1. '''
-
-### REMOVED METHODS ###
-'''
-# Below methods were removed from the earlier version.
-
-# def move(self, the_new_position):
-#     """
-#     Directly updates the adventurer's position without any checks.
-#     """
-#     self.pos = the_new_position '''
