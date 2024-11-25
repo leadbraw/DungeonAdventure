@@ -54,7 +54,7 @@ class GameController:
 
             # Place monsters in designated MONSTER rooms
             for room_coords in monster_rooms:
-                raw_data = self.monster_manager.get_monster_data(monster_type="Normal")[1:] # Ignore entry number!
+                raw_data = self.monster_manager.get_monster_data(monster_type="Normal")[1:] # Ignore entry ID!
                 monster = MonsterFactory.get_instance().make_monster(raw_data)
                 if monster:
                     self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_monster(monster)
@@ -139,6 +139,7 @@ class GameController:
                 new_position = (self.position[0] + dx, self.position[1] + dy)
                 self.position = new_position
                 print(f"Moved to new position: {self.position}")
+                self.draw_ui()
                 self.room_interaction()
             else:
                 print("Invalid move: No valid path in that direction.")
