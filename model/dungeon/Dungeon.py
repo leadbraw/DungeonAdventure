@@ -1,6 +1,10 @@
 import random
+
+import pygame
 from colorama import Fore, Style
 from copy import deepcopy
+
+from constants import BACKGROUND_COLOR
 
 '''
 MONSTER: Room with monster, battle begins upon entry
@@ -48,6 +52,7 @@ class Room:
         #Attributes
         self.monster = None
         self.item = None
+        self.visited = False
 
     def __str__(self):
         # Assign colors to specific room types
@@ -88,6 +93,12 @@ class Room:
 
     def get_type(self):
         return self.type
+
+    def set_visited(self, new_visited):
+        self.visited = new_visited
+
+    def get_visited(self):
+        return self.visited
 
     def define_valid_directions(self, length, width, dungeon, x, y):
         directions = [(-1, 0), (0, 1), (1, 0), (0, -1)] # Up, Right, Down, Left
@@ -246,8 +257,45 @@ class Dungeon:
         return (0 <= new_x < self.length and 0 <= new_y < self.width and
                 self.map[new_x][new_y].type == 'BLOCKED')
 
+    def draw_map_all(self, window):
+        tile_size = 75
+        for row in range(self.length):
+            for col in range(self.width):
+                room = self.map[row][col]
+                x = col * tile_size
+                y = row * tile_size
+                if room.type == "MONSTER":
+                    color = (255, 0, 0)
+                elif room.type == "ELITE":
+                    color = (200, 0, 0)
+                elif room.type == "ITEM":
+                    color = (0, 255, 0)
+                elif room.type == "PILLAR":
+                    color = (255, 255, 255)
+                elif room.type == "TRAP":
+                    color = (0, 0, 255)
+                elif room.type == "ENTRANCE":
+                    color = (255, 165, 0)
+                elif room.type == "EXIT":
+                    color = (255, 215, 0)
+                elif room.type == "EMPTY":
+                    color = (60, 60, 60)
+                elif room.type == "BLOCKED":
+                    color = (0, 0, 0)
+                pygame.draw.rect(window, color, (x, y, tile_size, tile_size))
+
+
 if __name__ == "__main__":
+    screen = pygame.display.set_mode((600, 600))
     # Testing code
-    d = Dungeon(1)
+    d = Dungeon(4)
     print(d.__str__())
     print(f"Non-blocked rooms ({len(d.room_list)}): {d.room_list}")
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        screen.fill(BACKGROUND_COLOR)
+        d.draw_map_all(screen)
+        pygame.display.update()
