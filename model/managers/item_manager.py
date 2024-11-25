@@ -25,8 +25,8 @@ class ItemManager:
         self.other_items = {}
 
         for row in items_data:
-            item_name = row[1]  # Assuming the name is at index 1
-            if row[5]:  # Assuming the one_time_item flag is at index 5
+            item_name = row[1]  # Assuming the name is at index 1 TODO: fix?
+            if row[4]:  # Assuming the one_time_item/unique_item flag is at index 4 TODO: fix?
                 self.one_time_items[item_name] = row
             else:
                 self.other_items[item_name] = row
@@ -59,15 +59,15 @@ class ItemManager:
         """
         return self.other_items.get(item_name)
 
-    def get_random_non_temporary_item_data(self):
+    def get_random_consumable_item_data(self):
         """
-        Retrieve raw data for a random non-temporary item.
+        Retrieve raw data for a random consumable item.
         :return: Raw data for the item or None if no items are available.
         """
-        non_temporary_data = [
-            raw_data for raw_data in self.other_items.values() if not raw_data[4]  # Assuming index 4 is 'temporary'
+        consumable_data = [
+            raw_data for raw_data in self.other_items.values() if not raw_data[4]  # Assuming index 4 is 'unique'
         ]
-        return random.choice(non_temporary_data) if non_temporary_data else None
+        return random.choice(consumable_data) if consumable_data else None
 
     def reset_unique_items(self):
         """

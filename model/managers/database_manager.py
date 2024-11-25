@@ -46,7 +46,7 @@ class DatabaseManager:
     def fetch_items(self):
         """Fetches all items from the items table."""
         query = """
-        SELECT id, name, description, ability, temporary, one_time_item
+        SELECT id, name, description, ability, one_time_item
         FROM items
         """
         return self.execute_query(query)

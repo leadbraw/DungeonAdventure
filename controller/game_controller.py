@@ -64,7 +64,7 @@ class GameController:
 
             # Place elite monsters in designated ELITE rooms
             for room_coords in elite_rooms:
-                raw_data = self.monster_manager.get_monster_data(monster_type="Elite")[1:] # Ignore entry number!
+                raw_data = self.monster_manager.get_monster_data(monster_type="Elite")[1:] # Ignore entry ID!
                 elite_monster = MonsterFactory.get_instance().make_monster(raw_data)
                 if elite_monster:
                     self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_monster(elite_monster)
@@ -74,7 +74,7 @@ class GameController:
 
             # Place items in designated ITEM rooms
             for room_coords in item_rooms:
-                raw_data = self.item_manager.get_item_data()
+                raw_data = self.item_manager.get_random_consumable_item_data()[1:]
                 item = ItemFactory.get_instance().create_item_from_raw(raw_data)
                 if item:
                     self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_item(item)
@@ -83,7 +83,7 @@ class GameController:
                     print(f"Failed to place item in room at {room_coords}: No item available.")
             pillar = PILLAR_NAMES[i]
             pillar_coords = all_rooms[2]  # Pillar room is always the third room in the floor's room_list
-            raw_data = self.item_manager.get_item_data(item_name=pillar)
+            raw_data = self.item_manager.get_unique_item_data(item_name=pillar)[1:] # Ignore entry ID!
             if raw_data:
                 pillar_item = ItemFactory.get_instance().create_unique_item(raw_data)
                 self.dungeon[i].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar_item)
