@@ -12,7 +12,7 @@ from typing import final
     name (string): entity's name.
     pos (tuple): entity's position.
     max_hp (int): entity's max hp.
-    hit_chance (float): entity's attack hit chance percentage (0 and 1).
+    hit_chance (float): entity's attack hit chance percentage.
     damage_range (tuple): entity's attack min and max damage.
 
     Self-initialized:
@@ -26,15 +26,14 @@ class Entity:
     def __init__(self, the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
         # Private fields
         self.__my_name = the_name.strip() if the_name else "Unnamed Entity"  # Validate name
-
-        # Entity attributes with validation
         self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
         self.__my_attack_speed = max(1, the_attack_speed)  # Ensure non-zero attack speed
         self.__my_hit_chance = min(max(0, the_hit_chance), 1)  # Clamp between 0 and 1
         self.__my_damage_range = (
-            max(0, the_damage_range[0]),
-            max(0, the_damage_range[1])
-        ) if the_damage_range and len(the_damage_range) == 2 else (0, 1)
+            max(1, the_damage_range[0]),
+            max(1, the_damage_range[0], the_damage_range[1])
+            # if damage range is incomplete defaults to 1
+        ) if the_damage_range and len(the_damage_range) == 2 else (1, 1)
 
         self.__my_hp = self.__my_max_hp  # Initialize HP to max HP
 
@@ -155,28 +154,29 @@ class Entity:
 
     @name.setter
     def name(self, the_name):
-        self.__my_name = the_name
+        self.__my_name = the_name.strip() if the_name else "Unnamed Entity"  # Validate name
 
     @max_hp.setter
-    def max_hp(self, the_hp):
-        if self.__my_max_hp >= the_hp >= 0:
-            self.__my_hp = the_hp
+    def max_hp(self, the_max_hp):
+        self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
 
     @attack_speed.setter
     def attack_speed(self, the_attack_speed):
-        self.__my_attack_speed = the_attack_speed
+        self.__my_attack_speed = max(1, the_attack_speed)  # Ensure non-zero attack speed
 
     @hit_chance.setter
     def hit_chance(self, the_hit_chance):
-        if 1 >= the_hit_chance >= 0:
-            self.__my_hit_chance = the_hit_chance
+        self.__my_hit_chance = min(max(0, the_hit_chance), 1)  # Clamp between 0 and 1
 
     @damage_range.setter
     def damage_range(self, the_damage_range):
-        self.__my_damage_range = the_damage_range
+        self.__my_damage_range = (
+            max(1, the_damage_range[0]),
+            max(1, the_damage_range[0], the_damage_range[1])
+            # if damage range is incomplete defaults to 1
+        ) if the_damage_range and len(the_damage_range) == 2 else (1, 1)
 
     @hp.setter
     def hp(self, the_hp):
         if self.__my_max_hp >= the_hp >= 0:
             self.__my_hp = the_hp
-
