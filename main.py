@@ -24,6 +24,14 @@ def main():
     # Initialize GameSetup
     game_setup = GameSetup()
 
+    # # Define adventurers data
+    # adventurers_data = [
+    #     (1, "Mark", "Warrior", 100, 10, 0.8, 15, 25, 0.3),
+    #     (2, "Noah", "Priest", 80, 8, 0.6, 10, 20, 0.4),
+    #     (3, "Thief", "Thief", 70, 12, 0.7, 8, 16, 0.2),
+    #     (4, "Bard", "Bard", 75, 9, 0.65, 10, 18, 0.3),
+    # ]
+
     # Show splash screen while running the game setup
     splash_screen = SplashScreen(screen, font_large)
     splash_screen.display("TEAM 5", game_setup.setup)
@@ -53,7 +61,14 @@ def main():
             if isinstance(result, str):
                 # Hero selected and confirmed
                 selected_hero = result
-                state = "GAMEPLAY"
+                #state = "GAMEPLAY"
+                if not selected_hero:
+                    print(f"Invalid hero name selected: {result}")
+                else:
+                    print(f"Hero selected: {selected_hero}")
+                    # TODO: INSTANTIATE HERO BASED ON CLASS NAME AAAAAAAAAAAAa
+                    state = "GAMEPLAY"
+
             elif result is None:
                 # Player returned to main menu
                 state = "MAIN_MENU"
@@ -62,6 +77,7 @@ def main():
             # Initialize and start the game
             if selected_hero:
                 game_controller = GameController(screen, selected_hero)
+                game_controller.set_active_adventurer(selected_hero)
                 game_controller.initialize_dungeon()
                 game_controller.display_game()
                 state = "QUIT"  # Exit game after gameplay finishes

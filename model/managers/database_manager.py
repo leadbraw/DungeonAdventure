@@ -61,8 +61,9 @@ class DatabaseManager:
 
     def fetch_monsters(self):
         query = """
-        SELECT id, name, type, HP, attack_speed, chance_to_hit, 
-               attack_min, attack_max, chance_to_heal, heal_range_min, heal_range_max
+        SELECT id, name, type, max_HP, attack_speed, chance_to_hit, 
+               attack_damage_min, attack_damage_max, chance_to_heal,
+               heal_range_min, heal_range_max
         FROM monsters
         """
         monsters = self.execute_query(query)
@@ -72,7 +73,8 @@ class DatabaseManager:
     def fetch_adventurers(self):
         """Fetches all adventurers from the adventurers table."""
         query = """
-        SELECT id, name, type, max_hp, attack_speed, chance_to_hit, min_damage, max_damage, chance_to_block
-        FROM heroes
+        SELECT id, name, type, max_hp, attack_speed, chance_to_hit,
+                attack_damage_min, attack_damage_max, chance_to_block
+        FROM adventurers
         """
         return self.execute_query(query)

@@ -8,41 +8,29 @@ from model.entities.entities import Entity
     Attributes:
 
     Entity shared:
-    name (string): entity's name.
-    pos (tuple): entity's position.
-    max_hp (int): entity's max hp.
-    hit_chance (float): entity's attack hit chance percentage (0 and 1).
-    damage_range (tuple): entity's attack min and max damage.
+    name (string): adventurer's name.
+    max_hp (int): adventurer's max hp.
+    hit_chance (float): adventurer's attack hit chance percentage (0 and 1).
+    damage_range (tuple): adventurer's attack min and max damage.
 
     Adventurer specific:
     block_chance (float): adventurer's block chance percentage (0 to 1).
 
     Methods:
-    move_to(the_new_position): updates the adventurer's position.
     special_action(the_target): performs a special action on the target (or self).
 """
 
 
 class Adventurer(Entity):
-    def __init__(self, the_name, the_position, the_max_hp,
+    def __init__(self, the_name, the_type, the_max_hp,
                  the_attack_speed, the_hit_chance, the_damage_range,
                  the_block_chance):
-        super().__init__(the_name, the_position, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
+        super().__init__(the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
         # adventurer specific attributes (from database)
+        self.__my_type = the_type
         self.__my_block_chance = the_block_chance
 
     ### PUBLIC METHODS ###
-    @final
-    def move_to(self, the_new_position):
-        """
-        Updates the adventurer's position to the passed in position as long as
-        they are within 1 unit of each other (adventurer's movement is continuous).
-        :param the_new_position: new position.
-        """
-        if (abs(the_new_position[0] - self.pos[0]) <= 1
-                and abs(the_new_position[1] - self.pos[1]) <= 1):
-            self.pos = the_new_position
-
     @abstractmethod
     def special_action(self, the_target):
         # implemented in subclasses
@@ -63,7 +51,6 @@ class Adventurer(Entity):
         if self._block():
             message += self._block_msg()
         else:
-            self._update_hp(the_dmg)
             message += self._update_hp(the_dmg)
 
         return message
@@ -108,8 +95,6 @@ class Adventurer(Entity):
     Methods:
     special_action(the_target): performs Crushing Blow.
 """
-
-
 class Warrior(Adventurer):
     __my_special_hit_chance = 0.4
     __my_special_dmg_range = (75, 175)
@@ -126,10 +111,18 @@ class Warrior(Adventurer):
         if not self.is_alive():
             return message
 
+        message += self.__special_action_msg(the_target)
+        # crushing blow 75 to 175 dmg 0.4 chance to hit
+        # attack roll (random float within the hit chance)
         if random.uniform(0, 1) <= self.__my_special_hit_chance:
+            # damage roll (random int within damage_range)
             damage = random.randint(*self.__my_special_dmg_range)
-            message += self.__special_action_msg(the_target)
+            # set health
+            message += f"{self.name} hit {the_target.name} for {damage} points.\n"
             message += the_target._hit_response(damage)
+
+        else:
+            message += f"{self.name} missed the attack.\n"
 
         return message[:len(message) - 1]
 
@@ -148,8 +141,6 @@ class Warrior(Adventurer):
     Methods:
     special_action(the_target): performs Divine Prayer.
 """
-
-
 class Priest(Adventurer):
     __my_special_heal_range_percentage = (0.4, 0.7)
 
@@ -166,15 +157,15 @@ class Priest(Adventurer):
             return message
 
         heal = int(random.uniform(*self.__my_special_heal_range_percentage) * self.max_hp)
+        self._update_hp(-heal)
         message += self.__special_action_msg(heal)
-        the_target._update_hp(-heal)
 
         return message[:len(message) - 1]
 
     def __special_action_msg(self, the_heal):
         """
         Returns the Divine Prayer action message.
-        :param the_target: attack target.
+        :param the_heal: heal points.
         :return: Divine Prayer message.
         """
         return f"{self.name} uses Divine Prayer and heals for {the_heal}.\n"
@@ -187,8 +178,6 @@ class Priest(Adventurer):
     Methods:
     special_action(the_target): performs Surprise Attack.
 """
-
-
 class Thief(Adventurer):
     # special hit chance = 0.4
     __my_normal_attack_chance = 0.4
@@ -207,18 +196,25 @@ class Thief(Adventurer):
         if not self.is_alive():
             return message
 
-        roll = random.uniform(0, 1)
-        if roll <= self.__my_normal_attack_chance:
-            message += self.__special_action_msg(the_target)
-            message += super().attack(the_target)
-        elif roll <= self.__my_normal_attack_chance + self.__my_normal_attack_chance:
-            message += self.__special_action_msg(the_target)
-            message += super().attack(the_target)
-            message += super().attack(the_target)
-        else:
-            message += f"{self.name} was detected and failed to attack.\n"
+        message += self.__special_action_msg(the_target)
+        # surprise attack 0.4 to hit, 0.4 to normal, 0.2 to skip
+        # attack roll (random float within the hit chance)
+        attack_roll = random.uniform(0, 1)
 
-        return message
+        if attack_roll >= self.__my_detection_chance:
+            # not detected: succeeds
+            if attack_roll >= self.__my_detection_chance + self.__my_normal_attack_chance:
+                # extra attack
+                message += f"{self.name} gets an extra attack!\n"
+                message += self.attack(the_target) + "\n"
+
+            # normal attack
+            message += self.attack(the_target)
+
+        else:
+            message += f"{self.name} was detected."  # end statement
+
+        return message  # utilizes Entity attack method trimming
 
     def __special_action_msg(self, the_target):
         """
@@ -253,6 +249,7 @@ class Bard(Adventurer):
         if not self.is_alive():
             return message
 
+        message += self.__special_action_msg(the_target)
         damage = random.randint(*self.__my_special_dmg_range)
         message += f"{self.name} hit {the_target.name} for {damage} points.\n"
         message += the_target._hit_response(damage)
@@ -268,53 +265,3 @@ class Bard(Adventurer):
         :return: Discombobulating Thought message.
         """
         return f"{self.name} uses Discombobulating Thought on {the_target.name}.\n"
-
-
-if __name__ == "__main__":
-    p = Warrior("war guy", (0, 0), 10, 6, 0.7, (1, 5), 0.3)
-    q = Priest("heal guy", (0, 0), 10, 3, 0.7, (1, 5), 0.3)
-
-    # Simulating a scenario
-    # q.hp = 0  # Uncomment to simulate Priest being dead
-    print(q.special_action(p))  # Priest performs a special action on Warrior
-    print(p, q)  # Prints the state of both Warrior and Priest
-
-### PUBLIC METHODS ###
-'''
-move_to:
-Updates
-the
-adventurer
-'s position to the passed-in position if they are within 1 unit.
-
-special_action:
-Performs a special action on the target( or self).Must be implemented by subclasses. '''
-
-### INTERNAL METHODS ###
-'''
-_hit_response:
-Handles
-the
-adventurer
-'s response to being hit. Checks for a successful block.
-
-_block_msg:
-Generates a message indicating a successful block. 
-
-_block:
-Determines whether a block is successful based on block chance. '''
-
-### PROPERTIES ###
-'''
-block_chance:
-    Get or set the adventurer's block chance, ensuring the value is between 0 and 1. '''
-
-### REMOVED METHODS ###
-'''
-# Below methods were removed from the earlier version.
-
-# def move(self, the_new_position):
-#     """
-#     Directly updates the adventurer's position without any checks.
-#     """
-#     self.pos = the_new_position '''

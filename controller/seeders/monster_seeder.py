@@ -14,11 +14,10 @@ class MonsterSeeder:
         ]
 
         insert_query = """
-            INSERT INTO monsters (name, type, HP, attack_speed, chance_to_hit,
-                                  attack_min, attack_max, chance_to_heal, heal_range_min, heal_range_max)
+            INSERT INTO monsters (name, type, max_HP, attack_speed, chance_to_hit,
+                                  attack_damage_min, attack_damage_max, chance_to_heal, heal_range_min, heal_range_max)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
-
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
