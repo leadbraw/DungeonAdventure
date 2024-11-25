@@ -22,11 +22,12 @@ from model.entities.entities import Entity
 
 
 class Adventurer(Entity):
-    def __init__(self, the_name, the_max_hp,
+    def __init__(self, random_ass_number, the_name, the_type, the_max_hp,
                  the_attack_speed, the_hit_chance, the_damage_range,
                  the_block_chance):
         super().__init__(the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
         # adventurer specific attributes (from database)
+        self.__my_type = the_type
         self.__my_block_chance = the_block_chance
 
     ### PUBLIC METHODS ###

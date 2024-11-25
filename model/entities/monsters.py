@@ -4,7 +4,7 @@ from model.entities.entities import Entity
 
 
 class Monster(Entity):
-    def __init__(self, the_name, the_type, the_max_hp,
+    def __init__(self, another_random_ass_number, the_name, the_type, the_max_hp,
                  the_attack_speed, the_hit_chance, the_damage_range,
                  the_heal_chance, the_heal_range):
         """

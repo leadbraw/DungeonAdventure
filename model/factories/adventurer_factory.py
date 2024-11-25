@@ -1,4 +1,4 @@
-from model.entities.adventurers import Adventurer
+from model.entities.adventurers import Warrior, Priest, Thief, Bard
 
 class AdventurerFactory:
     _instance = None
@@ -35,7 +35,7 @@ class AdventurerFactory:
         8: special_attack (str)
         """
         adventurer_type = raw_data[1]
-        if adventurer_type == "Warrior":
+        if adventurer_type == "Noah":
             return self.make_warrior(raw_data)
         elif adventurer_type == "Priest":
             return self.make_priest(raw_data)
@@ -52,8 +52,10 @@ class AdventurerFactory:
         :param raw_data: Tuple containing adventurer attributes.
         :return: A Warrior instance.
         """
-        # TODO: Implement logic to create a Warrior
-        pass
+        print(raw_data)
+        return Warrior(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
+                       raw_data[4], raw_data[5], (raw_data[6], raw_data[7]),
+                       raw_data[8])
 
     def make_priest(self, raw_data):
         """
