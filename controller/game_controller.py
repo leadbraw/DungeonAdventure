@@ -208,6 +208,7 @@ class GameController:
 
                 for turn in range(player_turns):
                     # if monster still alive
+                    # TODO: use .is_alive() for clarity
                     if monster.hp > 0:
                         damage = adventurer.attack(monster)
                         print(f"You attacked and dealt {damage} damage to {monster.name}.")
