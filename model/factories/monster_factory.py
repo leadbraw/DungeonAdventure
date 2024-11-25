@@ -33,7 +33,6 @@ class MonsterFactory:
         8: heal_range_min (int)
         9: heal_range_max (int)
         """
-        print(raw_data)
         monster_type = raw_data[1]
         if monster_type == "Normal":
             return MonsterFactory.make_normal_monster(raw_data)
@@ -49,7 +48,6 @@ class MonsterFactory:
         :param raw_data: Tuple containing monster attributes.
         :return: A normal Monster instance.
         """
-        print(raw_data)
         return Monster(raw_data[0], raw_data[1], raw_data[2],
                        raw_data[3], raw_data[4], (raw_data[5], raw_data[6]),
                        raw_data[7], (raw_data[8], raw_data[9]))
