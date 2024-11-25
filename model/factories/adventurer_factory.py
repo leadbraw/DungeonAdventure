@@ -32,10 +32,9 @@ class AdventurerFactory:
         5: attack_damage_min (int)
         6: attack_damage_max (int)
         7: chance_to_block (float)
-        8: special_attack (str)
         """
         adventurer_type = raw_data[1]
-        if adventurer_type == "Noah":
+        if adventurer_type == "Warrior":
             return self.make_warrior(raw_data)
         elif adventurer_type == "Priest":
             return self.make_priest(raw_data)
@@ -54,8 +53,7 @@ class AdventurerFactory:
         """
         print(raw_data)
         return Warrior(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
-                       raw_data[4], raw_data[5], (raw_data[6], raw_data[7]),
-                       raw_data[8])
+                       raw_data[4], (raw_data[5], raw_data[6]), raw_data[7])
 
     def make_priest(self, raw_data):
         """
@@ -63,8 +61,9 @@ class AdventurerFactory:
         :param raw_data: Tuple containing adventurer attributes.
         :return: A Priest instance.
         """
-        # TODO: Implement logic to create a Priest
-        pass
+        print(raw_data)
+        return Priest(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
+                      raw_data[4], (raw_data[5], raw_data[6]), raw_data[7])
 
     def make_thief(self, raw_data):
         """
@@ -72,8 +71,9 @@ class AdventurerFactory:
         :param raw_data: Tuple containing adventurer attributes.
         :return: A Thief instance.
         """
-        # TODO: Implement logic to create a Thief
-        pass
+        print(raw_data)
+        return Thief(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
+                     raw_data[4], (raw_data[5], raw_data[6]), raw_data[7])
 
     def make_bard(self, raw_data):
         """
@@ -81,5 +81,6 @@ class AdventurerFactory:
         :param raw_data: Tuple containing adventurer attributes.
         :return: A Bard instance.
         """
-        # TODO: Implement logic to create a Bard
-        pass
+        print(raw_data)
+        return Bard(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
+                    raw_data[4], (raw_data[5], raw_data[6]), raw_data[7])

@@ -54,7 +54,7 @@ class GameController:
 
             # Place monsters in designated MONSTER rooms
             for room_coords in monster_rooms:
-                raw_data = self.monster_manager.get_monster_data(monster_type="Normal")
+                raw_data = self.monster_manager.get_monster_data(monster_type="Normal")[1:] # Ignore entry number!
                 monster = MonsterFactory.get_instance().make_monster(raw_data)
                 if monster:
                     self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_monster(monster)
@@ -64,7 +64,7 @@ class GameController:
 
             # Place elite monsters in designated ELITE rooms
             for room_coords in elite_rooms:
-                raw_data = self.monster_manager.get_monster_data(monster_type="Elite")
+                raw_data = self.monster_manager.get_monster_data(monster_type="Elite")[1:] # Ignore entry number!
                 elite_monster = MonsterFactory.get_instance().make_monster(raw_data)
                 if elite_monster:
                     self.dungeon[i].fetch_room(room_coords[0], room_coords[1]).set_monster(elite_monster)
@@ -248,7 +248,7 @@ class GameController:
 
     def set_active_adventurer(self, adventurer_name):
         """Switches the active adventurer."""
-        raw_data = self.adventurer_manager.get_adventurer_data(name=adventurer_name)
+        raw_data = self.adventurer_manager.get_adventurer_data(name=adventurer_name)[1:] # Ignore entry number!
         if raw_data:
             self.active_adventurer = AdventurerFactory.get_instance().make_adventurer(raw_data)
         else:
