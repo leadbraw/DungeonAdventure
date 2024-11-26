@@ -3,21 +3,17 @@ from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIG
 from controller.gui_elements import Button
 from model.managers.adventurer_manager import AdventurerManager
 
-
 class CharacterScreen:
     """Handles the character selection and confirmation screen."""
     def __init__(self, screen, fonts):
         self.screen = screen
         self.fonts = fonts
 
-        # Access AdventurerManager singleton instance
         self.adventurer_manager = AdventurerManager.get_instance()
 
-        # Create buttons for adventurer selection
         self.adventurer_buttons = {}
         self._initialize_adventurer_buttons()
 
-        # Back button for initial selection screen
         self.initial_back_button = Button(
             OFF_WHITE, self.screen.get_width() / 2 - 70, self.screen.get_height() - 100,
             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], DARK_GREY, 'BACK'
@@ -52,7 +48,6 @@ class CharacterScreen:
         self.screen.fill(DARK_GREY)
 
         if self.on_confirmation_screen and self.selected_character:
-            # Draw confirmation screen
             char_name = self.fonts["large"].render(self.selected_character["name"], True, OFF_WHITE)
             char_type = self.fonts["small"].render(f"Class: {self.selected_character['type']}", True, OFF_WHITE)
             char_hp = self.fonts["small"].render(f"HP: {self.selected_character['max_HP']}", True, OFF_WHITE)
@@ -65,12 +60,10 @@ class CharacterScreen:
             char_chance_to_block = self.fonts["small"].render(f"Block Chance: {self.selected_character['chance_to_block'] * 100:.1f}%", True, OFF_WHITE)
             # char_special_attack = self.fonts["small"].render(f"Ability: {self.selected_character['special_attack']}", True, OFF_WHITE)
 
-            # Load and display character image
             char_image = pygame.image.load(self.selected_character["image"])
             char_image = pygame.transform.scale(char_image, (200, 200))
             self.screen.blit(char_image, (self.screen.get_width() / 2 - 300, 200))
 
-            # Draw character information
             self.screen.blit(char_name, (self.screen.get_width() / 2 + 100, 50))
             self.screen.blit(char_type, (self.screen.get_width() / 2 + 100, 100))
             self.screen.blit(char_hp, (self.screen.get_width() / 2 + 100, 150))
@@ -80,20 +73,16 @@ class CharacterScreen:
             self.screen.blit(char_chance_to_block, (self.screen.get_width() / 2 + 100, 350))
             # self.screen.blit(char_special_attack, (self.screen.get_width() / 2 + 100, 400))
 
-            # Draw buttons
             self.confirm_button.draw(self.screen)
             self.confirm_back_button.draw(self.screen)
         else:
-            # Draw selection screen
             title = self.fonts["large"].render("CHOOSE ADVENTURER", True, LIGHT_BLUE)
             self.screen.blit(title, (self.screen.get_width() / 2 - title.get_width() / 2,
                                      self.screen.get_height() / 6 - title.get_height() / 2))
 
-            # Draw adventurer selection buttons
             for button in self.adventurer_buttons.values():
                 button.draw(self.screen)
 
-            # Draw the back button for the initial selection screen
             self.initial_back_button.draw(self.screen)
 
     def handle_event(self, event):
@@ -126,7 +115,6 @@ class CharacterScreen:
                         self.on_confirmation_screen = True
                         break
                 if self.initial_back_button.is_hovered((mouse_x, mouse_y)):
-                    # Back out from the initial screen
                     return "back", None
         return None, None
 
@@ -142,10 +130,8 @@ class CharacterScreen:
 
                 action, data = self.handle_event(event)
                 if action == "select":
-                    # Return the selected hero name to main
                     return data
                 elif action == "back":
-                    # Return to main menu
                     return None
 
             self.draw()
