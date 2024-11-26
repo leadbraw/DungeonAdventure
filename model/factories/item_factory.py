@@ -23,10 +23,9 @@ class ItemFactory:
         if not raw_data:
             raise ValueError("No raw data provided to create an item.")
 
-        item_id, name, description, ability, one_time_item = raw_data
+        name, description, ability, one_time_item = raw_data
 
         return Item(
-            item_id=item_id,
             name=name,
             description=description,
             ability=ability,

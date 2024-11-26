@@ -6,26 +6,34 @@ class ItemSeeder:
 
     def populate_items(self):
         """Inserts initial item data into the items table."""
+
+        '''
+        Fields by position:
+        0: name (str)
+        1: description (str)
+        2: ability (str)
+        3: unique (bool (int))
+        '''
         items_data = [
             # Pillars of OO
             ("Pillar of Abstraction", "One of the four Pillars of OO required to win the game.",
-             "effect handled externally", 0, 1),  # Use 0/1 for False/True
+             "effect handled externally", 1),  # Use 0/1 for False/True
             ("Pillar of Encapsulation", "One of the four Pillars of OO required to win the game.",
-             "effect handled externally", 0, 1),
+             "effect handled externally", 1),
             ("Pillar of Inheritance", "One of the four Pillars of OO required to win the game.",
-             "effect handled externally", 0, 1),
+             "effect handled externally", 1),
             ("Pillar of Polymorphism", "One of the four Pillars of OO required to win the game.",
-             "effect handled externally", 0, 1),
+             "effect handled externally", 1),
 
             # Potions (temporary items)
-            ("Data Spike", "Deals 20-25 Damage to a Monster.", "effect handles externally", 0, 0),
-            ("Healing Potion", "Heals the adventurer by 5-15 hit points.", "hp:5-15", 1, 0),
-            ("Vision Potion", "Reveals surrounding rooms in the dungeon.", "effect handles externally", 1, 0)
+            ("Data Spike", "Deals 20-25 Damage to a Monster.", "effect handles externally", 0),
+            ("Healing Potion", "Heals the adventurer by 5-15 hit points.", "hp:5-15", 0),
+            ("Vision Potion", "Reveals surrounding rooms in the dungeon.", "effect handles externally", 0)
         ]
 
         insert_query = """
-            INSERT INTO items (name, description, ability, temporary, one_time_item)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO items (name, description, ability, one_time_item)
+            VALUES (?, ?, ?, ?)
         """
 
         try:

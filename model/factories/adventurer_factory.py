@@ -45,42 +45,42 @@ class AdventurerFactory:
         else:
             raise ValueError(f"Unknown adventurer type: {adventurer_type}")
 
-    def make_warrior(self, raw_data):
+    @staticmethod
+    def make_warrior(raw_data):
         """
         Create a Warrior instance.
         :param raw_data: Tuple containing adventurer attributes.
         :return: A Warrior instance.
         """
-        print(raw_data)
         return Warrior(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
                        raw_data[4], (raw_data[5], raw_data[6]), raw_data[7])
 
-    def make_priest(self, raw_data):
+    @staticmethod
+    def make_priest(raw_data):
         """
         Create a Priest instance.
         :param raw_data: Tuple containing adventurer attributes.
         :return: A Priest instance.
         """
-        print(raw_data)
         return Priest(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
                       raw_data[4], (raw_data[5], raw_data[6]), raw_data[7])
 
-    def make_thief(self, raw_data):
+    @staticmethod
+    def make_thief(raw_data):
         """
         Create a Thief instance.
         :param raw_data: Tuple containing adventurer attributes.
         :return: A Thief instance.
         """
-        print(raw_data)
         return Thief(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
                      raw_data[4], (raw_data[5], raw_data[6]), raw_data[7])
 
-    def make_bard(self, raw_data):
+    @staticmethod
+    def make_bard(raw_data):
         """
         Create a Bard instance.
         :param raw_data: Tuple containing adventurer attributes.
         :return: A Bard instance.
         """
-        print(raw_data)
         return Bard(raw_data[0], raw_data[1], raw_data[2], raw_data[3],
                     raw_data[4], (raw_data[5], raw_data[6]), raw_data[7])

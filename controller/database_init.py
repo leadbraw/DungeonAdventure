@@ -67,7 +67,6 @@ class DatabaseInitializer:
                     name TEXT NOT NULL,
                     description TEXT,
                     ability TEXT,
-                    temporary INTEGER, -- Use INTEGER instead of BOOLEAN
                     one_time_item INTEGER -- Use INTEGER instead of BOOLEAN
                 );
             """,
