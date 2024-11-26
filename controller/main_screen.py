@@ -63,6 +63,18 @@ class MainScreen:
         """Handles the manual screen."""
         manual_running = True
         exit_button = pygame.Rect(655, 75, 45, 45)
+        # There is a better way to do this, but I can't be bothered.
+        manual_body = self.fonts["small"].render("Navigate through four floors of a dungeon and gather",
+                                                 True, OFF_WHITE)
+        manual_body2 = self.fonts["small"].render("all four pillars of O.O. to beat the game. Any room",
+                                                  True, OFF_WHITE)
+        manual_body3 = self.fonts["small"].render("could have a monster, a formidable elite monster, an",
+                                                  True, OFF_WHITE)
+        manual_body4 = self.fonts["small"].render("item to help you on your journey, a trap, or the pillar.",
+                                                  True, OFF_WHITE)
+        manual_body5 = self.fonts["small"].render("Only one pillar is present per floor. You must grab",
+                                                  True, OFF_WHITE)
+        manual_body6 = self.fonts["small"].render("the pillar before proceeding to the next floor.", True, OFF_WHITE)
         while manual_running:
             clicked = False
             mouse_pos = pygame.mouse.get_pos()
@@ -76,7 +88,20 @@ class MainScreen:
             manual_text = self.fonts["large"].render("MANUAL", True, OFF_WHITE)
             self.screen.blit(manual_text, (self.screen.get_width() / 2 - manual_text.get_width() / 2,
                                            self.screen.get_height() / 5 - manual_text.get_height() / 2))
-
+            '''First line is drawn 50 pixels below 'MANUAL' title. Others are drawn 32 pixels below each
+            preceding line. Hence the adding of 50, 82, 114, 146, 178, 210 to the heights each time'''
+            self.screen.blit(manual_body, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
+                                           self.screen.get_height() / 5 - manual_body.get_height() / 2 + 50))
+            self.screen.blit(manual_body2, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
+                                           self.screen.get_height() / 5 - manual_body.get_height() / 2 + 82))
+            self.screen.blit(manual_body3, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
+                                            self.screen.get_height() / 5 - manual_body.get_height() / 2 + 114))
+            self.screen.blit(manual_body4, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
+                                            self.screen.get_height() / 5 - manual_body.get_height() / 2 + 146))
+            self.screen.blit(manual_body5, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
+                                            self.screen.get_height() / 5 - manual_body.get_height() / 2 + 178))
+            self.screen.blit(manual_body6, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
+                                            self.screen.get_height() / 5 - manual_body.get_height() / 2 + 210))
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left click
                     clicked = True

@@ -1,6 +1,6 @@
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY, PILLAR_NAMES
+from constants import BACKGROUND_COLOR, DARK_GREY, PILLAR_NAMES, get_fonts, OFF_WHITE
 from model.factories.adventurer_factory import AdventurerFactory
 from model.factories.monster_factory import MonsterFactory
 from model.factories.item_factory import ItemFactory
@@ -24,6 +24,7 @@ class GameController:
         self.current_floor = 1
         self.position = None
         self.active_adventurer = None
+        self.fonts = get_fonts() # dict of fonts
 
         self.set_active_adventurer(hero_name)
 
@@ -268,8 +269,8 @@ class GameController:
 
         # Display the current room type
         current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
-        room_text = pygame.font.Font(None, 30).render(
-            f"Room: {current_room.type}", True, (255, 255, 255)
+        room_text = self.fonts["small"].render(
+            f"Room: {current_room.type}", True, OFF_WHITE
         )
         self.screen.blit(room_text, (50, 500))
 
