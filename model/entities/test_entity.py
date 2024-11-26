@@ -101,7 +101,6 @@ def test_attack_faints_target():
     # Target will faint after one attack
     with patch('random.uniform', return_value=0.7):  # Force a hit
         message = attacker.attack(target)
-        print(message)
         assert "Target has fainted." in message
 
 
