@@ -4,6 +4,8 @@ import pygame
 from colorama import Fore, Style
 from copy import deepcopy
 
+from pygame import Surface
+
 from constants import BACKGROUND_COLOR
 
 '''
@@ -257,8 +259,10 @@ class Dungeon:
         return (0 <= new_x < self.length and 0 <= new_y < self.width and
                 self.map[new_x][new_y].type == 'BLOCKED')
 
-    def draw_map_all(self, window):
-        tile_size = 75
+    def create_map(self, debug=False):
+        """Creates the map of the floor. By default, only returns visited rooms. Returns a Surface"""
+        tile_size = 50
+        map_surface = Surface((500, 500))
         for row in range(self.length):
             for col in range(self.width):
                 room = self.map[row][col]
@@ -282,20 +286,26 @@ class Dungeon:
                     color = (60, 60, 60)
                 elif room.type == "BLOCKED":
                     color = (0, 0, 0)
-                pygame.draw.rect(window, color, (x, y, tile_size, tile_size))
+                if not debug and room.visited:
+                    pygame.draw.rect(map_surface, color, (x, y, tile_size, tile_size))
+                elif debug:
+                    pygame.draw.rect(map_surface, color, (x, y, tile_size, tile_size))
+
+        return map_surface
 
 
 if __name__ == "__main__":
-    screen = pygame.display.set_mode((600, 600))
+    screen = pygame.display.set_mode((500, 500))
     # Testing code
     d = Dungeon(4)
     print(d.__str__())
     print(f"Non-blocked rooms ({len(d.room_list)}): {d.room_list}")
     running = True
+    map = d.create_map()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         screen.fill(BACKGROUND_COLOR)
-        d.draw_map_all(screen)
+        screen.blit(map, (0, 0))
         pygame.display.update()
