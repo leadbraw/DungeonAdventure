@@ -1,7 +1,7 @@
 import pygame
 from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE
 from controller.gui_elements import Button
-
+from model.managers.adventurer_manager import AdventurerManager
 
 class CharacterScreen:
     """Handles the character selection and confirmation screen."""
@@ -9,17 +9,11 @@ class CharacterScreen:
         self.screen = screen
         self.fonts = fonts
 
-        # Create buttons for adventurer selection
-        self.noah_button = Button(DARK_GREY, self.screen.get_width() / 4 - 100, self.screen.get_height() / 3,
-                                  MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], OFF_WHITE, 'NOAH')
-        self.jayne_button = Button(DARK_GREY, 3 * self.screen.get_width() / 4 - 100, self.screen.get_height() / 3,
-                                   MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], OFF_WHITE, 'JAYNE')
-        self.sean_button = Button(DARK_GREY, self.screen.get_width() / 4 - 100, 2 * self.screen.get_height() / 3,
-                                  MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], OFF_WHITE, 'SEAN')
-        self.mark_button = Button(DARK_GREY, 3 * self.screen.get_width() / 4 - 100, 2 * self.screen.get_height() / 3,
-                                  MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], OFF_WHITE, 'MARK')
+        self.adventurer_manager = AdventurerManager.get_instance()
 
-        # Back button for initial selection screen
+        self.adventurer_buttons = {}
+        self._initialize_adventurer_buttons()
+
         self.initial_back_button = Button(
             OFF_WHITE, self.screen.get_width() / 2 - 70, self.screen.get_height() - 100,
             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], DARK_GREY, 'BACK'
@@ -33,42 +27,62 @@ class CharacterScreen:
         self.confirm_back_button = Button(OFF_WHITE, self.screen.get_width() / 2 - 70, self.screen.get_height() - 100,
                                           MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], DARK_GREY, 'BACK')
 
+    def _initialize_adventurer_buttons(self):
+        """Dynamically create buttons for all adventurers."""
+        adventurer_data = self.adventurer_manager.get_adventurer_data()
+        positions = [
+            (self.screen.get_width() / 4 - 100, self.screen.get_height() / 3),
+            (3 * self.screen.get_width() / 4 - 100, self.screen.get_height() / 3),
+            (self.screen.get_width() / 4 - 100, 2 * self.screen.get_height() / 3),
+            (3 * self.screen.get_width() / 4 - 100, 2 * self.screen.get_height() / 3)
+        ]
+
+        for idx, (name, data) in enumerate(adventurer_data.items()):
+            x, y = positions[idx % len(positions)]
+            self.adventurer_buttons[name] = Button(
+                DARK_GREY, x, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], OFF_WHITE, name.upper()
+            )
+
     def draw(self):
         """Draw the character selection or confirmation screen."""
         self.screen.fill(DARK_GREY)
 
         if self.on_confirmation_screen and self.selected_character:
-            # Draw confirmation screen
             char_name = self.fonts["large"].render(self.selected_character["name"], True, OFF_WHITE)
-            char_stats = self.fonts["small"].render(self.selected_character["stats"], True, OFF_WHITE)
-            char_ability = self.fonts["small"].render(f"Ability: {self.selected_character['ability']}", True, OFF_WHITE)
+            char_type = self.fonts["small"].render(f"Class: {self.selected_character['type']}", True, OFF_WHITE)
+            char_hp = self.fonts["small"].render(f"HP: {self.selected_character['max_HP']}", True, OFF_WHITE)
+            char_attack_speed = self.fonts["small"].render(f"Attack Speed: {self.selected_character['attack_speed']}", True, OFF_WHITE)
+            char_chance_to_hit = self.fonts["small"].render(f"Hit Chance: {self.selected_character['chance_to_hit'] * 100:.1f}%", True, OFF_WHITE)
+            char_attack_damage = self.fonts["small"].render(
+                f"Attack Damage: {self.selected_character['attack_damage_min']} - {self.selected_character['attack_damage_max']}",
+                True, OFF_WHITE
+            )
+            char_chance_to_block = self.fonts["small"].render(f"Block Chance: {self.selected_character['chance_to_block'] * 100:.1f}%", True, OFF_WHITE)
+            # char_special_attack = self.fonts["small"].render(f"Ability: {self.selected_character['special_attack']}", True, OFF_WHITE)
 
-            # Load and display character image
             char_image = pygame.image.load(self.selected_character["image"])
             char_image = pygame.transform.scale(char_image, (200, 200))
             self.screen.blit(char_image, (self.screen.get_width() / 2 - 300, 200))
 
-            # Draw character information
-            self.screen.blit(char_name, (self.screen.get_width() / 2 + 100, 100))
-            self.screen.blit(char_stats, (self.screen.get_width() / 2 + 100, 200))
-            self.screen.blit(char_ability, (self.screen.get_width() / 2 + 100, 250))
+            self.screen.blit(char_name, (self.screen.get_width() / 2 + 100, 50))
+            self.screen.blit(char_type, (self.screen.get_width() / 2 + 100, 100))
+            self.screen.blit(char_hp, (self.screen.get_width() / 2 + 100, 150))
+            self.screen.blit(char_attack_speed, (self.screen.get_width() / 2 + 100, 200))
+            self.screen.blit(char_chance_to_hit, (self.screen.get_width() / 2 + 100, 250))
+            self.screen.blit(char_attack_damage, (self.screen.get_width() / 2 + 100, 300))
+            self.screen.blit(char_chance_to_block, (self.screen.get_width() / 2 + 100, 350))
+            # self.screen.blit(char_special_attack, (self.screen.get_width() / 2 + 100, 400))
 
-            # Draw buttons
             self.confirm_button.draw(self.screen)
             self.confirm_back_button.draw(self.screen)
         else:
-            # Draw selection screen
             title = self.fonts["large"].render("CHOOSE ADVENTURER", True, LIGHT_BLUE)
             self.screen.blit(title, (self.screen.get_width() / 2 - title.get_width() / 2,
                                      self.screen.get_height() / 6 - title.get_height() / 2))
 
-            # Draw adventurer selection buttons
-            self.noah_button.draw(self.screen)
-            self.jayne_button.draw(self.screen)
-            self.sean_button.draw(self.screen)
-            self.mark_button.draw(self.screen)
+            for button in self.adventurer_buttons.values():
+                button.draw(self.screen)
 
-            # Draw the back button for the initial selection screen
             self.initial_back_button.draw(self.screen)
 
     def handle_event(self, event):
@@ -82,40 +96,25 @@ class CharacterScreen:
                 elif self.confirm_back_button.is_hovered((mouse_x, mouse_y)):
                     self.on_confirmation_screen = False
             else:
-                if self.noah_button.is_hovered((mouse_x, mouse_y)):
-                    self.selected_character = {
-                        "name": "Noah",
-                        "stats": "HP: 75, MP: 50",
-                        "ability": "Heal",
-                        "image": "assets/images/noah.png"
-                    }
-                    self.on_confirmation_screen = True
-                elif self.jayne_button.is_hovered((mouse_x, mouse_y)):
-                    self.selected_character = {
-                        "name": "Jayne",
-                        "stats": "HP: 75, MP: 60",
-                        "ability": "Surprise Attack",
-                        "image": "assets/images/jayne.png"
-                    }
-                    self.on_confirmation_screen = True
-                elif self.sean_button.is_hovered((mouse_x, mouse_y)):
-                    self.selected_character = {
-                        "name": "Sean",
-                        "stats": "HP: 90, MP: 40",
-                        "ability": "Music",
-                        "image": "assets/images/sean.png"
-                    }
-                    self.on_confirmation_screen = True
-                elif self.mark_button.is_hovered((mouse_x, mouse_y)):
-                    self.selected_character = {
-                        "name": "Mark",
-                        "stats": "HP: 125, MP: 30",
-                        "ability": "Crushing Blow",
-                        "image": "assets/images/mark.png"
-                    }
-                    self.on_confirmation_screen = True
-                elif self.initial_back_button.is_hovered((mouse_x, mouse_y)):
-                    # Back out from the initial screen
+                for name, button in self.adventurer_buttons.items():
+                    if button.is_hovered((mouse_x, mouse_y)):
+                        raw_data = self.adventurer_manager.get_adventurer_data(name)
+                        print(f"raw_data for {name}: {raw_data}")
+                        self.selected_character = {
+                            "name": name,
+                            "type": raw_data[2],
+                            "max_HP": raw_data[3],
+                            "attack_speed": raw_data[4],
+                            "chance_to_hit": raw_data[5],
+                            "attack_damage_min": raw_data[6],
+                            "attack_damage_max": raw_data[7],
+                            "chance_to_block": raw_data[8],
+                            # "special_attack": raw_data[9],
+                            "image": f"assets/images/{name.lower()}.png"
+                        }
+                        self.on_confirmation_screen = True
+                        break
+                if self.initial_back_button.is_hovered((mouse_x, mouse_y)):
                     return "back", None
         return None, None
 
@@ -131,10 +130,8 @@ class CharacterScreen:
 
                 action, data = self.handle_event(event)
                 if action == "select":
-                    # Return the selected hero name to main
                     return data
                 elif action == "back":
-                    # Return to main menu
                     return None
 
             self.draw()

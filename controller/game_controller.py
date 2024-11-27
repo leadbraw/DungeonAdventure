@@ -93,6 +93,8 @@ class GameController:
                 print(f"Failed to place pillar in room at {pillar_coords}: No pillar available.")
         # Set the initial player position
         self.position = self.dungeon[0].entrance_loc
+        # Use of asterisk is to unpack the self.position tuple and treat each member as a different arg.
+        self.dungeon[0].fetch_room(*self.position).set_visited(True)
         print(f"Player starting position: {self.position}")
 
     def display_game(self):
@@ -102,6 +104,10 @@ class GameController:
 
             # Draw game UI
             self.draw_ui()
+
+            # Draw map
+            map = pygame.transform.scale(self.dungeon[self.current_floor - 1].create_map(), (150, 150))
+            self.screen.blit(map, (650, 0))
 
             # Handle events
             for event in pygame.event.get():
@@ -152,6 +158,7 @@ class GameController:
 
         if current_room.type == "MONSTER" and current_room.has_monster():
             monster = current_room.get_monster()
+            current_room.set_visited(True)
             self.start_battle(current_room.get_monster())
 
         elif current_room.type == "ITEM" and current_room.has_item():
@@ -160,7 +167,7 @@ class GameController:
             current_room.item = None
 
         elif current_room.type == "EXIT":
-
+            current_room.set_visited(True)
             if self.current_floor == len(self.dungeon):
                 print("You found the exit! Congratulations!")
                 pygame.quit()
@@ -169,6 +176,7 @@ class GameController:
                 print(f"You have completed floor {self.current_floor}! Proceeding to the next floor.")
                 self.current_floor += 1
                 self.position = self.dungeon[self.current_floor - 1].entrance_loc
+                self.dungeon[self.current_floor - 1].fetch_room(*self.position).set_visited(True)
                 print(f"Entering floor {self.current_floor} at position {self.position}.")
 
         elif current_room.type == "ENTRANCE":
@@ -181,6 +189,8 @@ class GameController:
 
         elif current_room.type == "EMPTY":
             print("You've found an empty room. It smells in here.")
+
+        current_room.set_visited(True)
 
     def start_battle(self, monster):
         """Starts and Handles battle action with player vs monster"""
