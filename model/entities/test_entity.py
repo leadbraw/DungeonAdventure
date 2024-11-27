@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import patch
+import pytest
+from pytest_mock import MockerFixture
 from model.entities.entities import Entity
 
 
