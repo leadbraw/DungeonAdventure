@@ -3,6 +3,8 @@ from abc import abstractmethod
 from typing import final
 from model.entities.entities import Entity
 
+# TODO move special action constants into database and add parameters to be updated with them
+
 """ Provides the default behavior shared by all adventurers.
 
     Attributes:
@@ -179,7 +181,7 @@ class Priest(Adventurer):
     special_action(the_target): performs Surprise Attack.
 """
 class Thief(Adventurer):
-    # special hit chance = 0.4
+    # __my_special hit chance = 0.4
     __my_normal_attack_chance = 0.4
     __my_detection_chance = 0.2
 
