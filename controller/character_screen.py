@@ -22,10 +22,12 @@ class CharacterScreen:
         # State management for transitions
         self.on_confirmation_screen = False
         self.selected_character = None
-        self.confirm_button = Button(LIGHT_BLUE, self.screen.get_width() / 2 - 70, 2 * self.screen.get_height() / 3,
-                                      MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], OFF_WHITE, 'CONFIRM')
-        self.confirm_back_button = Button(OFF_WHITE, self.screen.get_width() / 2 - 70, self.screen.get_height() - 100,
-                                          MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], DARK_GREY, 'BACK')
+        self.confirm_button = Button(LIGHT_BLUE, self.screen.get_width() / 2 - MENU_BUTTON_WIDTH / 2,
+                                      self.screen.get_height() - 150, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
+                                      self.fonts["small"], OFF_WHITE, 'CONFIRM')
+        self.confirm_back_button = Button(OFF_WHITE, self.screen.get_width() / 2 - MENU_BUTTON_WIDTH / 2,
+                                          self.screen.get_height() - 100, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
+                                          self.fonts["small"], DARK_GREY, 'BACK')
 
     def _initialize_adventurer_buttons(self):
         """Dynamically create buttons for all adventurers."""
@@ -43,35 +45,59 @@ class CharacterScreen:
                 DARK_GREY, x, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], OFF_WHITE, name.upper()
             )
 
+    def _wrap_text(self, text, font, max_width):
+        """Wrap text to fit within the max width."""
+        words = text.split(' ')
+        lines = []
+        current_line = ""
+        for word in words:
+            test_line = f"{current_line} {word}".strip()
+            if font.size(test_line)[0] <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+        lines.append(current_line)
+        return lines
+
     def draw(self):
         """Draw the character selection or confirmation screen."""
         self.screen.fill(DARK_GREY)
 
         if self.on_confirmation_screen and self.selected_character:
             char_name = self.fonts["large"].render(self.selected_character["name"], True, OFF_WHITE)
-            char_type = self.fonts["small"].render(f"Class: {self.selected_character['type']}", True, OFF_WHITE)
-            char_hp = self.fonts["small"].render(f"HP: {self.selected_character['max_HP']}", True, OFF_WHITE)
-            char_attack_speed = self.fonts["small"].render(f"Attack Speed: {self.selected_character['attack_speed']}", True, OFF_WHITE)
-            char_chance_to_hit = self.fonts["small"].render(f"Hit Chance: {self.selected_character['chance_to_hit'] * 100:.1f}%", True, OFF_WHITE)
-            char_attack_damage = self.fonts["small"].render(
+            details = [
+                f"Class: {self.selected_character['type']}",
+                f"HP: {self.selected_character['max_HP']}",
+                f"Attack Speed: {self.selected_character['attack_speed']}",
+                f"Hit Chance: {self.selected_character['chance_to_hit'] * 100:.1f}%",
                 f"Attack Damage: {self.selected_character['attack_damage_min']} - {self.selected_character['attack_damage_max']}",
-                True, OFF_WHITE
-            )
-            char_chance_to_block = self.fonts["small"].render(f"Block Chance: {self.selected_character['chance_to_block'] * 100:.1f}%", True, OFF_WHITE)
-            # char_special_attack = self.fonts["small"].render(f"Ability: {self.selected_character['special_attack']}", True, OFF_WHITE)
+                f"Block Chance: {self.selected_character['chance_to_block'] * 100:.1f}%"
+            ]
+
+            # Handle word-wrapping for long ability descriptions with mostly good indentation
+            label_width = self.fonts["small"].size("Ability: ")[0]
+            space_width = self.fonts["small"].size(" ")[0]
+            indent_spaces = label_width // space_width
+            raw_ability_text = f"Ability: {self.selected_character['special_attack']}"
+            wrapped_lines = self._wrap_text(raw_ability_text, self.fonts["small"], max_width=300)
+
+            if len(wrapped_lines) > 1:
+                for i in range(1, len(wrapped_lines)):
+                    wrapped_lines[i] = " " * indent_spaces + wrapped_lines[i]
+
+            details.extend(wrapped_lines)
 
             char_image = pygame.image.load(self.selected_character["image"])
-            char_image = pygame.transform.scale(char_image, (200, 200))
-            self.screen.blit(char_image, (self.screen.get_width() / 2 - 300, 200))
+            char_image = pygame.transform.scale(char_image, (256, 256))
+            self.screen.blit(char_image, (self.screen.get_width() / 4 - 128, 100))
 
-            self.screen.blit(char_name, (self.screen.get_width() / 2 + 100, 50))
-            self.screen.blit(char_type, (self.screen.get_width() / 2 + 100, 100))
-            self.screen.blit(char_hp, (self.screen.get_width() / 2 + 100, 150))
-            self.screen.blit(char_attack_speed, (self.screen.get_width() / 2 + 100, 200))
-            self.screen.blit(char_chance_to_hit, (self.screen.get_width() / 2 + 100, 250))
-            self.screen.blit(char_attack_damage, (self.screen.get_width() / 2 + 100, 300))
-            self.screen.blit(char_chance_to_block, (self.screen.get_width() / 2 + 100, 350))
-            # self.screen.blit(char_special_attack, (self.screen.get_width() / 2 + 100, 400))
+            self.screen.blit(char_name, (self.screen.get_width() / 2 + 100, 20))
+            spacing = 50
+            start_y = 100
+            for idx, detail in enumerate(details):
+                text_surface = self.fonts["small"].render(detail, True, OFF_WHITE)
+                self.screen.blit(text_surface, (self.screen.get_width() / 2 + 100, start_y + idx * spacing))
 
             self.confirm_button.draw(self.screen)
             self.confirm_back_button.draw(self.screen)
@@ -99,7 +125,6 @@ class CharacterScreen:
                 for name, button in self.adventurer_buttons.items():
                     if button.is_hovered((mouse_x, mouse_y)):
                         raw_data = self.adventurer_manager.get_adventurer_data(name)
-                        print(f"raw_data for {name}: {raw_data}")
                         self.selected_character = {
                             "name": name,
                             "type": raw_data[2],
@@ -109,7 +134,7 @@ class CharacterScreen:
                             "attack_damage_min": raw_data[6],
                             "attack_damage_max": raw_data[7],
                             "chance_to_block": raw_data[8],
-                            # "special_attack": raw_data[9],
+                            "special_attack": raw_data[9],
                             "image": f"assets/images/{name.lower()}.png"
                         }
                         self.on_confirmation_screen = True

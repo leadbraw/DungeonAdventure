@@ -74,7 +74,8 @@ class DatabaseManager:
         """Fetches all adventurers from the adventurers table."""
         query = """
         SELECT id, name, type, max_hp, attack_speed, chance_to_hit,
-                attack_damage_min, attack_damage_max, chance_to_block
+                attack_damage_min, attack_damage_max, chance_to_block,
+                special_attack
         FROM adventurers
         """
         return self.execute_query(query)

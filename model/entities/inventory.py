@@ -8,5 +8,3 @@ class Inventory:
 
         """
         self.items = []
-
-    def
