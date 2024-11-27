@@ -1,6 +1,7 @@
 import sys
 import pygame
 from constants import BACKGROUND_COLOR, DARK_GREY, PILLAR_NAMES, get_fonts, OFF_WHITE
+from controller.gui_elements import Button
 from model.factories.adventurer_factory import AdventurerFactory
 from model.factories.monster_factory import MonsterFactory
 from model.factories.item_factory import ItemFactory
@@ -193,71 +194,107 @@ class GameController:
         current_room.set_visited(True)
 
     def start_battle(self, monster):
-        """Starts and Handles battle action with player vs monster"""
+        """Starts and Handles battle action with player vs monster in the Room section."""
         print(f"A wild {monster.name} appears! Prepare for battle!")
 
-        if not self.active_adventurer:
-            print("No adventurer is active. Please select one.")
-            return
-
         adventurer = self.active_adventurer
-        while monster.hp > 0 and adventurer.hp > 0:
-            print(f"Monster HP: {monster.hp}")
-            print(f"Your HP: {adventurer.hp}")
-            print("What are you going to do?:")
-            print("1. Are you going to Fight")
-            print("2. Are you going to use Item")
-            # TODO: Get user choice/print info to GUI, not console
-            # get the player input
-            action = input("Enter 1 to Fight or 2 to use Item: ").strip()
 
-            if action == "1": # player chooses to fight the monster
-                # TODO: attack() in adventurer handles the attack speed calculations itself.
-                player_turns = adventurer.attack_speed // monster.attack_speed
-                #Ensure at least 1 attack
-                if player_turns == 0:
-                    player_turns = 1
+        # Define the black section coordinates (adjust these based on your layout)
+        room_section_x = 0
+        room_section_y = 450
+        room_section_width = 800
+        room_section_height = 150
 
-                for turn in range(player_turns):
-                    # if monster still alive
-                    # TODO: use .is_alive() for clarity
-                    if monster.hp > 0:
-                        damage = adventurer.attack(monster)
-                        print(f"You attacked and dealt {damage} damage to {monster.name}.")
+        # Define fight and item buttons in the room section
+        fight_button = Button(color=(0, 255, 0), x=150, y=room_section_y + 70, width=100, height=30,
+                              font=self.fonts["small"], text_color=(255, 255, 255), text="Fight")
+        item_button = Button(color=(0, 0, 255), x=350, y=room_section_y + 70, width=100, height=30,
+                             font=self.fonts["small"], text_color=(255, 255, 255), text="Use Item")
 
-                    else:
-                        break
+        running = True
+        while running and monster.hp > 0 and adventurer.hp > 0:
+            # Clear screen
+            self.screen.fill(DARK_GREY)
 
-                #Use item
-            elif action == "2":
-                # TODO: Implement item uses/effects
-                if adventurer.use_item():
-                    print(f"You used {adventurer.use_item.get_name}.")
-                else:
-                    print("You don't have any usable items, Bummer.")
+            # Restore the mini-map
+            map = pygame.transform.scale(self.dungeon[self.current_floor - 1].create_map(), (150, 150))
+            self.screen.blit(map, (650, 0))
 
-            else:
-                print("Invalid action, please choose again.")
-                # retry
-                continue
+            # Restore the adventurer portrait
+            portrait = self.get_hero_portrait()
+            portrait_position = (650, 450)  # Fixed position for the portrait
+            self.screen.blit(portrait, portrait_position)
 
-            # now the monster turn
-            if monster.hp > 0:
-                print(f"{monster.name} is attacking!")
-                damage = monster.attack(adventurer)
-                print(f"{monster.name} dealt {damage} damage to you.")
+            # Draw the black section as the battle UI
+            room_rect = pygame.Rect(room_section_x, room_section_y, room_section_width, room_section_height)
+            pygame.draw.rect(self.screen, (0, 0, 0), room_rect)  # True black background
 
-        #check outcome of battle
+            # Update "Room:" text to reflect the monster room
+            room_text = self.fonts["small"].render(f"Room: MONSTER", True, OFF_WHITE)
+            self.screen.blit(room_text, (10, room_section_y + 10))
+
+            # Draw monster and adventurer stats in the black section
+            monster_text = self.fonts["small"].render(f"Monster HP: {monster.hp}", True, OFF_WHITE)
+            adventurer_text = self.fonts["small"].render(f"Your HP: {adventurer.hp}", True, OFF_WHITE)
+            self.screen.blit(monster_text, (10, room_section_y + 40))
+            self.screen.blit(adventurer_text, (10, room_section_y + 60))
+
+            # Draw buttons in the black section
+            fight_button.draw(self.screen)
+            item_button.draw(self.screen)
+
+            pygame.display.flip()
+
+            # Handle player input through button clicks
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+
+                    if fight_button.is_hovered(mouse_pos):
+                        self.execute_fight(monster, adventurer)
+                    elif item_button.is_hovered(mouse_pos):
+                        self.use_item(adventurer)
+
+                # Exit battle if monster or adventurer is defeated
+                if monster.hp <= 0 or adventurer.hp <= 0:
+                    running = False
+
+        # Check battle outcome
         if monster.hp <= 0:
             print(f"You defeated {monster.name}, Well done!")
             current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
-            #clear monster from room
-            current_room.set_monster(None)
-
+            current_room.set_monster(None)  # Clear monster from the room
         elif adventurer.hp <= 0:
-            print("Your were defeated, GAME OVER:(")
+            print("You were defeated, GAME OVER :(")
             pygame.quit()
             sys.exit()
+
+    def execute_fight(self, monster, adventurer):
+        """Handle the fight action."""
+        player_turns = max(1, adventurer.attack_speed // monster.attack_speed)
+
+        for _ in range(player_turns):
+            if monster.hp > 0:
+                damage = adventurer.attack(monster)
+                print(f"You attacked and dealt {damage} damage to {monster.name}.")
+            else:
+                break
+
+        if monster.hp > 0:
+            print(f"{monster.name} is attacking!")
+            damage = monster.attack(adventurer)
+            print(f"{monster.name} dealt {damage} damage to you.")
+
+    def use_item(self, adventurer):
+        """Handle the use item action."""
+        item = adventurer.use_item()
+        if item:
+            print(f"You used {item.get_name()}.")
+        else:
+            print("You don't have any usable items, bummer.")
 
     def set_active_adventurer(self, adventurer_name):
         """Switches the active adventurer."""
