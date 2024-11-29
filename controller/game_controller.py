@@ -1,6 +1,6 @@
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY, PILLAR_NAMES, get_fonts, OFF_WHITE
+from constants import BACKGROUND_COLOR, DARK_GREY, PILLAR_NAMES, get_fonts, OFF_WHITE, LIGHT_BLUE
 from controller.gui_elements import Button
 from model.factories.adventurer_factory import AdventurerFactory
 from model.factories.monster_factory import MonsterFactory
@@ -199,49 +199,41 @@ class GameController:
 
         adventurer = self.active_adventurer
 
-        # Define the black section coordinates (adjust these based on your layout)
-        room_section_x = 0
-        room_section_y = 450
-        room_section_width = 800
-        room_section_height = 150
-
-        # Define fight and item buttons in the room section
-        fight_button = Button(color=(0, 255, 0), x=150, y=room_section_y + 70, width=100, height=30,
+        # Define fight and item buttons
+        fight_button = Button(color=LIGHT_BLUE, x=150, y=540, width=100, height=30,
                               font=self.fonts["small"], text_color=(255, 255, 255), text="Fight")
-        item_button = Button(color=(0, 0, 255), x=350, y=room_section_y + 70, width=100, height=30,
+        item_button = Button(color=LIGHT_BLUE, x=350, y=540, width=100, height=30,
                              font=self.fonts["small"], text_color=(255, 255, 255), text="Use Item")
 
         running = True
         while running and monster.hp > 0 and adventurer.hp > 0:
-            # Clear screen
-            self.screen.fill(DARK_GREY)
+            # Draw UI background
+            bottom_rect = pygame.Rect(0, 450, 800, 150)
+            right_rect = pygame.Rect(650, 0, 150, 450)
+            pygame.draw.rect(self.screen, (0, 0, 0), bottom_rect)
+            pygame.draw.rect(self.screen, BACKGROUND_COLOR, right_rect)
 
-            # Restore the mini-map
-            map = pygame.transform.scale(self.dungeon[self.current_floor - 1].create_map(), (150, 150))
-            self.screen.blit(map, (650, 0))
-
-            # Restore the adventurer portrait
+            # Draw the adventurer's portrait
             portrait = self.get_hero_portrait()
-            portrait_position = (650, 450)  # Fixed position for the portrait
-            self.screen.blit(portrait, portrait_position)
+            self.screen.blit(portrait, (650, 450))
 
-            # Draw the black section as the battle UI
-            room_rect = pygame.Rect(room_section_x, room_section_y, room_section_width, room_section_height)
-            pygame.draw.rect(self.screen, (0, 0, 0), room_rect)  # True black background
+            # Display the room type as "Room: MONSTER"
+            room_text = self.fonts["small"].render("Room: MONSTER", True, OFF_WHITE)
+            self.screen.blit(room_text, (50, 460))
 
-            # Update "Room:" text to reflect the monster room
-            room_text = self.fonts["small"].render(f"Room: MONSTER", True, OFF_WHITE)
-            self.screen.blit(room_text, (10, room_section_y + 10))
-
-            # Draw monster and adventurer stats in the black section
+            # Display monster and player HP
             monster_text = self.fonts["small"].render(f"Monster HP: {monster.hp}", True, OFF_WHITE)
             adventurer_text = self.fonts["small"].render(f"Your HP: {adventurer.hp}", True, OFF_WHITE)
-            self.screen.blit(monster_text, (10, room_section_y + 40))
-            self.screen.blit(adventurer_text, (10, room_section_y + 60))
+            self.screen.blit(monster_text, (50, 490))
+            self.screen.blit(adventurer_text, (50, 510))
 
-            # Draw buttons in the black section
+            # Draw buttons for battle actions
             fight_button.draw(self.screen)
             item_button.draw(self.screen)
+
+            # Display the mini-map
+            map = pygame.transform.scale(self.dungeon[self.current_floor - 1].create_map(), (150, 150))
+            self.screen.blit(map, (650, 0))
 
             pygame.display.flip()
 
@@ -266,7 +258,8 @@ class GameController:
         if monster.hp <= 0:
             print(f"You defeated {monster.name}, Well done!")
             current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
-            current_room.set_monster(None)  # Clear monster from the room
+            # Clear monster from the room
+            current_room.set_monster(None)
         elif adventurer.hp <= 0:
             print("You were defeated, GAME OVER :(")
             pygame.quit()
