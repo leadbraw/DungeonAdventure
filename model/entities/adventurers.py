@@ -2,6 +2,7 @@ import random
 from abc import abstractmethod
 from typing import final
 from model.entities.entities import Entity
+from model.entities.inventory import Inventory
 
 # TODO move special action constants into database and add parameters to be updated with them
 
@@ -27,9 +28,10 @@ class Adventurer(Entity):
                  the_attack_speed, the_hit_chance, the_damage_range,
                  the_block_chance):
         super().__init__(the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
-        # adventurer specific attributes (from database)
         self.__my_type = the_type
         self.__my_block_chance = the_block_chance
+        self.inventory = Inventory()
+
 
     ### PUBLIC METHODS ###
     @abstractmethod
@@ -79,6 +81,42 @@ class Adventurer(Entity):
             blocked = True
 
         return blocked
+
+    def apply_buff(self, buff_value, buff_type):
+        """
+        Applies a permanent buff to the adventurer.
+
+        :param buff_value: The value of the buff to apply.
+        :param buff_type: The type of the buff (e.g., 'max_hp', 'block_chance', 'attack_damage', 'attack_speed').
+        """
+        if buff_type == "max_hp":
+            self.max_hp = self.max_hp + buff_value  # Uses the setter for max_hp
+            self._update_hp(-buff_value)
+            print(f"{self.name}'s maximum HP increased by {buff_value}. New max HP: {self.max_hp}.")
+        elif buff_type == "block_chance":
+            self.block_chance = min(self.block_chance + buff_value, 1.0)  # Cap block chance at 100%
+            print(f"{self.name}'s block chance increased by {buff_value}. New block chance: {self.block_chance:.2f}.")
+        elif buff_type == "attack_damage":
+            min_damage, max_damage = self.damage_range
+            self.damage_range = (min_damage + buff_value, max_damage + buff_value)  # Uses the setter for damage_range
+            print(f"{self.name}'s attack damage increased by {buff_value}. New damage range: {self.damage_range}.")
+        elif buff_type == "attack_speed":
+            self.attack_speed = self.attack_speed + buff_value  # Uses the setter for attack_speed
+            print(f"{self.name}'s attack speed increased by {buff_value}. New attack speed: {self.attack_speed}.")
+        else:
+            print(f"Buff type '{buff_type}' is not recognized.")
+
+    def heal_from_item(self, heal_amount):
+        """
+        Heals the adventurer by a specific amount from an item.
+        :param heal_amount: The amount of HP to restore.
+        """
+        if self.hp < self.max_hp:
+            healed = min(self.max_hp - self.hp, heal_amount)
+            self._update_hp(-healed)  # Negative value to heal
+            print(f"{self.name} healed for {healed} HP from an item. Current HP: {self.hp}/{self.max_hp}.")
+        else:
+            print(f"{self.name} is already at full health.")
 
     ### PROPERTIES ###
     @property

@@ -67,6 +67,23 @@ class Monster(Entity):
 
         return heal
 
+    def take_item_damage(self, damage):
+        """
+        Applies item-induced damage to the monster, bypassing regeneration.
+        :param damage: The amount of damage to apply.
+        :return: A string message describing the result.
+        """
+        if not self.is_alive():
+            return f"{self.name} is already defeated!"
+
+        # Directly update HP, bypassing regeneration logic
+        self._update_hp(-damage)
+        message = f"{self.name} takes {damage} item damage.\n"
+        if not self.is_alive():
+            message += f"{self.name} has been defeated!\n"
+
+        return message
+
     ### PROPERTIES ###
     @property
     def heal_chance(self):
