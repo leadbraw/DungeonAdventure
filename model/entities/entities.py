@@ -28,7 +28,7 @@ class Entity:
         self.__my_name = the_name.strip() if the_name else "Unnamed Entity"  # Validate name
         self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
         self.__my_attack_speed = max(1, the_attack_speed)  # Ensure non-zero attack speed
-        self.__my_hit_chance = min(max(0, the_hit_chance), 1)  # Clamp between 0 and 1
+        self.__my_hit_chance = min(max(0.1, the_hit_chance), 1)  # Clamp between 0.1 and 1
         self.__my_damage_range = (
             max(1, the_damage_range[0]),
             max(1, the_damage_range[0], the_damage_range[1])
@@ -67,10 +67,14 @@ class Entity:
         """
         message = ""
 
+        # number of attacks
         for i in range(self.__calculate_attack_num(the_target)):
+            # no attack if self or target is dead
             if not self.is_alive() or not the_target.is_alive():
                 break
 
+            # hit: [0, hit_chance]
+            # miss: (hit_chance, 1]
             if random.uniform(0, 1) <= self.hit_chance:
                 damage = random.randint(*self.damage_range)
                 message += f"{self.name} hit {the_target.name} for {damage} points.\n"
@@ -105,7 +109,7 @@ class Entity:
         :return: faint message if HP reaches 0.
         """
         message = ""
-        if self.hp - the_diff < 0:
+        if self.hp - the_diff <= 0:
             self.hp = 0
             message += self._has_fainted_msg()
         elif self.hp - the_diff > self.max_hp:
@@ -159,6 +163,8 @@ class Entity:
     @max_hp.setter
     def max_hp(self, the_max_hp):
         self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
+        if self.__my_hp > self.__my_max_hp:
+            self.__my_hp = self.__my_max_hp
 
     @attack_speed.setter
     def attack_speed(self, the_attack_speed):
@@ -166,7 +172,7 @@ class Entity:
 
     @hit_chance.setter
     def hit_chance(self, the_hit_chance):
-        self.__my_hit_chance = min(max(0, the_hit_chance), 1)  # Clamp between 0 and 1
+        self.__my_hit_chance = min(max(0.1, the_hit_chance), 1)  # Clamp between 0 and 1
 
     @damage_range.setter
     def damage_range(self, the_damage_range):
