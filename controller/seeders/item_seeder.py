@@ -6,34 +6,29 @@ class ItemSeeder:
 
     def populate_items(self):
         """Inserts initial item data into the items table."""
-
-        '''
-        Fields by position:
-        0: name (str)
-        1: description (str)
-        2: ability (str)
-        3: unique (bool (int))
-        '''
         items_data = [
-            # Pillars of OO
-            ("Pillar of Abstraction", "One of the four Pillars of OO required to win the game.",
-             "effect handled externally", 1),  # Use 0/1 for False/True
-            ("Pillar of Encapsulation", "One of the four Pillars of OO required to win the game.",
-             "effect handled externally", 1),
-            ("Pillar of Inheritance", "One of the four Pillars of OO required to win the game.",
-             "effect handled externally", 1),
-            ("Pillar of Polymorphism", "One of the four Pillars of OO required to win the game.",
-             "effect handled externally", 1),
+            # Pillars of OO (Permanent buffs targeting the adventurer)
+            ("Pillar of Abstraction", "One of the four Pillars of OO. Grants +25 to max HP.",
+             "adventurer", 1, 25, 25, "max_hp"),
+            ("Pillar of Encapsulation", "One of the four Pillars of OO. Grants +0.1 to block chance.",
+             "adventurer", 1, 1, 1, "block_chance"),
+            ("Pillar of Inheritance", "One of the four Pillars of OO. Grants +5 to min and max attack damage.",
+             "adventurer", 1, 5, 5, "attack_damage"),
+            ("Pillar of Polymorphism", "One of the four Pillars of OO. Grants +1 to attack speed.",
+             "adventurer", 1, 1, 1, "attack_speed"),
 
             # Potions (temporary items)
-            ("Data Spike", "Deals 20-25 Damage to a Monster.", "effect handles externally", 0),
-            ("Healing Potion", "Heals the adventurer by 5-15 hit points.", "hp:5-15", 0),
-            ("Vision Potion", "Reveals surrounding rooms in the dungeon.", "effect handles externally", 0)
+            ("Code Spike", "Deals 20-25 damage to a Monster.",
+             "monster", 0, 20, 25, None),
+            ("Energy Drink", "Heals the adventurer by 5-15 hit points.",
+             "adventurer", 0, 5, 15, None),
+            ("White Box", "Reveals surrounding rooms in the dungeon.",
+             "room", 0, None, None, None)
         ]
 
         insert_query = """
-            INSERT INTO items (name, description, ability, one_time_item)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO items (name, description, target, one_time_item, effect_min, effect_max, buff_type)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """
 
         try:

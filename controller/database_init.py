@@ -66,8 +66,11 @@ class DatabaseInitializer:
                     id INTEGER PRIMARY KEY,
                     name TEXT NOT NULL,
                     description TEXT,
-                    ability TEXT,
-                    one_time_item INTEGER -- Use INTEGER instead of BOOLEAN
+                    target TEXT NOT NULL,
+                    one_time_item INTEGER, -- Use INTEGER instead of BOOLEAN
+                    effect_min INTEGER,
+                    effect_max INTEGER,
+                    buff_type TEXT
                 );
             """,
             "rooms": """

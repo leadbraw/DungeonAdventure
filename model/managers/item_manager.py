@@ -21,28 +21,51 @@ class ItemManager:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
 
         # Separate raw item data into two dictionaries
-        self.one_time_items = {}
-        self.other_items = {}
+        self.one_time_items = {}  # Items that can only be acquired once
+        self.other_items = {}  # Items that can be acquired multiple times
 
+        for item_name, data in self.one_time_items.items():
+            if not data["name"]:
+                raise ValueError(f"Missing name for one-time item: {data}")
+        for item_name, data in self.other_items.items():
+            if not data["name"]:
+                raise ValueError(f"Missing name for limited item: {data}")
+
+        # Populate dictionaries from items_data
         for row in items_data:
-            item_name = row[1]  # Assuming the name is at index 1 TODO: fix?
-            if row[4]:  # Assuming the one_time_item/unique_item flag is at index 4 TODO: fix?
-                self.one_time_items[item_name] = row
+            item_name = row[1]
+
+            item_data = {
+                "name": row[1],
+                "description": row[2],
+                "target": row[3],
+                "one_time_item": row[4],
+                "effect_min": row[5],
+                "effect_max": row[6],
+                "buff_type": row[7]
+            }
+
+            if row[4]:  # If one_time_item is True
+                self.one_time_items[item_name] = item_data
             else:
-                self.other_items[item_name] = row
+                self.other_items[item_name] = item_data
 
-        self.unique_items_acquired = set()  # Track unique items acquired by the adventurer
+        # Track unique items acquired by the adventurer
+        self.unique_items_acquired = set()
 
-    def get_unique_item_data(self, item_name):
+    def get_unique_item_data(self):
         """
-        Retrieve raw data for a unique item, ensuring it hasn't already been acquired.
-        :param item_name: The name of the unique item.
-        :return: Raw data for the item or None if already acquired or not found.
-        """
-        if item_name in self.unique_items_acquired:
-            return None  # Item has already been acquired
+        Retrieve and remove a random unique item from the one_time_items dictionary.
+        Ensures each unique item is used only once.
 
-        return self.one_time_items.get(item_name)
+        :return: Raw data for a random unique item, or None if no items remain.
+        """
+        if not self.one_time_items:
+            return None  # No more unique items to retrieve
+
+        # Randomly select an item name and pop it from the dictionary
+        item_name = random.choice(list(self.one_time_items.keys()))
+        return self.one_time_items.pop(item_name)
 
     def mark_item_acquired(self, item_name):
         """
@@ -53,7 +76,7 @@ class ItemManager:
 
     def get_limited_item_data(self, item_name):
         """
-        Retrieve raw data for a limited-instance item.
+        Retrieve data for a non-unique item.
         :param item_name: The name of the item.
         :return: Raw data for the item or None if not found.
         """
@@ -61,16 +84,29 @@ class ItemManager:
 
     def get_random_consumable_item_data(self):
         """
-        Retrieve raw data for a random consumable item.
+        Retrieve data for a random consumable item.
         :return: Raw data for the item or None if no items are available.
         """
-        consumable_data = [
-            raw_data for raw_data in self.other_items.values() if not raw_data[4]  # Assuming index 4 is 'unique'
-        ]
-        return random.choice(consumable_data) if consumable_data else None
+        if not self.other_items:
+            print("Warning: No consumable items available.")
+            return None
+
+        return random.choice(list(self.other_items.values()))
 
     def reset_unique_items(self):
         """
         Clear the set of unique items acquired, allowing them to be acquired again.
         """
         self.unique_items_acquired.clear()
+
+    def list_all_items(self):
+        """
+        Lists all items managed by the ItemManager for debugging purposes.
+        """
+        print("Unique Items:")
+        for item_name, item_data in self.one_time_items.items():
+            print(f"- {item_name}: {item_data}")
+
+        print("\nLimited Items:")
+        for item_name, item_data in self.other_items.items():
+            print(f"- {item_name}: {item_data}")
