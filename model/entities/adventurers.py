@@ -11,11 +11,10 @@ from model.entities.entities import Entity
 
     Entity shared:
     name (string): adventurer's name.
+    type (string)
     max_hp (int): adventurer's max hp.
-    hit_chance (float): adventurer's attack hit chance percentage (0 and 1).
+    hit_chance (float): adventurer's attack hit chance percentage (0.1 and 1).
     damage_range (tuple): adventurer's attack min and max damage.
-
-    Adventurer specific:
     block_chance (float): adventurer's block chance percentage (0 to 1).
 
     Methods:
@@ -49,6 +48,9 @@ class Adventurer(Entity):
         """
         message = ""
 
+        if not self.is_alive():
+            return message
+
         # check block
         if self._block():
             message += self._block_msg()
@@ -79,6 +81,10 @@ class Adventurer(Entity):
         return blocked
 
     ### PROPERTIES ###
+    @property
+    def type(self):
+        return self.__my_type
+
     @property
     def block_chance(self):
         return self.__my_block_chance
@@ -199,7 +205,9 @@ class Thief(Adventurer):
             return message
 
         message += self.__special_action_msg(the_target)
-        # surprise attack 0.4 to hit, 0.4 to normal, 0.2 to skip
+        # miss: [0, 0.2)
+        # hit: [0.2, 0.6)
+        # extra hit: [0.6, 1]
         # attack roll (random float within the hit chance)
         attack_roll = random.uniform(0, 1)
 
