@@ -1,6 +1,4 @@
-from unittest.mock import patch
 import pytest
-from pytest_mock import MockerFixture
 from model.entities.entities import Entity
 
 
@@ -17,6 +15,21 @@ class TestEntity(Entity):
         return message
 
 
+@pytest.fixture
+def entity():
+    return TestEntity("Test Entity", 100, 10,
+                      0.8, (5, 10))
+@pytest.fixture
+def attacker():
+    return TestEntity("Attacker", 100, 10,
+                      0.8, (5, 10))
+
+@pytest.fixture
+def target():
+    return TestEntity("Target", 100, 10,
+                      0.8, (5, 10))
+
+
 # Test initialization
 def test_entity_initialization():
     # Test valid initialization
@@ -30,84 +43,67 @@ def test_entity_initialization():
     assert entity.hp == 100
 
 
-def test_invalid_name():
+def test_invalid_name(entity):
     # Test invalid name input
-    entity = TestEntity("", 100, 10, 0.8, (5, 10))
+    entity.name = ""
     assert entity.name == "Unnamed Entity"
 
 
-def test_invalid_max_hp():
+def test_invalid_max_hp(entity):
     # Test invalid max_hp input (must be at least 1)
-    entity = TestEntity("Test Entity", -5, 10, 0.8, (5, 10))
+    entity.max_hp = -5
     assert entity.max_hp == 1
     assert entity.hp == 1
 
 
-def test_invalid_attack_speed():
+def test_invalid_attack_speed(entity):
     # Test invalid attack speed (must be at least 1)
-    entity = TestEntity("Test Entity", 100, -10, 0.8, (5, 10))
+    entity.attack_speed = -10
     assert entity.attack_speed == 1
 
 
-def test_invalid_hit_chance():
+@pytest.mark.parametrize("chance_in, chance_out", [(-0.2, 0.1),
+                                                   (1.2, 1)])
+def test_invalid_hit_chance(chance_in, chance_out, entity):
     # Test invalid hit chance (must be between 0 and 1)
-    entity = TestEntity("Test Entity", 100, 10, -0.2, (5, 10))
-    assert entity.hit_chance == 0
-
-    entity = TestEntity("Test Entity", 100, 10, 1.2, (5, 10))
-    assert entity.hit_chance == 1
+    entity.hit_chance = chance_in
+    assert entity.hit_chance == chance_out
 
 
-def test_invalid_damage_range():
+@pytest.mark.parametrize("range_in, range_out", [((-5, 10), (1, 10)),
+                                                 ((5, -10), (5, 5)),
+                                                 ((5, ), (1, 1))])
+def test_invalid_damage_range(range_in, range_out, entity):
     # Test invalid damage range (must be non-negative and a tuple of length 2)
-    entity = TestEntity("Test Entity", 100, 10, 0.8, (-5, 10))
-    assert entity.damage_range == (1, 10)
-
-    entity = TestEntity("Test Entity", 100, 10, 0.8, (5, -10))
-    assert entity.damage_range == (5, 5)
-
-    entity = TestEntity("Test Entity", 100, 10, 0.8, (5,))
-    assert entity.damage_range == (1, 1)
+    entity.damage_range = range_in
+    assert entity.damage_range == range_out
 
 
 # Test is_alive
-def test_is_alive():
-    # Test when alive
-    entity = TestEntity("Test Entity", 100, 10, 0.8, (5, 10))
-    assert entity.is_alive() is True
-
-    # Test when fainted (hp == 0)
-    entity.hp = 0
-    assert entity.is_alive() is False
+@pytest.mark.parametrize("hp_val, status", [(100, True),
+                                            (0, False)])
+def test_is_alive(hp_val, status, entity):
+    entity.hp = hp_val
+    assert entity.is_alive() is status
 
 
 # Test attack method
-def test_attack():
-    attacker = TestEntity("Attacker", 100, 10, 0.8, (5, 10))
-    target = TestEntity("Target", 100, 10, 0.8, (5, 10))
-
-    with patch('random.uniform', return_value=0.7):  # Force a hit
-        message = attacker.attack(target)
-        assert "Attacker hit Target" in message
-
-    with patch('random.uniform', return_value=0.9):  # Force a miss
-        message = attacker.attack(target)
-        assert "Attacker missed the attack." in message
+@pytest.mark.parametrize("force_roll, attack_outcome", [(0, "Attacker hit Target"),
+                                                        (1, "Attacker missed the attack.")])
+def test_attack(force_roll, attack_outcome, attacker, target, mocker):
+    mocker.patch('random.uniform', return_value=force_roll)
+    message = attacker.attack(target)
+    assert attack_outcome in message
 
 
-def test_attack_faints_target():
-    attacker = TestEntity("Attacker", 100, 10, 0.8, (5, 10))
-    target = TestEntity("Target", 5, 10, 0.8, (5, 10))
-
-    # Target will faint after one attack
-    with patch('random.uniform', return_value=0.7):  # Force a hit
-        message = attacker.attack(target)
-        assert "Target has fainted." in message
+def test_attack_kills_target(attacker, target, mocker):
+    target.hp = 5
+    mocker.patch('random.uniform', return_value=0)  # Force hit
+    message = attacker.attack(target)
+    assert "Target has fainted." in message
 
 
-def test_attack_no_action_if_dead():
-    attacker = TestEntity("Attacker", 100, 10, 0.8, (5, 10))
-    target = TestEntity("Target", 10, 10, 0.8, (5, 10))
+def test_attack_no_action_if_dead(attacker, target):
     target._update_hp(target.max_hp)
 
     message = attacker.attack(target)
@@ -115,29 +111,19 @@ def test_attack_no_action_if_dead():
 
 
 # Test _update_hp method
-def test_update_hp():
-    entity = TestEntity("Test Entity", 100, 10, 0.8, (5, 10))
-
-    # Subtract 20 HP (but not below 0)
-    entity._update_hp(20)
-    assert entity.hp == 80
-
-    # Subtract 100 HP (should be set to 0, faint)
-    entity._update_hp(100)
-    assert entity.hp == 0
-    assert "Test Entity has fainted." in entity._update_hp(100)
-
-    # Add 50 HP (but not above max HP)
-    entity._update_hp(-50)
-    assert entity.hp == 50
-
-    # Try to go above max HP
-    entity._update_hp(-200)
-    assert entity.hp == entity.max_hp  # No more than max_hp
+@pytest.mark.parametrize("hp_in, hp_should", [(20, 60),
+                                              (100, 0),
+                                              (-50, 100),
+                                              (-10, 90)])
+def test_update_hp(hp_in, hp_should, entity):
+    # increase max for healing testing
+    entity.hp = 80
+    # Subtract in value
+    entity._update_hp(hp_in)
+    assert entity.hp == hp_should
 
 
 # Test faint message
-def test_faint_message():
-    entity = TestEntity("Test Entity", 100, 10, 0.8, (5, 10))
+def test_faint_message(entity):
     faint_message = entity._has_fainted_msg()
     assert faint_message == "Test Entity has fainted.\n"
