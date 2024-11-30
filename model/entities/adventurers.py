@@ -63,7 +63,7 @@ class Adventurer(Entity):
         Returns a successful block message.
         :return: block message.
         """
-        return f"{self.name} blocked the attack.\n"
+        return f"You blocked the attack.\n"
 
     @final
     def _block(self):
