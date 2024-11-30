@@ -27,6 +27,7 @@ class GameController:
         self.current_floor = 1
         self.position = None
         self.active_adventurer = None
+        self.current_message = None
         self.fonts = get_fonts() # dict of fonts
 
         self.set_active_adventurer(hero_name)
@@ -175,68 +176,89 @@ class GameController:
     def room_interaction(self):
         """Interact with the current room."""
         current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
-        print(f"Entered room at {self.position}: {current_room.type}")
+        message = f"Entered room at {self.position}: {current_room.type}"
 
         if current_room.type == "MONSTER" and current_room.has_monster():
             monster = current_room.get_monster()
+            message = f"A wild {monster.name} appears! Prepare for battle!"
             current_room.set_visited(True)
-            self.start_battle(current_room.get_monster())
-
+            self.draw_ui(message)
+            pygame.display.flip()
+            pygame.time.delay(2000)
+            self.start_battle(monster)  # Start the battle
 
         elif current_room.type == "ITEM" and current_room.has_item():
             item = current_room.get_item()
-            print(f"You found a {item.get_name()}!")
+            message = f"You found a {item.get_name()}!"
 
             # Special handling for Pillar items
             if item.get_name().startswith("Pillar"):
-                print(f"The {item.get_name()} grants you its power!")
-                # Automatically use the Pillar effect on the adventurer
+                message += f" The {item.get_name()} grants you its power!"
                 self.active_adventurer.inventory._apply_effect_to_adventurer(
                     {
                         "name": item.get_name(),
-                        "buff_type": item.get_buff_type(),  # Assume Pillars have a buff_type attribute
-                        "effect_min": item.get_effect_min(),  # Assume these attributes exist
-                        "effect_max": item.get_effect_max()
+                        "buff_type": item.get_buff_type(),
+                        "effect_min": item.get_effect_min(),
+                        "effect_max": item.get_effect_max(),
                     },
                     self.active_adventurer,
                     item.get_effect_min(),
-                    item.get_effect_max()
+                    item.get_effect_max(),
                 )
-                # Remove the item from the room
                 current_room.item = None
             else:
                 # Add the item to the inventory if it's not a Pillar
                 if self.active_adventurer.inventory.add_item(item):
-                    print(f"{item.get_name()} added to your inventory.")
+                    message += f" {item.get_name()} added to your inventory."
                     current_room.item = None
                 else:
-                    print(f"Your inventory is full! Unable to pick up {item.get_name()}.")
+                    message += f" Your inventory is full! Unable to pick up {item.get_name()}."
+
+            self.draw_ui(message)
+            pygame.display.flip()
 
         elif current_room.type == "EXIT":
             current_room.set_visited(True)
             if self.current_floor == len(self.dungeon):
-                print("You found the exit! Congratulations!")
+                message = "You found the exit! Congratulations!"
+                self.draw_ui(message)
+                pygame.display.flip()
+                pygame.time.delay(3000)
                 pygame.quit()
                 sys.exit()
             else:
-                print(f"You have completed floor {self.current_floor}! Proceeding to the next floor.")
+                message = f"You have completed floor {self.current_floor}! Proceeding to the next floor."
+                self.draw_ui(message)
+                pygame.display.flip()
+                pygame.time.delay(2000)
                 self.current_floor += 1
                 self.position = self.dungeon[self.current_floor - 1].entrance_loc
                 self.dungeon[self.current_floor - 1].fetch_room(*self.position).set_visited(True)
-                print(f"Entering floor {self.current_floor} at position {self.position}.")
+                message = f"Entering floor {self.current_floor} at position {self.position}."
+                self.draw_ui(message)
+                pygame.display.flip()
 
         elif current_room.type == "ENTRANCE":
-            print("You are back at the entrance.")
+            message = "You are back at the entrance."
+            self.draw_ui(message)
+            pygame.display.flip()
 
         elif current_room.type == "PILLAR" and current_room.has_item():
             pillar = current_room.get_item()
-            print(f"You've found the {pillar.get_name()}! Wow!")
+            message = f"You've found the {pillar.get_name()}! Wow!"
             current_room.item = None
+            self.draw_ui(message)
+            pygame.display.flip()
 
         elif current_room.type == "EMPTY":
-            print("You've found an empty room. It smells in here.")
+            message = "You've found an empty room. It smells in here."
+            self.draw_ui(message)
+            pygame.display.flip()
 
+        # Mark the room as visited and display the final interaction message
         current_room.set_visited(True)
+        self.draw_ui(message)
+        pygame.display.flip()
 
     def start_battle(self, monster):
         """Starts and Handles battle action with player vs monster in the Room section."""
@@ -365,22 +387,26 @@ class GameController:
         else:
             print(f"Adventurer '{adventurer_name}' not found.")
 
-    def draw_ui(self):
-        """Draws the game's user interface."""
+    def draw_ui(self, message=None):
+        """Draws the game's user interface, updating the room message permanently."""
+        # Draw the UI background
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         right_rect = pygame.Rect(650, 0, 150, 450)
         pygame.draw.rect(self.screen, BACKGROUND_COLOR, bottom_rect)
         pygame.draw.rect(self.screen, BACKGROUND_COLOR, right_rect)
 
+        # Draw the adventurer's portrait
         portrait = self.get_hero_portrait()
         self.screen.blit(portrait, (650, 450))
 
-        # Display the current room type
-        current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
-        room_text = self.fonts["small"].render(
-            f"Room: {current_room.type}", True, OFF_WHITE
-        )
-        self.screen.blit(room_text, (50, 500))
+        # If an interaction message is provided, update the message state
+        if message:
+            self.current_message = message
+
+        # Display the current message (either room type or interaction message)
+        if hasattr(self, 'current_message') and self.current_message:
+            message_text = self.fonts["small"].render(self.current_message, True, OFF_WHITE)
+            self.screen.blit(message_text, (50, 500))
 
     def get_hero_portrait(self):
         """Returns the portrait for the selected hero."""
