@@ -3,11 +3,13 @@ from model.managers.item_manager import ItemManager
 from model.managers.room_manager import RoomManager
 from model.managers.monster_manager import MonsterManager
 from model.managers.adventurer_manager import AdventurerManager
+from model.managers.sprite_manager import SpriteManager
 from controller.seeders.adventurer_seeder import AdventurerSeeder
 from controller.seeders.item_seeder import ItemSeeder
 from controller.seeders.monster_seeder import MonsterSeeder
 from controller.seeders.room_seeder import RoomSeeder
 from model.managers.database_manager import DatabaseManager
+from constants import SPRITE_PATHS
 
 
 class GameSetup:
@@ -16,6 +18,7 @@ class GameSetup:
         self.room_manager = None
         self.monster_manager = None
         self.adventurer_manager = None
+        self.sprite_manager = None
 
     def setup(self):
         # Step 1: Initialize the DatabaseInitializer
@@ -43,7 +46,7 @@ class GameSetup:
         items_data = db_manager.fetch_items()
         rooms_data = db_manager.fetch_rooms()
         monsters_data = db_manager.fetch_monsters()
-        adventurers_data = db_manager.fetch_adventurers()  # Fetch adventurer data
+        adventurers_data = db_manager.fetch_adventurers()
         db_manager.close_connection()
 
         # Step 5: Initialize managers with the fetched data
@@ -53,5 +56,16 @@ class GameSetup:
         self.monster_manager = MonsterManager.get_instance(monsters_data)
         self.adventurer_manager = AdventurerManager.get_instance(adventurers_data)
 
+        # Step 6: Initialize SpriteManager and preload sprites
+        print("Initializing SpriteManager...")
+        self.sprite_manager = SpriteManager.get_instance()
+        self.sprite_manager.preload_sprites(SPRITE_PATHS)
+
         print("Game setup complete!")
-        return self.item_manager, self.room_manager, self.monster_manager, self.adventurer_manager
+        return (
+            self.item_manager,
+            self.room_manager,
+            self.monster_manager,
+            self.adventurer_manager,
+            self.sprite_manager,
+        )
