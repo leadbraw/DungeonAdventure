@@ -262,7 +262,6 @@ class GameController:
 
     def start_battle(self, monster):
         """Starts and Handles battle action with player vs monster in the Room section."""
-        print(f"A wild {monster.name} appears! Prepare for battle!")
 
         adventurer = self.active_adventurer
         inventory_overlay = InventoryOverlay(self.screen, self.fonts, adventurer.inventory)
@@ -398,6 +397,11 @@ class GameController:
         # Draw the adventurer's portrait
         portrait = self.get_hero_portrait()
         self.screen.blit(portrait, (650, 450))
+
+        # Draw adventurer's HP
+        current_hp, max_hp = self.active_adventurer.hp, self.active_adventurer.max_hp
+        hp_text = self.fonts["small"].render(f"{current_hp} / {max_hp}", True, OFF_WHITE)
+        self.screen.blit(hp_text, (660, 420)) # TODO: Add hp bar, also display hp during battle as well.
 
         # If an interaction message is provided, update the message state
         if message:
