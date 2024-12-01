@@ -70,12 +70,15 @@ def main():
                 # Player returned to main menu
                 state = "MAIN_MENU"
 
+
         elif state == "GAMEPLAY":
             # Initialize and start the game
             if selected_hero:
                 game_controller = GameController(screen, selected_hero)
                 game_controller.set_active_adventurer(selected_hero)
-                game_controller.initialize_dungeon()
+
+                # Dungeon is already initialized when DungeonManager is instantiated
+                print("[Main] Dungeon is already initialized through DungeonManager.")
                 game_controller.display_game()
                 state = "QUIT"  # Exit game after gameplay finishes
 
