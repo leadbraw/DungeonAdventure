@@ -77,7 +77,7 @@ class Monster(Entity):
             return f"{self.name} is already defeated!"
 
         # Directly update HP, bypassing regeneration logic
-        self._update_hp(-damage)
+        self._update_hp(damage)
         message = f"{self.name} takes {damage} item damage.\n"
         if not self.is_alive():
             message += f"{self.name} has been defeated!\n"
