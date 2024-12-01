@@ -12,7 +12,7 @@ from model.managers.monster_manager import MonsterManager
 from model.managers.adventurer_manager import AdventurerManager
 from model.managers.item_manager import ItemManager
 from model.dungeon.dungeon import Dungeon
-
+from model.managers.sprite_manager import SpriteManager  # Import SpriteManager
 
 class GameController:
     def __init__(self, screen, hero_name):
@@ -21,16 +21,17 @@ class GameController:
         self.room_manager = RoomManager.get_instance()
         self.monster_manager = MonsterManager.get_instance()
         self.item_manager = ItemManager.get_instance()
-        # print(f"Adventurers data passed to AdventurerManager: {adventurers_data}")
         self.adventurer_manager = AdventurerManager.get_instance()
+        self.sprite_manager = SpriteManager.get_instance()
         self.dungeon = []  # List of floors
         self.current_floor = 1
         self.position = None
         self.active_adventurer = None
         self.current_message = None
-        self.fonts = get_fonts() # dict of fonts
+        self.fonts = get_fonts()  # Dictionary of fonts
 
         self.set_active_adventurer(hero_name)
+
 
     def initialize_dungeon(self):
         """Creates all four floors of the dungeon."""
@@ -124,10 +125,28 @@ class GameController:
         while True:
             self.screen.fill(DARK_GREY)
 
-            # Draw game UI
-            self.draw_ui()
+            # Fetch the current room's sprite
+            current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
+            room_doors = current_room.valid_directions  # List of four booleans (top, right, bottom, left)
+            sprite_config = self.room_manager.get_room_by_doors(
+                room_doors)  # Get room sprite and rotation from RoomManager
 
-            # Draw map
+            # Render the current room's sprite
+            if sprite_config and "sprite_name" in sprite_config and "rotation" in sprite_config:
+                sprite_name, rotation = sprite_config["sprite_name"], sprite_config["rotation"]
+                room_sprite = self.sprite_manager.get_transformed_sprite(sprite_name, rotate=rotation)
+
+                if room_sprite:
+                    x = (650 - room_sprite.get_width()) // 2  # Center within 650px
+                    y = 0  # Top of the screen
+                    self.screen.blit(room_sprite, (x, y))
+                else:
+                    print(f"[GameController] Failed to render sprite '{sprite_name}' with rotation {rotation}.")
+            else:
+                print(f"[GameController] Invalid sprite config for room doors {room_doors}: {sprite_config}")
+
+            # Draw game UI and map
+            self.draw_ui()
             map = pygame.transform.scale(self.dungeon[self.current_floor - 1].create_map(), (150, 150))
             self.screen.blit(map, (650, 0))
 
