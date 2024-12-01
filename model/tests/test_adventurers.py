@@ -101,3 +101,58 @@ def test_hit_response_for_dead_adventurer(adventurer):
     # Should not perform any action and return empty response
     assert result == ""
 
+
+# Test Adventurer's apply_buff method
+def test_apply_buff_max_hp(adventurer):
+    adventurer.apply_buff(20, "max_hp")
+    assert adventurer.max_hp == 120  # Maximum HP should increase
+    assert adventurer.hp == 120  # Current HP should also increase by the same amount
+
+
+def test_apply_buff_block_chance(adventurer):
+    assert adventurer.block_chance == 0.5  # Verify initial value
+    adventurer.apply_buff(0.1, "block_chance")
+    assert adventurer.block_chance == 0.6
+
+    adventurer.apply_buff(0.5, "block_chance")  # Test cap at 1.0
+    assert adventurer.block_chance == 1.0
+
+
+def test_apply_buff_attack_damage(adventurer):
+    assert adventurer.damage_range == (10, 20)  # Verify initial value
+    adventurer.apply_buff(5, "attack_damage")
+    assert adventurer.damage_range == (15, 25)
+
+
+def test_apply_buff_attack_speed(adventurer):
+    assert adventurer.attack_speed == 5  # Verify initial value
+    adventurer.apply_buff(2, "attack_speed")
+    assert adventurer.attack_speed == 7
+
+
+def test_apply_buff_invalid_type(adventurer):
+    adventurer.apply_buff(10, "invalid_type")
+    # Ensure no changes are made
+    assert adventurer.max_hp == 100
+    assert adventurer.block_chance == 0.5
+    assert adventurer.damage_range == (10, 20)
+    assert adventurer.attack_speed == 5
+
+
+# Test Adventurer's heal_from_item method
+def test_heal_from_item(adventurer):
+    adventurer.hp = 50  # Simulate damage
+    adventurer.heal_from_item(30)
+    assert adventurer.hp == 80  # Healed by 30
+
+
+def test_heal_from_item_full_health(adventurer):
+    adventurer.hp = 100  # Already at full health
+    adventurer.heal_from_item(30)
+    assert adventurer.hp == 100  # No change
+
+
+def test_heal_from_item_overheal(adventurer):
+    adventurer.hp = 90  # Almost full health
+    adventurer.heal_from_item(20)
+    assert adventurer.hp == 100  # Capped at max HP
