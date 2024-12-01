@@ -1,10 +1,11 @@
 import pygame
-from constants import (SCREEN_WIDTH, SCREEN_HEIGHT, get_fonts)
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, get_fonts, SPRITE_PATHS
 from controller.splash_screen import SplashScreen
 from controller.main_screen import MainScreen
 from controller.character_screen import CharacterScreen
 from controller.game_controller import GameController
 from controller.game_setup import GameSetup
+from model.managers.sprite_manager import SpriteManager
 
 def main():
     """Entry point for the game."""
@@ -18,15 +19,25 @@ def main():
     # Create the screen and set up window properties
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Dungeon Adventure")
-    dungeon_icon = pygame.image.load('assets/images/dice.png')
+
+    # Use SpriteManager to preload images
+    sprite_manager = SpriteManager.get_instance()
+    sprite_manager.preload_sprites({
+        "hero": SPRITE_PATHS["hero"],
+        "dice": SPRITE_PATHS["dice"]
+    })
+    hero_image = sprite_manager.get_sprite("hero")
+    dungeon_icon = sprite_manager.get_sprite("dice")
+
+    # Set window icon
     pygame.display.set_icon(dungeon_icon)
 
     # Initialize GameSetup
     game_setup = GameSetup()
 
-    # Show splash screen while running the game setup
+    # Show splash screen with hero image and text
     splash_screen = SplashScreen(screen, font_large)
-    splash_screen.display("TEAM 5", game_setup.setup)
+    splash_screen.display("TEAM 5", setup_function=game_setup.setup, image=hero_image, image_size=(256, 256))
 
     # Define game states
     state = "MAIN_MENU"
@@ -53,13 +64,7 @@ def main():
             if isinstance(result, str):
                 # Hero selected and confirmed
                 selected_hero = result
-                #state = "GAMEPLAY"
-                if not selected_hero:
-                    print(f"Invalid hero name selected: {result}")
-                else:
-                    print(f"Hero selected: {selected_hero}")
-                    # TODO: INSTANTIATE HERO BASED ON CLASS NAME AAAAAAAAAAAAa
-                    state = "GAMEPLAY"
+                state = "GAMEPLAY"
 
             elif result is None:
                 # Player returned to main menu
