@@ -3,7 +3,7 @@ from model.entities.entities import Entity
 
 
 # Mock subclass for testing
-class TestEntity(Entity):
+class MockEntity(Entity):
     def __init__(self, the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
         super().__init__(the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
 
@@ -17,23 +17,23 @@ class TestEntity(Entity):
 
 @pytest.fixture
 def entity():
-    return TestEntity("Test Entity", 100, 10,
+    return MockEntity("Test Entity", 100, 10,
                       0.8, (5, 10))
 @pytest.fixture
 def attacker():
-    return TestEntity("Attacker", 100, 10,
+    return MockEntity("Attacker", 100, 10,
                       0.8, (5, 10))
 
 @pytest.fixture
 def target():
-    return TestEntity("Target", 100, 10,
+    return MockEntity("Target", 100, 10,
                       0.8, (5, 10))
 
 
 # Test initialization
 def test_entity_initialization():
     # Test valid initialization
-    entity = TestEntity("Test Entity", 100, 10,
+    entity = MockEntity("Test Entity", 100, 10,
                         0.8, (5, 10))
     assert entity.name == "Test Entity"
     assert entity.max_hp == 100
