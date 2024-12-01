@@ -23,7 +23,22 @@ class RoomManager:
             }
 
     def get_room_by_doors(self, doors):
-        return self.rooms.get(tuple(doors))
+        """
+        Retrieves the sprite configuration for the given door configuration.
+        :param doors: List of four booleans representing the door states (top, right, bottom, left).
+        :return: A dictionary containing 'sprite_name' and 'rotation', or None if not found.
+        """
+        room_config = self.rooms.get(tuple(doors))
+        if room_config:
+            # Normalize the sprite name
+            image_path = room_config["image_path"]
+            sprite_name = image_path.split("\\")[-1].split(".")[0]  # For Windows paths
+            # print(
+            #     f"[RoomManager] Found room config for doors {doors}: sprite='{sprite_name}', rotation={room_config['rotation']}")
+            return {"sprite_name": sprite_name, "rotation": room_config["rotation"]}
+        else:
+            print(f"[RoomManager] No room config found for doors: {doors}")
+            return None
 
     def get_all_rooms(self):
         return self.rooms
