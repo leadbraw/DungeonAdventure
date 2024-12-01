@@ -1,13 +1,14 @@
 import pygame
+import os
 
 # Colors
-DARK_GREY = (60, 60, 60)
-PASTEL_RED = (250, 145, 147)
-LIGHT_BLUE = (85, 176, 230)
-OFF_WHITE = (226, 226, 226)
 BACKGROUND_COLOR = (24, 24, 24)
+DARK_GREY = (60, 60, 60)
 FADED_BLUE = (100, 149, 237)
 FADED_GRAY = (169, 169, 169)
+LIGHT_BLUE = (85, 176, 230)
+OFF_WHITE = (226, 226, 226)
+PASTEL_RED = (250, 145, 147)
 
 # Screen Dimensions
 SCREEN_WIDTH = 800
@@ -28,3 +29,46 @@ def get_fonts():
         "small": pygame.font.Font(None, 30),
         "medium": pygame.font.Font(None, 50),
     }
+
+# Sprite Paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ASSETS_DIR = os.path.join(BASE_DIR, "assets", "images")
+
+SPRITE_PATHS = {
+    # dungeon sprites, will rotate
+    "dungeon_one": os.path.join(ASSETS_DIR, "dungeon_one.png"),
+    "dungeon_two": os.path.join(ASSETS_DIR, "dungeon_two.png"),
+    "dungeon_two_op_a": os.path.join(ASSETS_DIR, "dungeon_two_op_a.png"),
+    "dungeon_two_op_b": os.path.join(ASSETS_DIR, "dungeon_two_op_b.png"),
+    "dungeon_three": os.path.join(ASSETS_DIR, "dungeon_three.png"),
+    "dungeon_four": os.path.join(ASSETS_DIR, "dungeon_four.png"),
+
+    # enemy sprites, may flip
+    "gremlin_one": os.path.join(ASSETS_DIR, "gremlin_one.png"),
+    "gremlin_two": os.path.join(ASSETS_DIR, "gremlin_two.png"),
+    "ogre_one": os.path.join(ASSETS_DIR, "ogre_one.png"),
+    "ogre_two": os.path.join(ASSETS_DIR, "ogre_two.png"),
+    "skeleton_one": os.path.join(ASSETS_DIR, "skeleton_one.png"),
+    "skeleton_two": os.path.join(ASSETS_DIR, "skeleton_two.png"),
+    "tom": os.path.join(ASSETS_DIR, "tom.png"),
+
+    # STATIC IMAGES
+    # character and portraits sprites
+    "jayne": os.path.join(ASSETS_DIR, "jayne.png"),
+    "jayne_portrait": os.path.join(ASSETS_DIR, "jayne_portrait.png"),
+    "mark": os.path.join(ASSETS_DIR, "mark.png"),
+    "mark_portrait": os.path.join(ASSETS_DIR, "mark_portrait.png"),
+    "noah": os.path.join(ASSETS_DIR, "noah.png"),
+    "noah_portrait": os.path.join(ASSETS_DIR, "noah_portrait.png"),
+    "sean": os.path.join(ASSETS_DIR, "sean.png"),
+    "sean_portrait": os.path.join(ASSETS_DIR, "sean_portrait.png"),
+
+    # default backups sprites
+    "dice": os.path.join(ASSETS_DIR, "dice.png"),
+    "hero": os.path.join(ASSETS_DIR, "hero.png"),
+
+    # item sprites
+    "code_spike": os.path.join(ASSETS_DIR, "code_spike.png"),
+    "energy_drink": os.path.join(ASSETS_DIR, "energy_drink.png"),
+    "white_box": os.path.join(ASSETS_DIR, "white_box.png"),
+}
