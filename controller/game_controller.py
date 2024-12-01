@@ -167,20 +167,22 @@ class GameController:
                 # Update the position if the direction is valid
                 new_position = (self.position[0] + dx, self.position[1] + dy)
                 self.position = new_position
-                print(f"Moved to new position: {self.position}")
-                self.draw_ui()
                 self.room_interaction()
             else:
-                print("Invalid move: No valid path in that direction.")
+
+                message = "Invalid move: No valid path in that direction."
+                self.draw_ui(message)
+                pygame.display.flip()
+                pygame.time.delay(1000)
 
     def room_interaction(self):
         """Interact with the current room."""
         current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
-        message = f"Entered room at {self.position}: {current_room.type}"
+        message = f"Entered the {current_room.type} room at {self.position}"
 
         if current_room.type == "MONSTER" and current_room.has_monster():
             monster = current_room.get_monster()
-            message = f"A wild {monster.name} appears! Prepare for battle!"
+            message = f"Oh no! A wild {monster.name} appears! Prepare for battle!"
             current_room.set_visited(True)
             self.draw_ui(message)
             pygame.display.flip()
@@ -279,6 +281,14 @@ class GameController:
             pygame.draw.rect(self.screen, (0, 0, 0), bottom_rect)
             pygame.draw.rect(self.screen, BACKGROUND_COLOR, bottom_rect)
 
+            portrait = self.get_hero_portrait()
+            self.screen.blit(portrait, (650, 450))
+
+            monster_text = self.fonts["small"].render(f"Monster HP: {monster.hp}", True, OFF_WHITE)
+            adventurer_text = self.fonts["small"].render(f"Your HP: {adventurer.hp}", True, OFF_WHITE)
+            self.screen.blit(monster_text, (50, 490))
+            self.screen.blit(adventurer_text, (50, 510))
+
             # Draw buttons for battle actions
             fight_button.draw(self.screen)
             item_button.draw(self.screen)
@@ -318,7 +328,10 @@ class GameController:
 
         # Post-battle logic
         if monster.hp <= 0:
-            print(f"You defeated {monster.name}, well done!")
+            message = f"You defeated {monster.name}, well done!"
+            self.draw_ui(message)
+            pygame.display.flip()
+            pygame.time.delay(2000)
             current_room = self.dungeon[self.current_floor - 1].fetch_room(self.position[0], self.position[1])
             current_room.set_monster(None)  # Clear monster from the room
 
@@ -362,22 +375,23 @@ class GameController:
         for _ in range(player_turns):
             if monster.hp > 0:
                 damage = adventurer.attack(monster)
-                print(f"You attacked and dealt {damage} damage to {monster.name}.")
+                message = f"You attacked and dealt {damage} damage to {monster.name}."
+                self.draw_ui(message)
+                pygame.display.flip()
+                pygame.time.delay(2000)
             else:
                 break
 
         if monster.hp > 0:
-            print(f"{monster.name} is attacking!")
+            message = f"{monster.name} is attacking!"
+            self.draw_ui(message)
+            pygame.display.flip()
+            pygame.time.delay(2000)
             damage = monster.attack(adventurer)
-            print(f"{monster.name} dealt {damage} damage to you.")
-
-    def use_item(self, adventurer):
-        """Handle the use item action."""
-        item = adventurer.use_item()
-        if item:
-            print(f"You used {item.get_name()}.")
-        else:
-            print("You don't have any usable items, bummer.")
+            message = f"{monster.name} dealt {damage} damage to you."
+            self.draw_ui(message)
+            pygame.display.flip()
+            pygame.time.delay(2000)
 
     def set_active_adventurer(self, adventurer_name):
         raw_data = self.adventurer_manager.get_adventurer_data(name=adventurer_name)[1:]  # Ignore entry number!
