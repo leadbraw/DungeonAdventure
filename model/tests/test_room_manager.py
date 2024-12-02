@@ -30,7 +30,7 @@ def test_initialization_empty_data(manager):
 
 def test_get_room_by_doors(manager):
     room = manager.get_room_by_doors([True, False, True, False])
-    assert room["image_path"] == "path/to/image1.png"
+    assert room["sprite_name"] == "image1"  # File name without path
     assert room["rotation"] == 90
 
     non_existent_room = manager.get_room_by_doors([False, False, False, False])
@@ -50,7 +50,8 @@ def test_duplicate_door_configurations(manager):
     manager = RoomManager.get_instance(duplicate_data)
 
     room = manager.get_room_by_doors([True, False, True, False])
-    assert room["image_path"] == "path/to/image2.png"  # Latest entry is retained
+    assert room["sprite_name"] == "image2"  # File name without path
+    assert room["rotation"] == 180  # Latest entry is retained
 
 def test_invalid_door_configuration():
     invalid_data = [

@@ -23,10 +23,3 @@ class Item:
     def get_name(self):
         """Returns the name of the item."""
         return self.name
-
-    def use(self, target):
-        """
-        Activates the item's ability on the target.
-        :param target: The entity the item is used on.
-        """
-        print(f"{self.name} used on {target}. Ability: {self.ability}")

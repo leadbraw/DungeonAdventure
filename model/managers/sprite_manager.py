@@ -42,7 +42,7 @@ class SpriteManager:
                 # print(f"[SpriteManager] Loading sprite: {name} from {file_path}")
                 self.sprites[name] = pygame.image.load(file_path).convert_alpha()
                 # print(f"[SpriteManager] Successfully loaded: {name}")
-            except pygame.error as e:
+            except Exception as e:
                 print(f"[SpriteManager] Error loading sprite '{name}' from {file_path}: {e}")
                 self.sprites[name] = None
         return self.sprites.get(name)
@@ -89,6 +89,6 @@ class SpriteManager:
 
     def clear_sprites(self):
         """Clears all loaded sprites and transformations."""
-        print(f"[SpriteManager] Clearing {len(self.sprites)} sprites and {len(self.transformed_cache)} transformed sprites.")
+        print(f"[SpriteManager] Clearing {len(self.sprites)} sprites.")
         self.sprites.clear()
         print("[SpriteManager] Cache cleared.")

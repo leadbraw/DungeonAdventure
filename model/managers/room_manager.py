@@ -30,11 +30,10 @@ class RoomManager:
         """
         room_config = self.rooms.get(tuple(doors))
         if room_config:
-            # Normalize the sprite name
+            # Normalize the sprite name from image_path
             image_path = room_config["image_path"]
-            sprite_name = image_path.split("\\")[-1].split(".")[0]  # For Windows paths
-            # print(
-            #     f"[RoomManager] Found room config for doors {doors}: sprite='{sprite_name}', rotation={room_config['rotation']}")
+            # Handle both forward (/) and backward (\) slashes
+            sprite_name = image_path.replace("\\", "/").split("/")[-1].split(".")[0]
             return {"sprite_name": sprite_name, "rotation": room_config["rotation"]}
         else:
             print(f"[RoomManager] No room config found for doors: {doors}")

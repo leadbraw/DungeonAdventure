@@ -1,5 +1,3 @@
-# item_factory.py
-
 from model.entities.item import Item
 
 class ItemFactory:
@@ -25,6 +23,29 @@ class ItemFactory:
         if not raw_data:
             raise ValueError("No raw data provided to create an item.")
 
+        # Check for missing required fields
+        required_fields = ["name", "description", "target", "one_time_item"]
+        for field in required_fields:
+            if field not in raw_data:
+                raise KeyError(f"Missing required field: {field}")
+
+        # Type validation
+        if not isinstance(raw_data.get("name"), str):
+            raise TypeError("Invalid type for 'name'. Expected str.")
+        if not isinstance(raw_data.get("description"), str):
+            raise TypeError("Invalid type for 'description'. Expected str.")
+        if not isinstance(raw_data.get("target"), str):
+            raise TypeError("Invalid type for 'target'. Expected str.")
+        if not isinstance(raw_data.get("one_time_item"), (int, bool)):
+            raise TypeError("Invalid type for 'one_time_item'. Expected int or bool.")
+        if not isinstance(raw_data.get("effect_min"), (int, type(None))):
+            raise TypeError("Invalid type for 'effect_min'. Expected int or None.")
+        if not isinstance(raw_data.get("effect_max"), (int, type(None))):
+            raise TypeError("Invalid type for 'effect_max'. Expected int or None.")
+        if raw_data.get("buff_type") is not None and not isinstance(raw_data["buff_type"], str):
+            raise TypeError("Invalid type for 'buff_type'. Expected str or None.")
+
+        # Create and return the item
         return Item(
             name=raw_data["name"],
             description=raw_data["description"],
