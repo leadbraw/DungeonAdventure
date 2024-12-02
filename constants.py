@@ -68,7 +68,11 @@ SPRITE_PATHS = {
     "hero": os.path.join(ASSETS_DIR, "hero.png"),
 
     # item sprites
+    "abstraction_pillar": os.path.join(ASSETS_DIR, "abstraction_pillar.png"),
     "code_spike": os.path.join(ASSETS_DIR, "code_spike.png"),
+    "encapsulation_pillar": os.path.join(ASSETS_DIR, "encapsulation_pillar.png"),
     "energy_drink": os.path.join(ASSETS_DIR, "energy_drink.png"),
+    "inheritance_pillar": os.path.join(ASSETS_DIR, "inheritance_pillar.png"),
+    "polymorphism_pillar": os.path.join(ASSETS_DIR, "polymorphism_pillar.png"),
     "white_box": os.path.join(ASSETS_DIR, "white_box.png"),
 }
