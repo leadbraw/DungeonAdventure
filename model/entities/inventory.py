@@ -72,7 +72,7 @@ class Inventory:
             if entry["item"].name == item_name:
                 effect_min = entry["item"].effect_min
                 effect_max = entry["item"].effect_max
-                if self.apply_effect(entry["item"], target, effect_min, effect_max, dungeon):
+                if self.apply_effect(entry["item"], target, effect_min, effect_max):
                     self.remove_item(item_name, 1)
                     return entry["item"]
         print(f"Item '{item_name}' is not usable or not found.")
