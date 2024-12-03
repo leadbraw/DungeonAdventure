@@ -18,6 +18,7 @@ class GameController:
         self.sprite_manager = SpriteManager.get_instance()
         self.battle_manager = BattleManager.get_instance(self.screen, self.fonts, self.draw_ui)
         self.dungeon_manager = DungeonManager.get_instance()
+        self.dungeon_manager.initialize_dungeon()
         self.adventurer_manager = AdventurerManager.get_instance()
         self.minimap = None
 
@@ -27,6 +28,7 @@ class GameController:
         self.active_adventurer = None
         self.current_message = None
         self.pillars_found = 0
+        self.return_to_menu = False # Flag for if user chose to return to menu. Only set to True upon losing a battle.
 
         # Mark the starting room as visited and initialize the adventurer
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -55,6 +57,8 @@ class GameController:
                 elif event.type == pygame.KEYDOWN:
                     self.player_movement(event.key)
 
+            if self.return_to_menu:
+                return 1 # This will be seen by main.py and trigger a return to the main menu.
             pygame.display.flip()
 
     def player_movement(self, key):
@@ -90,37 +94,41 @@ class GameController:
         # Handle MONSTER and ELITE rooms
         if current_room.type == "MONSTER" and current_room.has_monster():
             monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
-            self.render_monster(monster.name)
+            self.render_monster_sprite(monster.name)
             self.display_message(f"A wild {monster.name} appears! Prepare for battle!", 2000)
 
             '''This line present in all cases because putting it before the if/elif structure breaks traps.
             A better way exists to do it. For another time.'''
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
-            self.battle_manager.start_battle(
-                adventurer=self.active_adventurer,
-                monster=monster,
-                dungeon=self.dungeon_manager.dungeon,  # Assuming this is the correct dungeon reference
-                current_floor=self.current_floor,
-                position=self.position,
-                get_hero_portrait=self.get_hero_portrait, # Pass the callable here
-                minimap=self.minimap
-            )
+            battle_result = self.battle_manager.start_battle(
+                            adventurer=self.active_adventurer,
+                            monster=monster,
+                            dungeon=self.dungeon_manager.dungeon,  # Assuming this is the correct dungeon reference
+                            current_floor=self.current_floor,
+                            position=self.position,
+                            get_hero_portrait=self.get_hero_portrait, # Pass the callable here
+                            minimap=self.minimap
+                            )
+            if battle_result == 1:
+                self.return_to_menu = True
 
         elif current_room.type == "ELITE" and current_room.has_monster():
             monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
-            self.render_monster(monster.name)
+            self.render_monster_sprite(monster.name)
             self.display_message(f"An ELITE {monster.name} stands before you! Prepare for a tougher fight!", 2000)
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-            self.battle_manager.start_battle(
-                adventurer=self.active_adventurer,
-                monster=monster,
-                dungeon=self.dungeon_manager.dungeon,  # Assuming this is the correct dungeon reference
-                current_floor=self.current_floor,
-                position=self.position,
-                get_hero_portrait=self.get_hero_portrait,
-                minimap=self.minimap # Pass the callable here
-            )
+            battle_result = self.battle_manager.start_battle(
+                                adventurer=self.active_adventurer,
+                                monster=monster,
+                                dungeon=self.dungeon_manager.dungeon,  # Assuming this is the correct dungeon reference
+                                current_floor=self.current_floor,
+                                position=self.position,
+                                get_hero_portrait=self.get_hero_portrait,
+                                minimap=self.minimap # Pass the callable here
+                            )
+            if battle_result == 1:
+                self.return_to_menu = True
 
         # Handle ITEM rooms
         elif current_room.type == "ITEM" and current_room.has_item():
@@ -150,7 +158,7 @@ class GameController:
             self.pillars_found += 1
 
         elif current_room.type == "TRAP" and not current_room.visited:
-            trap_dmg = random.randint(1, 10)
+            trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp) # Ensure player can't die to trap.
             self.active_adventurer._update_hp(trap_dmg)
             self.display_message(f"It's a trap! You take {trap_dmg} damage.")
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -218,7 +226,7 @@ class GameController:
         else:
             print(f"Invalid sprite config: {sprite_config}")
 
-    def render_monster(self, monster_name):
+    def render_monster_sprite(self, monster_name):
         choice = random.choice(("_one", "_two"))
         if monster_name == "Tom":
             sprite = self.sprite_manager.get_sprite("tom")

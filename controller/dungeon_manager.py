@@ -22,8 +22,7 @@ class DungeonManager:
         self.monster_manager = MonsterManager.get_instance()
         self.item_manager = ItemManager.get_instance()
         print("[DungeonManager] Initialized. Ready to generate the dungeon.")
-        # Ensure dungeon is initialized
-        self.initialize_dungeon()
+        # Note that __init__ does NOT call initialize_dungeon(), that is the game controller's responsibility!
 
     def initialize_dungeon(self):
         """Creates and populates all floors of the dungeon."""

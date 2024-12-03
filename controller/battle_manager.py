@@ -38,7 +38,8 @@ class BattleManager:
                 monster, adventurer, inventory_overlay, dungeon, current_floor, fight_button, item_button
             )
 
-        self.post_battle_logic(monster, adventurer, dungeon, current_floor, position)
+        if self.post_battle_logic(monster, adventurer, dungeon, current_floor, position) == 1:
+            return 1 # This will be seen by game controller and main and trigger a restart.
 
     def draw_battle_ui(self, monster, adventurer, fight_button, item_button, get_hero_portrait, minimap):
         """Draw the battle UI components."""
@@ -124,7 +125,9 @@ class BattleManager:
 
                         if menu_button.is_hovered(mouse_pos):
                             print("Returning to main menu...")
-                            return  # Return to main menu logic
+                            '''This method only returns a value if user chose to replay. This will be sent back
+                            to start_battle(), to game controller, and then to main, triggering a restart.'''
+                            return 1
                         elif quit_button.is_hovered(mouse_pos):
                             print("Exiting game...")
                             pygame.quit()

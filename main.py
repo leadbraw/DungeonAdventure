@@ -26,7 +26,6 @@ def main():
         "hero": SPRITE_PATHS["hero"],
         "dice": SPRITE_PATHS["dice"]
     })
-    hero_image = sprite_manager.get_sprite("hero")
     dungeon_icon = sprite_manager.get_sprite("dice")
 
     # Set window icon
@@ -79,8 +78,10 @@ def main():
 
                 # Dungeon is already initialized when DungeonManager is instantiated
                 print("[Main] Dungeon is already initialized through DungeonManager.")
-                game_controller.display_game()
-                state = "QUIT"  # Exit game after gameplay finishes
+                if game_controller.display_game() == 1: # If it returns a value, means user has died and chose to replay
+                    state = "MAIN_MENU"
+                else:
+                    state = "QUIT"  # Exit game after gameplay finishes
 
     # Quit pygame when the game exits
     pygame.quit()
