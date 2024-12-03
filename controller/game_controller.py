@@ -1,7 +1,7 @@
 import random
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE
+from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, SPRITE_PATHS
 from controller.battle_manager import BattleManager
 from controller.dungeon_manager import DungeonManager
 from model.managers.room_manager import RoomManager
@@ -90,6 +90,7 @@ class GameController:
         # Handle MONSTER and ELITE rooms
         if current_room.type == "MONSTER" and current_room.has_monster():
             monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
+            self.render_monster(monster.name)
             self.display_message(f"A wild {monster.name} appears! Prepare for battle!", 2000)
 
             '''This line present in all cases because putting it before the if/elif structure breaks traps.
@@ -108,6 +109,7 @@ class GameController:
 
         elif current_room.type == "ELITE" and current_room.has_monster():
             monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
+            self.render_monster(monster.name)
             self.display_message(f"An ELITE {monster.name} stands before you! Prepare for a tougher fight!", 2000)
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.battle_manager.start_battle(
@@ -207,6 +209,7 @@ class GameController:
             room_sprite = self.sprite_manager.get_transformed_sprite(sprite_name, rotate=rotation)
 
             if room_sprite:
+                test = room_sprite.get_width()
                 x = (650 - room_sprite.get_width()) // 2
                 y = 0
                 self.screen.blit(room_sprite, (x, y))
@@ -214,6 +217,16 @@ class GameController:
                 print(f"Failed to render sprite '{sprite_name}' with rotation {rotation}.")
         else:
             print(f"Invalid sprite config: {sprite_config}")
+
+    def render_monster(self, monster_name):
+        choice = random.choice(("_one", "_two"))
+        if monster_name == "Tom":
+            sprite = self.sprite_manager.get_sprite("tom")
+        else:
+            sprite = self.sprite_manager.get_sprite(monster_name.lower() + choice)
+        sprite_scaled = pygame.transform.scale(sprite, (450, 450))
+        self.screen.blit(sprite_scaled, (100, 0))
+
 
     def display_message(self, message, delay=0):
         """Displays a message and optionally delays for a specified duration."""
