@@ -93,14 +93,16 @@ class DungeonManager:
                 self.dungeon[floor].fetch_room(room_coords[0], room_coords[1]).set_item(item)
                 print(f"[DungeonManager] Placed {item.get_name()} in an ITEM room at {room_coords}.")
 
-    def place_pillar(self, floor, pillar_coords):
+    def place_pillar(self, floor_index, pillar_coords):
         """Places a unique pillar item in the specified room."""
-        print(f"[DungeonManager] Attempting to place a PILLAR in Floor {floor + 1}, Room {pillar_coords}.")
-        raw_data = self.item_manager.get_unique_item_data()
+        print(f"[DungeonManager] Attempting to place a PILLAR in Floor {floor_index + 1}, Room {pillar_coords}.")
+        raw_data = self.item_manager.get_unique_item_data(floor_index=floor_index)
         if raw_data:
             pillar_item = ItemFactory.get_instance().create_unique_item(raw_data)
-            self.dungeon[floor].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar_item)
+            self.dungeon[floor_index].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar_item)
             print(f"[DungeonManager] Placed {pillar_item.get_name()} in a PILLAR room at {pillar_coords}.")
+        else:
+            print(f"[DungeonManager] Failed to place pillar in a PILLAR room at {pillar_coords}.")
 
     def get_floor_entrance(self, floor):
         """Returns the entrance position for the specified floor."""

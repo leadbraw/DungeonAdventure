@@ -33,9 +33,8 @@ def test_initialization_empty_data(manager):
     assert len(manager.other_items) == 0
 
 def test_get_unique_item_data(manager):
-    unique_item = manager.get_unique_item_data()
+    unique_item = manager.get_unique_item_data(1)
     assert unique_item["name"] in ["Pillar of OOP", "Pillar of Inheritance"]  # Unique items
-    assert unique_item["name"] not in manager.one_time_items  # Item removed after retrieval
 
 def test_get_limited_item_data(manager):
     energy_drink = manager.get_limited_item_data("Energy Drink")
@@ -54,9 +53,9 @@ def test_get_random_consumable_item_data(manager):
 
 def test_reset_unique_items(manager):
     # Acquire a unique item
-    unique_item = manager.get_unique_item_data()
-    assert unique_item["name"] not in manager.one_time_items  # Item removed
-
+    unique_item = manager.get_unique_item_data(1)
+    # Mark it acquired
+    manager.mark_item_acquired(unique_item["name"])
     # Reset unique items
     manager.reset_unique_items()
     assert len(manager.unique_items_acquired) == 0

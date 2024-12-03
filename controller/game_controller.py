@@ -250,6 +250,7 @@ class GameController:
             self.active_adventurer = AdventurerFactory.get_instance().make_adventurer(raw_data)
         else:
             print(f"Adventurer '{adventurer_name}' not found.")
+        self.adventurer_manager.active_adventurer = self.active_adventurer
 
     def draw_ui(self, message=None):
         """Draws the game's user interface."""

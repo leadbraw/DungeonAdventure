@@ -53,7 +53,7 @@ class ItemManager:
         # Track unique items acquired by the adventurer
         self.unique_items_acquired = set()
 
-    def get_unique_item_data(self):
+    def get_unique_item_data(self, floor_index):
         """
         Retrieve and remove a random unique item from the one_time_items dictionary.
         Ensures each unique item is used only once.
@@ -63,9 +63,8 @@ class ItemManager:
         if not self.one_time_items:
             return None  # No more unique items to retrieve
 
-        # Randomly select an item name and pop it from the dictionary
-        item_name = random.choice(list(self.one_time_items.keys()))
-        return self.one_time_items.pop(item_name)
+        item_name = list(self.one_time_items.keys())[floor_index]
+        return self.one_time_items[item_name]
 
     def mark_item_acquired(self, item_name):
         """
