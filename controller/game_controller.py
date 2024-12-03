@@ -158,7 +158,7 @@ class GameController:
             self.pillars_found += 1
 
         elif current_room.type == "TRAP" and not current_room.visited:
-            trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp) # Ensure player can't die to trap.
+            trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp - 1) # Ensure player can't die to trap.
             self.active_adventurer._update_hp(trap_dmg)
             self.display_message(f"It's a trap! You take {trap_dmg} damage.")
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)

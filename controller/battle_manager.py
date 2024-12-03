@@ -110,7 +110,6 @@ class BattleManager:
                                  font=self.fonts["small"], text_color=(255, 255, 255), text="Quit")
             while True:
                 pygame.draw.rect(self.screen, (0, 0, 0), bottom_rect)
-                pygame.display.flip()
 
                 self.screen.blit(menu_text, (200, 470))
 
