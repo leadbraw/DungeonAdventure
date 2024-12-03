@@ -1,3 +1,4 @@
+import random
 import sys
 import pygame
 from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE
@@ -85,12 +86,16 @@ class GameController:
     def room_interaction(self):
         """Interact with the current room."""
         current_room = self.dungeon_manager.get_room(self.current_floor, self.position)
-        self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
         # Handle MONSTER and ELITE rooms
         if current_room.type == "MONSTER" and current_room.has_monster():
             monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
             self.display_message(f"A wild {monster.name} appears! Prepare for battle!", 2000)
+
+            '''This line present in all cases because putting it before the if/elif structure breaks traps.
+            A better way exists to do it. For another time.'''
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
+
             self.battle_manager.start_battle(
                 adventurer=self.active_adventurer,
                 monster=monster,
@@ -104,6 +109,7 @@ class GameController:
         elif current_room.type == "ELITE" and current_room.has_monster():
             monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
             self.display_message(f"An ELITE {monster.name} stands before you! Prepare for a tougher fight!", 2000)
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.battle_manager.start_battle(
                 adventurer=self.active_adventurer,
                 monster=monster,
@@ -117,6 +123,7 @@ class GameController:
         # Handle ITEM rooms
         elif current_room.type == "ITEM" and current_room.has_item():
             item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             if item.get_name().startswith("Pillar"):
                 self.handle_pillar_item(item)
             else:
@@ -124,10 +131,12 @@ class GameController:
 
         # Handle EXIT rooms
         elif current_room.type == "EXIT":
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.handle_exit_room()
 
         # Handle ENTRANCE rooms
         elif current_room.type == "ENTRANCE":
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.display_message("You are back at the entrance.")
 
         # Handle PILLAR rooms
@@ -135,11 +144,19 @@ class GameController:
             item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
             self.display_message(f"You've found the {item.get_name()}! Wow!")
             self.dungeon_manager.clear_item_in_room(self.current_floor, self.position)
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.pillars_found += 1
+
+        elif current_room.type == "TRAP" and not current_room.visited:
+            trap_dmg = random.randint(1, 10)
+            self.active_adventurer._update_hp(trap_dmg)
+            self.display_message(f"It's a trap! You take {trap_dmg} damage.")
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
         # Handle EMPTY rooms
         elif current_room.type == "EMPTY":
             self.display_message("You've found an empty room. It smells in here.")
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
     def handle_pillar_item(self, item):
         """Handles interaction with Pillar items."""
