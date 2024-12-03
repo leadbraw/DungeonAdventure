@@ -18,6 +18,7 @@ class GameController:
         self.battle_manager = BattleManager.get_instance(self.screen, self.fonts, self.draw_ui)
         self.dungeon_manager = DungeonManager.get_instance()
         self.adventurer_manager = AdventurerManager.get_instance()
+        self.minimap = None
 
         # Attributes for game state
         self.current_floor = 1
@@ -40,11 +41,9 @@ class GameController:
             sprite_config = self.room_manager.get_room_by_doors(room_doors)
             self.render_room_sprite(sprite_config)
 
-            # Draw game UI and map
-            self.draw_ui()
             map_image = self.dungeon_manager.get_floor_map(self.current_floor)
-            scaled_map = pygame.transform.scale(map_image, (150, 150))
-            self.screen.blit(scaled_map, (650, 0))
+            self.minimap = pygame.transform.scale(map_image, (150, 150))
+            self.draw_ui() # Draw UI draws map as well
 
             # Handle events
             for event in pygame.event.get():
@@ -97,7 +96,8 @@ class GameController:
                 dungeon=self.dungeon_manager.dungeon,  # Assuming this is the correct dungeon reference
                 current_floor=self.current_floor,
                 position=self.position,
-                get_hero_portrait=self.get_hero_portrait  # Pass the callable here
+                get_hero_portrait=self.get_hero_portrait, # Pass the callable here
+                minimap=self.minimap
             )
 
         elif current_room.type == "ELITE" and current_room.has_monster():
@@ -109,7 +109,8 @@ class GameController:
                 dungeon=self.dungeon_manager.dungeon,  # Assuming this is the correct dungeon reference
                 current_floor=self.current_floor,
                 position=self.position,
-                get_hero_portrait=self.get_hero_portrait  # Pass the callable here
+                get_hero_portrait=self.get_hero_portrait,
+                minimap=self.minimap # Pass the callable here
             )
 
         # Handle ITEM rooms
@@ -230,6 +231,9 @@ class GameController:
         if self.current_message:
             message_text = self.fonts["small"].render(self.current_message, True, OFF_WHITE)
             self.screen.blit(message_text, (50, 500))
+
+        # Draw minimap
+        self.screen.blit(self.minimap, (650, 0))
 
     def get_hero_portrait(self):
         """Returns the portrait for the selected hero."""

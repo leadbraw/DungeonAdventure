@@ -22,7 +22,7 @@ class BattleManager:
         self.fonts = fonts
         self.draw_ui = draw_ui
 
-    def start_battle(self, adventurer, monster, dungeon, current_floor, position, get_hero_portrait):
+    def start_battle(self, adventurer, monster, dungeon, current_floor, position, get_hero_portrait, minimap):
         """Starts and Handles battle action with player vs monster in the Room section."""
         inventory_overlay = InventoryOverlay(self.screen, self.fonts, adventurer.inventory)
 
@@ -30,18 +30,17 @@ class BattleManager:
                               font=self.fonts["small"], text_color=(255, 255, 255), text="Fight")
         item_button = Button(color=LIGHT_BLUE, x=350, y=540, width=100, height=30,
                              font=self.fonts["small"], text_color=(255, 255, 255), text="Use Item")
-
         running = True
         while running and monster.hp > 0 and adventurer.hp > 0:
             # Pass `get_hero_portrait` as a callable
-            self.draw_battle_ui(monster, adventurer, fight_button, item_button, get_hero_portrait)
+            self.draw_battle_ui(monster, adventurer, fight_button, item_button, get_hero_portrait, minimap)
             running = self.handle_battle_event(
                 monster, adventurer, inventory_overlay, dungeon, current_floor, fight_button, item_button
             )
 
         self.post_battle_logic(monster, adventurer, dungeon, current_floor, position)
 
-    def draw_battle_ui(self, monster, adventurer, fight_button, item_button, get_hero_portrait):
+    def draw_battle_ui(self, monster, adventurer, fight_button, item_button, get_hero_portrait, minimap):
         """Draw the battle UI components."""
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         pygame.draw.rect(self.screen, (0, 0, 0), bottom_rect)
@@ -55,6 +54,7 @@ class BattleManager:
         adventurer_text = self.fonts["small"].render(f"Your HP: {adventurer.hp}", True, OFF_WHITE)
         self.screen.blit(monster_text, (50, 490))
         self.screen.blit(adventurer_text, (50, 510))
+        self.screen.blit(minimap, (650, 0))
 
         fight_button.draw(self.screen)
         item_button.draw(self.screen)
