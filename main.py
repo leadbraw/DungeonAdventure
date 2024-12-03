@@ -37,7 +37,7 @@ def main():
 
     # Show splash screen with hero image and text
     splash_screen = SplashScreen(screen, font_large)
-    splash_screen.display("TEAM 5", setup_function=game_setup.setup, image=hero_image, image_size=(256, 256))
+    splash_screen.display("TEAM 5", setup_function=game_setup.setup)
 
     # Define game states
     state = "MAIN_MENU"
