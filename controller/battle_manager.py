@@ -102,18 +102,17 @@ class BattleManager:
             print("You were defeated, GAME OVER :(")
 
             # Display game-over options
+            menu_text = self.fonts["medium"].render("Return to Menu or Quit?", True, OFF_WHITE)
+            bottom_rect = pygame.Rect(0, 450, 800, 150)
+            menu_button = Button(color=LIGHT_BLUE, x=150, y=540, width=100, height=30,
+                                 font=self.fonts["small"], text_color=(255, 255, 255), text="Menu")
+            quit_button = Button(color=LIGHT_BLUE, x=350, y=540, width=100, height=30,
+                                 font=self.fonts["small"], text_color=(255, 255, 255), text="Quit")
             while True:
-                bottom_rect = pygame.Rect(0, 450, 800, 150)
                 pygame.draw.rect(self.screen, (0, 0, 0), bottom_rect)
                 pygame.display.flip()
 
-                menu_text = self.fonts["medium"].render("Return to Menu or Quit?", True, OFF_WHITE)
                 self.screen.blit(menu_text, (200, 470))
-
-                menu_button = Button(color=LIGHT_BLUE, x=150, y=540, width=100, height=30,
-                                     font=self.fonts["small"], text_color=(255, 255, 255), text="Menu")
-                quit_button = Button(color=LIGHT_BLUE, x=350, y=540, width=100, height=30,
-                                     font=self.fonts["small"], text_color=(255, 255, 255), text="Quit")
 
                 menu_button.draw(self.screen)
                 quit_button.draw(self.screen)
