@@ -25,6 +25,7 @@ class GameController:
         self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)  # Fetch entrance position
         self.active_adventurer = None
         self.current_message = None
+        self.pillars_found = 0
 
         # Mark the starting room as visited and initialize the adventurer
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -134,6 +135,7 @@ class GameController:
             item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
             self.display_message(f"You've found the {item.get_name()}! Wow!")
             self.dungeon_manager.clear_item_in_room(self.current_floor, self.position)
+            self.pillars_found += 1
 
         # Handle EMPTY rooms
         elif current_room.type == "EMPTY":
@@ -173,11 +175,13 @@ class GameController:
             self.display_message("You found the exit! Congratulations!", 3000)
             pygame.quit()
             sys.exit()
-        else:
+        elif self.pillars_found == self.current_floor:
             self.current_floor += 1
             self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.display_message(f"Entering floor {self.current_floor} at position {self.position}.")
+        else:
+            self.display_message(f"You must find the Pillar of O.O. before proceeding!")
 
     def render_room_sprite(self, sprite_config):
         """Renders the sprite for the current room."""
