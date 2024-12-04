@@ -9,15 +9,22 @@ class BattleManager:
 
     @staticmethod
     def get_instance(screen=None, fonts=None, draw_ui=None):
+        if not all([screen, fonts, draw_ui]):
+            raise ValueError("Missing arguments for initializing or resetting BattleManager.")
         if BattleManager._instance is None:
-            if not all([screen, fonts, draw_ui]):
-                raise ValueError("Missing arguments for initializing BattleManager.")
             BattleManager._instance = BattleManager(screen, fonts, draw_ui)
+        else: # There is an existing instance, let's reset it.
+            BattleManager._instance.reset(screen, fonts, draw_ui)
         return BattleManager._instance
 
     def __init__(self, screen, fonts, draw_ui):
         if BattleManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access it.")
+        self.screen = screen
+        self.fonts = fonts
+        self.draw_ui = draw_ui
+
+    def reset(self, screen, fonts, draw_ui):
         self.screen = screen
         self.fonts = fonts
         self.draw_ui = draw_ui
