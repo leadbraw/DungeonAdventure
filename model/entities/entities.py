@@ -77,10 +77,10 @@ class Entity:
             # miss: (hit_chance, 1]
             if random.uniform(0, 1) <= self.hit_chance:
                 damage = random.randint(*self.damage_range)
-                message += f"{self.name} hit {the_target.name} for {damage} points.\n"
+                message += f"{self.name} hit {the_target.name} for {damage} points."
                 message += the_target._hit_response(damage)
             else:
-                message += f"{self.name} missed the attack.\n"
+                message += f"{self.name} missed the attack."
 
         return message[:len(message) - 1]
 
@@ -124,7 +124,7 @@ class Entity:
         Returns the faint message for the entity.
         :return: faint message.
         """
-        return f"{self.name} has fainted.\n"
+        return f"{self.name} has fainted."
 
     @abstractmethod
     def _hit_response(self, the_dmg):

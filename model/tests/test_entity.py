@@ -126,4 +126,4 @@ def test_update_hp(hp_in, hp_should, entity):
 # Test faint message
 def test_faint_message(entity):
     faint_message = entity._has_fainted_msg()
-    assert faint_message == "Test Entity has fainted.\n"
+    assert faint_message == "Test Entity has fainted."

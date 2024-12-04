@@ -67,7 +67,7 @@ class Adventurer(Entity):
         Returns a successful block message.
         :return: block message.
         """
-        return f"You blocked the attack.\n"
+        return f"You blocked the attack."
 
     @final
     def _block(self):
@@ -164,11 +164,11 @@ class Warrior(Adventurer):
             # damage roll (random int within damage_range)
             damage = random.randint(*self.__my_special_dmg_range)
             # set health
-            message += f"{self.name} hit {the_target.name} for {damage} points.\n"
+            message += f"{self.name} hit {the_target.name} for {damage} points."
             message += the_target._hit_response(damage)
 
         else:
-            message += f"{self.name} missed the attack.\n"
+            message += f"{self.name} missed the attack."
 
         return message[:len(message) - 1]
 
@@ -178,7 +178,7 @@ class Warrior(Adventurer):
         :param the_target: attack target.
         :return: Crushing Blow message.
         """
-        return f"{self.name} uses Crushing Blow on {the_target.name}.\n"
+        return f"{self.name} uses Crushing Blow on {the_target.name}."
 
 
 """ Provides Priest specific behavior.
@@ -214,7 +214,7 @@ class Priest(Adventurer):
         :param the_heal: heal points.
         :return: Divine Prayer message.
         """
-        return f"{self.name} uses Divine Prayer and heals for {the_heal}.\n"
+        return f"{self.name} uses Divine Prayer and heals for {the_heal}."
 
 
 """ Provides Thief specific behavior.
@@ -253,8 +253,8 @@ class Thief(Adventurer):
             # not detected: succeeds
             if attack_roll >= self.__my_detection_chance + self.__my_normal_attack_chance:
                 # extra attack
-                message += f"{self.name} gets an extra attack!\n"
-                message += self.attack(the_target) + "\n"
+                message += f"{self.name} gets an extra attack!"
+                message += self.attack(the_target) + ""
 
             # normal attack
             message += self.attack(the_target)
@@ -270,7 +270,7 @@ class Thief(Adventurer):
         :param the_target: attack target.
         :return: Surprise Attack message.
         """
-        return f"{self.name} uses Surprise Attack on {the_target.name}.\n"
+        return f"{self.name} uses Surprise Attack on {the_target.name}."
 
 
 """ Provides Bard specific behavior.
@@ -299,9 +299,9 @@ class Bard(Adventurer):
 
         message += self.__special_action_msg(the_target)
         damage = random.randint(*self.__my_special_dmg_range)
-        message += f"{self.name} hit {the_target.name} for {damage} points.\n"
+        message += f"{self.name} hit {the_target.name} for {damage} points."
         message += the_target._hit_response(damage)
-        message += f"{self.name} takes {int(damage / 2)} points of damage.\n"
+        message += f"{self.name} takes {int(damage / 2)} points of damage."
         self._update_hp(int(damage / 2))
 
         return message[:len(message) - 1]
@@ -312,4 +312,4 @@ class Bard(Adventurer):
         :param the_target: attack target.
         :return: Discombobulating Thought message.
         """
-        return f"{self.name} uses Discombobulating Thought on {the_target.name}.\n"
+        return f"{self.name} uses Discombobulating Thought on {the_target.name}."

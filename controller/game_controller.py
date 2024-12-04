@@ -116,7 +116,7 @@ class GameController:
         elif current_room.type == "ELITE" and current_room.has_monster():
             monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
             self.render_monster_sprite(monster.name)
-            self.display_message(f"An ELITE {monster.name} stands before you! Prepare for a tougher fight!", 2000)
+            self.display_message(f"An ELITE {monster.name} stands before you! Prepare for a tough fight!", 2000)
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             battle_result = self.battle_manager.start_battle(
                                 adventurer=self.active_adventurer,

@@ -51,7 +51,7 @@ class Monster(Entity):
         :param the_heal: the number of points healed.
         :return: regen message.
         """
-        return f"{self.name} healed for {the_heal} points!\n"
+        return f"{self.name} healed for {the_heal} points."
 
     def _regen(self):
         """
@@ -78,9 +78,9 @@ class Monster(Entity):
 
         # Directly update HP, bypassing regeneration logic
         self._update_hp(damage)
-        message = f"{self.name} takes {damage} item damage.\n"
+        message = f"{self.name} takes {damage} item damage."
         if not self.is_alive():
-            message += f"{self.name} has been defeated!\n"
+            message += f"{self.name} has been defeated!"
 
         return message
 
