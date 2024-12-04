@@ -206,7 +206,7 @@ class GameController:
             self.current_floor += 1
             self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-            self.display_message(f"Entering floor {self.current_floor} at position {self.position}.")
+            self.display_message(f"You've now entered the {self.current_floor}nd floor.")
         else:
             self.display_message(f"You must find the Pillar of O.O. before proceeding!")
 
