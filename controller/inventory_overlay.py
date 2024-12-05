@@ -56,10 +56,15 @@ class InventoryOverlay:
         total_width = len(usable_items) * button_size + (len(usable_items) - 1) * spacing
         row_start_x = (650 - total_width) // 2  # Center row horizontally
         row_y = 6 + button_size + 6  # Fixed vertical position: 6px top + 128px button + 6px spacing
+
         buttons = []
         for i, name in enumerate(usable_items):
+            # Fetch item quantity from inventory
             quantity = next((entry["quantity"] for entry in self.inventory.items if entry["item"].name == name), 0)
+
             color = LIGHT_BLUE if quantity > 0 else FADED_BLUE
+
+            # Create and draw the button
             item_button = Button(
                 color=color,
                 x=row_start_x + i * (button_size + spacing),
@@ -68,11 +73,14 @@ class InventoryOverlay:
                 height=button_size,
                 font=self.fonts["small"],
                 text_color=(255, 255, 255),
-                text=name.split()[0],  # Display only the first word (e.g., "Code")
+                # text=name.split()[0],  Display only the first word (e.g., "Code")
+                text=f"{name.split()[0]} ({quantity})"
             )
             item_button.draw(self.screen)
             buttons.append((item_button, name, quantity))
+
         return buttons
+
 
     def draw_close_button(self, close_size, button_size, spacing):
         """Draws the close button at the specified position."""
@@ -118,7 +126,9 @@ class InventoryOverlay:
                 for item_button, name, quantity in usable_item_buttons:
                     if item_button.is_hovered(mouse_pos) and quantity > 0:
                         print(f"[DEBUG] {name} button clicked, attempting to use...")
-                        return True  # Keep overlay open (logic for issue 2 to be addressed later)
+                        # Save the selected item for later use
+                        self.selected_item = name
+                        return False  # Keep overlay open (logic for issue 2 to be addressed later)
 
                 # Check close button
                 if close_button.is_hovered(mouse_pos):

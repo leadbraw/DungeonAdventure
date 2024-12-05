@@ -289,9 +289,10 @@ class GameController:
         self.screen.blit(self.minimap, (650, 0))
 
         #Draw inventory button
-        self.inventory_button = Button(color=LIGHT_BLUE, x=660, y=380, width=100, height=30,
+        inventory_button = Button(color=LIGHT_BLUE, x=660, y=380, width=100, height=30,
                                     font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
-        self.inventory_button.draw(self.screen)
+        inventory_button.draw(self.screen)
+        self.inventory_button = inventory_button
 
 
     def get_hero_portrait(self):
