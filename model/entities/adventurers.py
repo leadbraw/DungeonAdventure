@@ -4,33 +4,26 @@ from typing import final
 from model.entities.entities import Entity
 from model.entities.inventory import Inventory
 
-# TODO move special action constants into database and add parameters to be updated with them
-
-""" Provides the default behavior shared by all adventurers.
-
-    Attributes:
-
-    Entity shared:
-    name (string): adventurer's name.
-    type (string)
-    max_hp (int): adventurer's max hp.
-    hit_chance (float): adventurer's attack hit chance percentage (0.1 and 1).
-    damage_range (tuple): adventurer's attack min and max damage.
-    block_chance (float): adventurer's block chance percentage (0 to 1).
-
-    Methods:
-    special_action(the_target): performs a special action on the target (or self).
-"""
-
+# optional: move special action constants into database and add parameters to be updated with them
 
 class Adventurer(Entity):
     def __init__(self, the_name, the_type, the_max_hp,
                  the_attack_speed, the_hit_chance, the_damage_range,
                  the_block_chance):
+        """
+        Represents an adventurer.
+        :param the_name: The name of the adventurer.
+        :param the_type: The class of the adventurer.
+        :param the_max_hp: Maximum health points of the adventurer.
+        :param the_attack_speed: Attack speed of the adventurer.
+        :param the_hit_chance: Hit chance of the adventurer.
+        :param the_damage_range: Damage range of the adventurer.
+        :param the_block_chance: Block chance of the adventurer.
+        """
         super().__init__(the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
-        self.__my_type = the_type
-        self.__my_block_chance = the_block_chance
-        self.inventory = Inventory()
+        self.__my_type = the_type.strip() if the_type else "Invalid type"  # Validate type
+        self.__my_block_chance = min(max(0, the_block_chance), 1)  # Clamp between 0 and 1
+        self.__inventory = Inventory()
 
 
     ### PUBLIC METHODS ###
@@ -126,6 +119,10 @@ class Adventurer(Entity):
     @property
     def block_chance(self):
         return self.__my_block_chance
+
+    @property
+    def inventory(self):
+        return self.__inventory
 
     @block_chance.setter
     def block_chance(self, the_block_chance):
