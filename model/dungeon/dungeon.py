@@ -147,6 +147,14 @@ class Dungeon:
         """Fetches room at given coordinates"""
         return self.map[x][y]
 
+    def reveal_adjacent_rooms(self, x, y):
+        """Marks adjacent rooms as visited."""
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+        for pair in directions:
+            next_x, next_y = x + pair[0], y + pair[1]
+            if 0 <= next_x < self.length and 0 <= next_y < self.width:
+                self.map[next_x][next_y].set_visited(True)
+
     def __str__(self):
         result = ""
         for row in self.map:
