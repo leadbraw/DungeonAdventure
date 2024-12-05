@@ -1,9 +1,11 @@
 import random
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, SPRITE_PATHS
+from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, SPRITE_PATHS, LIGHT_BLUE
 from controller.battle_manager import BattleManager
 from controller.dungeon_manager import DungeonManager
+from controller.gui_elements import Button
+from controller.inventory_overlay import InventoryOverlay
 from model.managers.room_manager import RoomManager
 from model.managers.adventurer_manager import AdventurerManager
 from model.managers.sprite_manager import SpriteManager
@@ -54,6 +56,14 @@ class GameController:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+
+                    if self.inventory_button.is_hovered(mouse_pos):
+                        inventory_overlay = InventoryOverlay(self.screen, self.fonts, self.active_adventurer.inventory)
+                        inventory_overlay.display()
+
                 elif event.type == pygame.KEYDOWN:
                     self.player_movement(event.key)
 
@@ -277,6 +287,12 @@ class GameController:
 
         # Draw minimap
         self.screen.blit(self.minimap, (650, 0))
+
+        #Draw inventory button
+        self.inventory_button = Button(color=LIGHT_BLUE, x=660, y=380, width=100, height=30,
+                                    font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
+        self.inventory_button.draw(self.screen)
+
 
     def get_hero_portrait(self):
         """Returns the portrait for the selected hero."""
