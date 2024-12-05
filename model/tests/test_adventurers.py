@@ -2,7 +2,6 @@ import pytest
 from unittest.mock import patch, Mock
 from model.entities.adventurers import Adventurer, Warrior, Priest, Thief, Bard
 
-# TODO special_attack edge cases and specific damage number testing
 
 @pytest.fixture
 def warrior():
@@ -34,40 +33,53 @@ def adventurer():
 
 
 # Test Warrior's special action
-def test_warrior_special_action(warrior, adventurer, mocker):
-    mocker.patch('random.uniform', return_value=0)  # Force hit
+@pytest.mark.parametrize("force_roll, damage, message", [(0, "10", "Mark hit"),
+                                                         (1, "", "missed")])
+def test_warrior_special_action(warrior, adventurer, mocker, force_roll, damage, message):
+    mocker.patch('random.uniform', return_value=force_roll)  # Force hit
+    mocker.patch('random.randint', return_value=damage)  # Force dmg
     result = warrior.special_action(adventurer)
 
     assert "Mark uses Crushing Blow" in result
-    assert "Mark hit" in result
+    assert message in result
+    assert damage in result
 
 
 # Test Priest's special action (healing)
-def test_priest_special_action(priest):
+def test_priest_special_action(priest, mocker):
     old_hp = 80 # create a measurable difference
     priest.hp = old_hp
+    mocker.patch('random.uniform', return_value=0.1)  # Force heal percentage
     result = priest.special_action(priest)
+    print(result)
 
     assert "Noah uses Divine Prayer and heals for " in result
-    assert priest.hp > old_hp
+    assert priest.hp == old_hp + 10
 
 
 # Test Thief's special action (Surprise Attack)
-def test_thief_special_action(thief, mocker, adventurer):
-    mocker.patch('random.uniform', return_value=1)  # Simulating a successful surprise attack
+@pytest.mark.parametrize("force_roll, message", [(0, "detected"),
+                                                 (0.5, "hit"),
+                                                 (1, "extra attack")])
+def test_thief_special_action(thief, mocker, adventurer, force_roll, message):
+    mocker.patch('random.uniform', return_value=force_roll)  # forcing attack roll
     result = thief.special_action(adventurer)
 
     assert "Jayne uses Surprise Attack" in result
-    assert "Jayne gets an extra attack!" in result
+    assert message in result
 
 
 # Test Bard's special action (Discombobulating Thought)
-def test_bard_special_action(bard, adventurer):
+@pytest.mark.parametrize("dmg_target, dmg_self", [(20, 10),
+                                                  (19, 9)])
+def test_bard_special_action(bard, adventurer, mocker, dmg_target, dmg_self):
+    mocker.patch('random.randint', return_value=dmg_target)
     result = bard.special_action(adventurer)
 
     assert "Sean uses Discombobulating Thought" in result
     assert "Sean hit" in result
     assert "Sean takes" in result
+    assert bard.max_hp - bard.hp == dmg_self
 
 
 # Test blocking behavior (hit or block)
