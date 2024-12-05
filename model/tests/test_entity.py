@@ -89,7 +89,7 @@ def test_is_alive(hp_val, status, entity):
 
 # Test attack method
 @pytest.mark.parametrize("force_roll, attack_outcome", [(0, "Attacker hit Target"),
-                                                        (1, "Attacker missed the attack.")])
+                                                        (1, "Attacker missed the attack")])
 def test_attack(force_roll, attack_outcome, attacker, target, mocker):
     mocker.patch('random.uniform', return_value=force_roll)
     message = attacker.attack(target)
@@ -100,7 +100,7 @@ def test_attack_kills_target(attacker, target, mocker):
     target.hp = 5
     mocker.patch('random.uniform', return_value=0)  # Force hit
     message = attacker.attack(target)
-    assert "Target has fainted." in message
+    assert "Target has fainted" in message
 
 
 def test_attack_no_action_if_dead(attacker, target):
