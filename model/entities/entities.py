@@ -2,29 +2,19 @@ import random
 from abc import abstractmethod
 from typing import final
 
-""" Provides the default behavior shared by all entities.
-    Utilizes template method (attack calls hit response, which is implemented
-    in subclasses.
-
-    Attributes:
-
-    Passed in:
-    name (string): entity's name.
-    pos (tuple): entity's position.
-    max_hp (int): entity's max hp.
-    hit_chance (float): entity's attack hit chance percentage.
-    damage_range (tuple): entity's attack min and max damage.
-
-    Self-initialized:
-    hp (int): entity's hp tracker. Initialized to max_hp.
-
-    Methods:
-    is_alive(): returns the entity's life status.
-    attack(the_target): performs attacks on the target.    
-"""
+# Utilizes Template method: attack(target) calls _hit_response(damage),
+# which is implemented in subclasses.
 class Entity:
     def __init__(self, the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
-        # Private fields
+        """
+        Represents a generic entity.
+        :param the_name: The name of the entity.
+        :param the_max_hp: Maximum health points of the entity.
+        :param the_attack_speed: Attack speed of the entity.
+        :param the_hit_chance: Hit chance of the entity.
+        :param the_damage_range: Damage range of the entity.
+        """
+
         self.__my_name = the_name.strip() if the_name else "Unnamed Entity"  # Validate name
         self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
         self.__my_attack_speed = max(1, the_attack_speed)  # Ensure non-zero attack speed
