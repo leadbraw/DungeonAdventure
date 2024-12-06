@@ -59,10 +59,23 @@ class GameController:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
-
                     if self.inventory_button.is_hovered(mouse_pos):
-                        inventory_overlay = InventoryOverlay(self.screen, self.fonts, self.active_adventurer.inventory)
-                        inventory_overlay.display(target=self.active_adventurer)
+                        # Pass the current position and dungeon explicitly
+                        inventory_overlay = InventoryOverlay(
+                            self.screen,
+                            self.fonts,
+                            self.active_adventurer.inventory,
+                            current_monster=None,  # No monster when out of combat
+                            current_room=self.position,  # Use current position
+                            dungeon=self.dungeon_manager.dungeon  # Pass the entire dungeon
+                        )
+
+                        # Provide position and the current dungeon floor to the display method
+                        inventory_overlay.display(
+                            target=self.active_adventurer,
+                            position=self.position,
+                            dungeon=self.dungeon_manager.dungeon[self.current_floor - 1]  # Specific dungeon floor
+                        )
 
                 elif event.type == pygame.KEYDOWN:
                     self.player_movement(event.key)
@@ -100,100 +113,87 @@ class GameController:
     def room_interaction(self):
         """Interact with the current room."""
         current_room = self.dungeon_manager.get_room(self.current_floor, self.position)
+        self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
-        # Handle MONSTER and ELITE rooms
-        if current_room.type == "MONSTER" and current_room.has_monster():
-            monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
-            self.render_monster_sprite(monster.name)
-            self.display_message(f"A wild {monster.name} appears! Prepare for battle!", 2000)
-
-            '''This line present in all cases because putting it before the if/elif structure breaks traps.
-            A better way exists to do it. For another time.'''
-            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-
-            battle_result = self.battle_manager.start_battle(
-                            adventurer=self.active_adventurer,
-                            monster=monster,
-                            dungeon=self.dungeon_manager.dungeon,  # Assuming this is the correct dungeon reference
-                            current_floor=self.current_floor,
-                            position=self.position,
-                            get_hero_portrait=self.get_hero_portrait, # Pass the callable here
-                            minimap=self.minimap
-                            )
-            if battle_result == 1:
-                self.return_to_menu = True
-
-        elif current_room.type == "ELITE" and current_room.has_monster():
-            monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
-            self.render_monster_sprite(monster.name)
-            self.display_message(f"An ELITE {monster.name} stands before you! Prepare for a tough fight!", 2000)
-            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-            battle_result = self.battle_manager.start_battle(
-                                adventurer=self.active_adventurer,
-                                monster=monster,
-                                dungeon=self.dungeon_manager.dungeon,  # Assuming this is the correct dungeon reference
-                                current_floor=self.current_floor,
-                                position=self.position,
-                                get_hero_portrait=self.get_hero_portrait,
-                                minimap=self.minimap # Pass the callable here
-                            )
-            if battle_result == 1:
-                self.return_to_menu = True
-
-        # Handle ITEM rooms
+        if current_room.type in ["MONSTER", "ELITE"] and current_room.has_monster():
+            self.handle_monster_room(current_room)
         elif current_room.type == "ITEM" and current_room.has_item():
-            item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
-            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-            if item.get_name().startswith("Pillar"):
-                self.handle_pillar_item(item)
-            else:
-                self.handle_regular_item(item)
-
-        # Handle EXIT rooms
+            self.handle_item_room(current_room)
         elif current_room.type == "EXIT":
-            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.handle_exit_room()
-
-        # Handle ENTRANCE rooms
         elif current_room.type == "ENTRANCE":
-            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.display_message("You are back at the entrance.")
-
-        # Handle PILLAR rooms
         elif current_room.type == "PILLAR" and current_room.has_item():
-            item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
-            self.display_message(f"You've found the {item.get_name()}! Wow!")
-            self.dungeon_manager.clear_item_in_room(self.current_floor, self.position)
-            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-            self.pillars_found += 1
-
+            self.handle_pillar_room(current_room)
         elif current_room.type == "TRAP" and not current_room.visited:
-            trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp - 1) # Ensure player can't die to trap.
-            self.active_adventurer._update_hp(trap_dmg)
-            self.display_message(f"It's a trap! You take {trap_dmg} damage.")
-            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-
-        # Handle EMPTY rooms
+            self.handle_trap_room(current_room)
         elif current_room.type == "EMPTY":
             self.display_message("You've found an empty room. It smells in here.")
-            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
+
+    def handle_monster_room(self, room):
+        """Handles interactions in MONSTER and ELITE rooms."""
+        monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
+        if not monster:
+            return
+
+        message = (
+            f"A wild {monster.name} appears! Prepare for battle!" if room.type == "MONSTER"
+            else f"An ELITE {monster.name} stands before you! Prepare for a tough fight!"
+        )
+        self.render_monster_sprite(monster.name)
+        self.display_message(message, 2000)
+
+        battle_result = self.battle_manager.start_battle(
+            adventurer=self.active_adventurer,
+            monster=monster,
+            dungeon=self.dungeon_manager.dungeon,
+            current_floor=self.current_floor,
+            position=self.position,
+            get_hero_portrait=self.get_hero_portrait,
+            minimap=self.minimap
+        )
+
+        if battle_result == 1:
+            self.return_to_menu = True
+
+    def handle_item_room(self, room):
+        """Handles interactions in ITEM rooms."""
+        item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
+        if not item:
+            self.display_message("There's no item here.")
+            return
+
+        if item.name.startswith("Pillar"):
+            self.handle_pillar_item(item)
+        else:
+            self.handle_regular_item(item)
+
+    def handle_pillar_room(self, room):
+        """Handles interactions in PILLAR rooms."""
+        item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
+        if not item:
+            self.display_message("There's no pillar here. Strange...")
+            return
+
+        self.handle_pillar_item(item)
+        self.pillars_found += 1
+
+    def handle_trap_room(self, room):
+        """Handles interactions in TRAP rooms."""
+        trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp - 1)  # Ensure player can't die to trap.
+        self.active_adventurer._update_hp(-trap_dmg)
+        self.display_message(f"It's a trap! You take {trap_dmg} damage.")
 
     def handle_pillar_item(self, item):
         """Handles interaction with Pillar items."""
-        self.display_message(f"The {item.get_name()} grants you its power!")
+        self.display_message(f"The {item.name} grants you its power!")
 
         # Use the existing public apply_effect method
         self.active_adventurer.inventory.apply_effect(
-            {
-                "name": item.get_name(),
-                "buff_type": item.get_buff_type(),
-                "effect_min": item.get_effect_min(),
-                "effect_max": item.get_effect_max(),
-                "target": "adventurer",  # Explicitly specify the target
-            },
+            item,
             self.active_adventurer,
-            item.get_effect_min(),
-            item.get_effect_max(),
+            item.effect_min,
+            item.effect_max,
         )
 
         self.dungeon_manager.clear_item_in_room(self.current_floor, self.position)
@@ -201,10 +201,10 @@ class GameController:
     def handle_regular_item(self, item):
         """Handles interaction with regular items."""
         if self.active_adventurer.inventory.add_item(item):
-            self.display_message(f"{item.get_name()} added to your inventory.")
+            self.display_message(f"{item.name} added to your inventory.")
             self.dungeon_manager.clear_item_in_room(self.current_floor, self.position)
         else:
-            self.display_message(f"Your inventory is full! Unable to pick up {item.get_name()}.")
+            self.display_message(f"Your inventory is full! Unable to pick up {item.name}.")
 
     def handle_exit_room(self):
         """Handles interaction with the Exit room."""

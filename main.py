@@ -23,7 +23,6 @@ def main():
     # Use SpriteManager to preload images
     sprite_manager = SpriteManager.get_instance()
     sprite_manager.preload_sprites({
-        "hero": SPRITE_PATHS["hero"],
         "dice": SPRITE_PATHS["dice"]
     })
     dungeon_icon = sprite_manager.get_sprite("dice")

@@ -53,7 +53,7 @@ class RoomSeeder:
 
             # Commit the transaction to save changes
             conn.commit()
-            print(f"Inserted {len(room_data)} room configurations into the database.")
+            #print(f"Inserted {len(room_data)} room configurations into the database.")
 
 
 if __name__ == "__main__":

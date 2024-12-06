@@ -67,7 +67,7 @@ class DatabaseManager:
         FROM monsters
         """
         monsters = self.execute_query(query)
-        print(f"DatabaseManager: Fetched {len(monsters)} monsters.")
+        #print(f"DatabaseManager: Fetched {len(monsters)} monsters.")
         return monsters
 
     def fetch_adventurers(self):

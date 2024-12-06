@@ -63,9 +63,20 @@ class ItemFactory:
         :param raw_data: Dictionary containing item attributes.
         :return: A unique Item instance.
         """
-        item = ItemFactory.create_item_from_raw(raw_data)
-        item.one_time_item = True  # Ensure the item is marked as unique
-        return item
+        try:
+            item = Item(
+                name=raw_data["name"],
+                description=raw_data["description"],
+                target=raw_data["target"],
+                one_time_item=True,  # Mark the item as unique
+                effect_min=raw_data.get("effect_min"),
+                effect_max=raw_data.get("effect_max"),
+                buff_type=raw_data.get("buff_type"),
+            )
+            return item
+        except KeyError as e:
+            print(f"[ItemFactory] Missing key in raw_data: {e}")
+            return None
 
     @staticmethod
     def create_standard_item(raw_data):

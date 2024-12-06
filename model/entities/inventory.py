@@ -1,6 +1,4 @@
 import random
-
-from model.entities import item
 from model.managers.item_manager import ItemManager
 
 class Inventory:
@@ -68,40 +66,89 @@ class Inventory:
         :param target: The target entity or object for the item's effect.
         :return: The used item, or None if the item is not found.
         """
+        print(f"[DEBUG] use_item called with item_name='{item_name}' and target='{target}'.")
+
+        # Check inventory structure
+        if not self.items:
+            print("[DEBUG] Inventory is empty. Cannot use any item.")
+            return None
+
         for entry in self.items:
-            if entry["item"].name == item_name:
-                effect_min = entry["item"].effect_min
-                effect_max = entry["item"].effect_max
-                if self.apply_effect(entry["item"], target, effect_min, effect_max):
+            item = entry["item"]
+            quantity = entry["quantity"]
+
+            # Debug information about the current item in inventory
+            print(f"[DEBUG] Checking inventory item: {item.name} with quantity={quantity}")
+
+            # Check if the current inventory item matches the requested item
+            if item.name == item_name:
+                print(f"[DEBUG] Found matching item '{item_name}' in inventory.")
+                effect_min = item.effect_min
+                effect_max = item.effect_max
+                print(f"[DEBUG] Attempting to apply effect: min={effect_min}, max={effect_max} to target '{target}'.")
+
+                # Attempt to apply the item's effect to the target
+                if self.apply_effect(item, target, effect_min, effect_max):
+                    print(f"[DEBUG] Item '{item_name}' successfully applied to target '{target}'.")
                     self.remove_item(item_name, 1)
-                    return entry["item"]
-        print(f"Item '{item_name}' is not usable or not found.")
+                    print(f"[DEBUG] Item '{item_name}' removed from inventory. Remaining quantity: {quantity - 1}")
+                    return item
+                else:
+                    print(f"[DEBUG] Failed to apply item '{item_name}' to target '{target}'.")
+
+        # If the item was not found or could not be used
+        print(f"[DEBUG] Item '{item_name}' is not usable or not found in inventory.")
         return None
 
     def apply_effect(self, item_data, target, effect_min, effect_max):
         """
         Applies the item's effect to the target.
 
-        :param item_data: The dictionary containing item data.
+        :param item_data: The Item object containing item data.
         :param target: The target entity or object.
         :param effect_min: The minimum effect value.
         :param effect_max: The maximum effect value.
         :return: True if the effect was applied successfully, False otherwise.
         """
-        if item_data.target == "adventurer":
-            return self._apply_effect_to_adventurer(item_data, target, effect_min, effect_max)
-        elif item_data.target == "monster":
-            return self._apply_effect_to_monster(item_data, target, effect_min, effect_max)
-        elif item_data.target == "room":
-            return self._apply_effect_to_room(item_data, target)
-        else:
-            print(f"No valid effect applied for item '{item_data['name']}'.")
+        print(f"[DEBUG] apply_effect called with item='{item_data.name}', target='{target}', "
+              f"effect_min={effect_min}, effect_max={effect_max}.")
+
+        # Check if the item_data is valid
+        if not item_data:
+            print("[DEBUG] Invalid item_data provided to apply_effect.")
             return False
 
-    def _apply_effect_to_adventurer(self, item_data, adventurer, effect_min, effect_max):
+        # Determine the correct target type for the item
+        if item_data.target == "adventurer":
+            print(f"[DEBUG] Target is 'adventurer'. Applying effect to '{target}'.")
+            return self._apply_effect_to_adventurer(item_data, target, effect_min, effect_max)
+
+        elif item_data.target == "monster":
+            print(f"[DEBUG] Target is 'monster'. Applying effect to '{target}'.")
+            return self._apply_effect_to_monster(item_data, target, effect_min, effect_max)
+
+        elif item_data.target == "room":
+            print(f"[DEBUG] Target is 'room'. Attempting to apply room effect.")
+            # Ensure target contains both position and dungeon
+            if isinstance(target, tuple) and len(target) == 2:
+                position, dungeon = target
+                print(f"[DEBUG] Room target identified: position={position}, dungeon={dungeon}.")
+                return self._apply_effect_to_room(item_data, position, dungeon)
+            else:
+                print(f"[DEBUG] Invalid room target format: {target}. Expected (position, dungeon).")
+                return False
+
+        else:
+            # Log unhandled target types
+            print(f"[DEBUG] No valid effect for item '{item_data.name}' with target type '{item_data.target}'.")
+            return False
+
+    @staticmethod
+    def _apply_effect_to_adventurer(item_data, adventurer, effect_min, effect_max):
         """
         Applies the item's effect to an adventurer.
-        :param item_data: The dictionary containing item data.
+
+        :param item_data: The Item object containing item data.
         :param adventurer: The adventurer object.
         :param effect_min: The minimum effect value.
         :param effect_max: The maximum effect value.
@@ -111,48 +158,87 @@ class Inventory:
         if item_data.name.startswith("Pillar"):
             buff_type = item_data.buff_type
             if not buff_type:
-                raise ValueError(f"Item '{item.name}' is missing a 'buff_type'.")
+                raise ValueError(f"Item '{item_data.name}' is missing a 'buff_type'.")
 
             buff_value = random.randint(effect_min, effect_max)
             adventurer.apply_buff(buff_value, buff_type)
-            print(f"{adventurer.name} gains {buff_value} to {buff_type} from {item.name}.")
+            print(f"{adventurer.name} gains {buff_value} to {buff_type} from {item_data.name}.")
             return True
 
+        # Handle Energy Drink
         elif item_data.name == "Energy Drink":
             heal_amount = random.randint(effect_min, effect_max)
             adventurer.heal_from_item(heal_amount)
-            print(f"{adventurer.name} heals {heal_amount} HP from {item.name}.")
+            print(f"{adventurer.name} heals {heal_amount} HP from {item_data.name}.")
             return True
 
-        print(f"Item '{item.name}' could not be applied to {adventurer.name}.")
+        # Fallback for unhandled cases
+        print(f"Item '{item_data.name}' could not be applied to {adventurer.name}.")
         return False
 
-    def _apply_effect_to_monster(self, item_data, monster, effect_min, effect_max):
+    @staticmethod
+    def _apply_effect_to_monster(item_data, monster, effect_min, effect_max):
         """
         Applies the item's effect to a monster.
-        :param item_data: The dictionary containing item data.
+
+        :param item_data: The Item object containing item data.
         :param monster: The monster object.
         :param effect_min: The minimum effect value.
         :param effect_max: The maximum effect value.
         :return: True if the effect was applied successfully, False otherwise.
         """
-        if effect_min is not None and effect_max is not None and item_data.get("name") == "Code Spike":
-            damage = random.randint(effect_min, effect_max)
-            print(monster.take_item_damage(damage))  # Bypasses regen
-            return True
+        if not monster:
+            print("[DEBUG] No valid monster target provided.")
+            return False
+
+        if not item_data:
+            print("[DEBUG] No valid item data provided.")
+            return False
+
+        print(f"[DEBUG] Attempting to apply effect from item '{item_data.name}' to monster '{monster.name}'.")
+
+        # Check for Code Spike and calculate damage
+        if effect_min is not None and effect_max is not None and item_data.name == "Code Spike":
+            try:
+                damage = random.randint(effect_min, effect_max)
+                print(f"[DEBUG] Calculated damage: {damage} (min={effect_min}, max={effect_max}).")
+
+                # Apply damage and log monster health
+                result_message = monster.take_item_damage(damage)  # Assuming this method exists and logs health changes
+                print(f"[DEBUG] Monster '{monster.name}' damage result: {result_message}")
+                return True
+
+            except Exception as e:
+                print(f"[ERROR] Failed to apply effect to monster. Error: {e}")
+                return False
+
+        # Log unhandled item effect cases
+        print(f"[DEBUG] No valid effect for item '{item_data.name}' on monster '{monster.name}'.")
         return False
 
-    def _apply_effect_to_room(self, item_data, position, dungeon):
+    @staticmethod
+    def _apply_effect_to_room(item_data, position, dungeon):
         """
         Applies the White Box's effect to reveal adjacent rooms on the current floor.
-        :param item_data: The dictionary containing item data.
+        :param item_data: The Item object containing item data.
         :param position: A tuple (x, y) representing the current position on the current floor.
         :param dungeon: The dungeon object for the current floor.
         :return: True if the effect was applied successfully, False otherwise.
         """
-        if item_data["name"] == "White Box":
+        print(f"[DEBUG] Room effect called for item: {item_data.name}. Position: {position}, Dungeon: {dungeon}")
+
+        if item_data.name == "White Box":
+            if not position or not dungeon:
+                print("[DEBUG] Position or dungeon is None. Cannot apply room effect.")
+                return False
+
             directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # Up, Right, Down, Left
             current_x, current_y = position  # Unpack current position
+
+            # Validate dungeon type
+            if not hasattr(dungeon, "get_length") or not hasattr(dungeon, "get_width"):
+                print("[DEBUG] Dungeon is not a valid dungeon object.")
+                return False
 
             # Check adjacent rooms and mark them as visited
             for dx, dy in directions:
@@ -165,6 +251,8 @@ class Inventory:
                             f"The White Box reveals an adjacent room: {adjacent_room.get_type()} at ({adj_x}, {adj_y}).")
 
             return True
+
+        print(f"[DEBUG] No valid room effect for item: {item_data.name}.")
         return False
 
     def list_items(self):
@@ -220,61 +308,3 @@ class Inventory:
             item = ItemManager.get_instance().get_limited_item_data(entry["name"])
             if item:
                 self.add_item(item, entry["quantity"])
-
-if __name__ == "__main__":
-    import random
-    from model.managers.item_manager import ItemManager
-    from model.entities.adventurers import Adventurer
-    from model.entities.monsters import Monster
-    from model.dungeon.dungeon import Dungeon
-
-    # Create test adventurer
-    adventurer = Adventurer("Hero", "Warrior", 50, 1.0, 0.9, (5, 10), 0.2)
-    print(f"Created adventurer: {adventurer.name} with HP {adventurer.hp}/{adventurer.max_hp}")
-
-    # Create test monster
-    monster = Monster("Goblin", "Beast", 30, 1.0, 0.8, (3, 6), 0.1, (5, 10))
-    print(f"Created monster: {monster.name} with HP {monster.hp}/{monster.max_hp}")
-
-    # Create test dungeon
-    dungeon = Dungeon(1)  # 5x5 dungeon
-    adventurer_position = (2, 2)
-    dungeon.fetch_room(*adventurer_position).set_visited(True)  # Set starting room as visited
-
-    # Create test items
-    white_box = {"name": "White Box"}
-    energy_drink = {"name": "Energy Drink", "effect_min": 5, "effect_max": 15}
-    code_spike = {"name": "Code Spike", "effect_min": 10, "effect_max": 20}
-    pillar_abstraction = {"name": "Pillar of Abstraction", "buff_type": "max_hp", "effect_min": 25, "effect_max": 25}
-
-    # Create inventory instance
-    inventory = Inventory()
-
-    # Add items to inventory
-    inventory.add_item(white_box)
-    inventory.add_item(energy_drink)
-    inventory.add_item(code_spike)
-    inventory.add_item(pillar_abstraction)
-
-    # Test _apply_effect_to_adventurer
-    print("\n=== Testing Adventurer Effects ===")
-    inventory._apply_effect_to_adventurer(pillar_abstraction, adventurer, 25, 25)
-    inventory._apply_effect_to_adventurer(energy_drink, adventurer, 5, 15)
-
-    # Test _apply_effect_to_monster
-    print("\n=== Testing Monster Effects ===")
-    inventory._apply_effect_to_monster(code_spike, monster, 10, 20)
-
-    # Test _apply_effect_to_room
-    print("\n=== Testing Room Effects ===")
-    inventory._apply_effect_to_room(white_box, adventurer_position, dungeon)
-
-    # Verify results
-    print("\n=== Verifying Results ===")
-    print(f"Adventurer HP: {adventurer.hp}/{adventurer.max_hp}")
-    print(f"Monster HP: {monster.hp}/{monster.max_hp}")
-    adjacent_positions = [(1, 2), (3, 2), (2, 1), (2, 3)]
-    for pos in adjacent_positions:
-        room = dungeon.fetch_room(*pos)
-        if room:
-            print(f"Room at {pos}: Visited = {room.get_visited()}")

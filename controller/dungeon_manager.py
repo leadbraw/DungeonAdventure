@@ -24,7 +24,7 @@ class DungeonManager:
         self.dungeon = []
         self.monster_manager = MonsterManager.get_instance()
         self.item_manager = ItemManager.get_instance()
-        print("[DungeonManager] Initialized. Ready to generate the dungeon.")
+        # print("[DungeonManager] Initialized. Ready to generate the dungeon.")
         # Note that __init__ does NOT call initialize_dungeon(), that is the game controller's responsibility!
 
     def initialize_dungeon(self):
@@ -34,7 +34,7 @@ class DungeonManager:
         """
         print("[DungeonManager] Initializing the dungeon...")
         self.dungeon = [Dungeon(1), Dungeon(2), Dungeon(3), Dungeon(4)]  # Four floors
-        print(f"[DungeonManager] Dungeon generated with {len(self.dungeon)} floors.")
+        # print(f"[DungeonManager] Dungeon generated with {len(self.dungeon)} floors.")
 
         for floor_index, floor in enumerate(self.dungeon):
             print(f"[DungeonManager] Floor {floor_index + 1} initialized:")
@@ -54,8 +54,8 @@ class DungeonManager:
                 coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).get_type() == 'ITEM'
             ]
 
-            print(
-                f"[DungeonManager] Floor {i + 1}: {len(monster_rooms)} MONSTER rooms, {len(elite_rooms)} ELITE rooms, {len(item_rooms)} ITEM rooms.")
+            # print(
+            #   f"[DungeonManager] Floor {i + 1}: {len(monster_rooms)} MONSTER rooms, {len(elite_rooms)} ELITE rooms, {len(item_rooms)} ITEM rooms.")
             self.populate_rooms(i, monster_rooms, elite_rooms, item_rooms, all_rooms)
 
         return self.dungeon
@@ -89,7 +89,7 @@ class DungeonManager:
         :param room_coords The coordinates where the monster will be placed (row, column).
         :param monster_type The type of the monster.
         """
-        print(f"[DungeonManager] Attempting to place {monster_type} monster in Floor {floor + 1}, Room {room_coords}.")
+        # print(f"[DungeonManager] Attempting to place {monster_type} monster in Floor {floor + 1}, Room {room_coords}.")
         raw_data = self.monster_manager.get_monster_data(monster_type=monster_type)
         if raw_data:
             raw_data_sliced = raw_data[1:]
@@ -104,31 +104,34 @@ class DungeonManager:
     def place_item(self, floor, room_coords):
         """
         Places a consumable item in the specified room.
-        :param floor The floor number (0-indexed).
-        :param room_coords The coordinates of the room where the item will be placed (row, column).
+        :param floor: The floor number (0-indexed).
+        :param room_coords: The coordinates of the room where the item will be placed (row, column).
         """
-        print(f"[DungeonManager] Attempting to place an ITEM in Floor {floor + 1}, Room {room_coords}.")
+        # Attempt to get raw item data and create the item
         raw_data = self.item_manager.get_random_consumable_item_data()
         if raw_data:
             item = ItemFactory.get_instance().create_item_from_raw(raw_data)
             if item:
                 self.dungeon[floor].fetch_room(room_coords[0], room_coords[1]).set_item(item)
-                print(f"[DungeonManager] Placed {item.get_name()} in an ITEM room at {room_coords}.")
+                print(f"[DungeonManager] Placed {item.name} in an ITEM room at {room_coords}.")
 
     def place_pillar(self, floor_index, pillar_coords):
         """
         Places a unique pillar item in the specified room.
-        :param floor_index The floor number (0-indexed).
-        :param pillar_coords The coordinates of the room where the pillar shall be placed (row, column).
+        :param floor_index: The floor number (0-indexed).
+        :param pillar_coords: The coordinates of the room where the pillar shall be placed (row, column).
         """
-        print(f"[DungeonManager] Attempting to place a PILLAR in Floor {floor_index + 1}, Room {pillar_coords}.")
+        # Attempt to retrieve unique item data and place the pillar
         raw_data = self.item_manager.get_unique_item_data(floor_index=floor_index)
         if raw_data:
             pillar_item = ItemFactory.get_instance().create_unique_item(raw_data)
-            self.dungeon[floor_index].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar_item)
-            print(f"[DungeonManager] Placed {pillar_item.get_name()} in a PILLAR room at {pillar_coords}.")
+            if pillar_item:
+                self.dungeon[floor_index].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar_item)
+                print(f"[DungeonManager] Placed {pillar_item.name} in a PILLAR room at {pillar_coords}.")
+            else:
+                print(f"[DungeonManager] Failed to create a unique pillar item for Floor {floor_index + 1}.")
         else:
-            print(f"[DungeonManager] Failed to place pillar in a PILLAR room at {pillar_coords}.")
+            print(f"[DungeonManager] No unique item data found for Floor {floor_index + 1}.")
 
     def get_floor_entrance(self, floor):
         """

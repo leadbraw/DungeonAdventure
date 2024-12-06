@@ -12,14 +12,45 @@ class Item:
         :param effect_max: The maximum value of the item's effect (optional, for numeric effects).
         :param buff_type: The type of buff applied by the item (e.g., "max_hp", "attack_speed") (optional).
         """
-        self.name = name
-        self.description = description
-        self.target = target
-        self.one_time_item = bool(one_time_item)
-        self.effect_min = effect_min
-        self.effect_max = effect_max
-        self.buff_type = buff_type
+        self.__my_name = name
+        self.__my_description = description
+        self.__my_target = target
+        self.__my_one_time_item = bool(one_time_item)
+        self.__my_effect_min = effect_min
+        self.__my_effect_max = effect_max
+        self.__my_buff_type = buff_type
 
-    def get_name(self):
-        """Returns the name of the item."""
-        return self.name
+    # Read-only property for name
+    @property
+    def name(self):
+        return self.__my_name
+
+    # Read-only property for description
+    @property
+    def description(self):
+        return self.__my_description
+
+    # Read-only property for target
+    @property
+    def target(self):
+        return self.__my_target
+
+    # Read-only property for one_time_item
+    @property
+    def one_time_item(self):
+        return self.__my_one_time_item
+
+    # Read-only property for effect_min
+    @property
+    def effect_min(self):
+        return self.__my_effect_min
+
+    # Read-only property for effect_max
+    @property
+    def effect_max(self):
+        return self.__my_effect_max
+
+    # Read-only property for buff_type
+    @property
+    def buff_type(self):
+        return self.__my_buff_type

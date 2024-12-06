@@ -31,22 +31,30 @@ class BattleManager:
 
     def start_battle(self, adventurer, monster, dungeon, current_floor, position, get_hero_portrait, minimap):
         """Starts and Handles battle action with player vs monster in the Room section."""
-        inventory_overlay = InventoryOverlay(self.screen, self.fonts, adventurer.inventory)
+        inventory_overlay = InventoryOverlay(
+            self.screen,
+            self.fonts,
+            adventurer.inventory,
+            current_monster=monster,  # Pass current monster
+            current_room=position,  # Pass current position
+            dungeon=dungeon  # Pass dungeon
+        )
 
         fight_button = Button(color=LIGHT_BLUE, x=150, y=540, width=100, height=30,
                               font=self.fonts["small"], text_color=(255, 255, 255), text="Fight")
         item_button = Button(color=LIGHT_BLUE, x=350, y=540, width=100, height=30,
                              font=self.fonts["small"], text_color=(255, 255, 255), text="Use Item")
+
         running = True
         while running and monster.hp > 0 and adventurer.hp > 0:
             # Pass `get_hero_portrait` as a callable
             self.draw_battle_ui(monster, adventurer, fight_button, item_button, get_hero_portrait, minimap)
             running = self.handle_battle_event(
-                monster, adventurer, inventory_overlay, dungeon, current_floor, fight_button, item_button
+                monster, adventurer, inventory_overlay, dungeon, current_floor, position, fight_button, item_button
             )
 
         if self.post_battle_logic(monster, adventurer, dungeon, current_floor, position) == 1:
-            return 1 # This will be seen by game controller and main and trigger a restart.
+            return 1  # Triggers a restart in the game controller and main
 
     def draw_battle_ui(self, monster, adventurer, fight_button, item_button, get_hero_portrait, minimap):
         """Draw the battle UI components."""
@@ -69,8 +77,21 @@ class BattleManager:
 
         pygame.display.flip()
 
-    def handle_battle_event(self, monster, adventurer, inventory_overlay, active_adventurer, dungeon, current_floor, fight_button, item_button):
-        """Handle player input during the battle."""
+    def handle_battle_event(self, monster, adventurer, inventory_overlay, dungeon, current_floor, position,
+                            fight_button, item_button):
+        """
+        Handle player input during the battle.
+
+        :param monster: The current monster in the battle.
+        :param adventurer: The adventurer in the battle.
+        :param inventory_overlay: The InventoryOverlay instance.
+        :param dungeon: The dungeon object (list of floors).
+        :param current_floor: The current floor (1-indexed).
+        :param position: The current position of the adventurer as a tuple (x, y).
+        :param fight_button: The button for fight actions.
+        :param item_button: The button for using items.
+        :return: True if the battle continues, False otherwise.
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -78,21 +99,35 @@ class BattleManager:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
 
+                # Fight button logic
                 if fight_button.is_hovered(mouse_pos):
                     self.execute_fight(monster, adventurer)
-                elif item_button.is_hovered(mouse_pos):
-                    inventory_overlay.display(target=active_adventurer)
 
-                    # Use the selected item if one was chosen
+                # Item button logic
+                elif item_button.is_hovered(mouse_pos):
+                    inventory_overlay.display(target=adventurer)
+
                     selected_item = inventory_overlay.selected_item
+                    print(f"[DEBUG] Selected item: {selected_item}")  # Debugging line
                     if selected_item:
-                        if adventurer.inventory.use_item(selected_item, adventurer, dungeon[current_floor - 1]):
-                            print(f"You used {selected_item}.")
+                        # Handle target logic for item types
+                        if selected_item.name == "White Box":
+                            actual_target = (
+                            position, dungeon[current_floor - 1])  # Use position and floor for room effects
+                        elif selected_item.name == "Code Spike":
+                            actual_target = monster  # Use monster for damage
+                        else:
+                            actual_target = adventurer  # Default target is the adventurer
+
+                        if adventurer.inventory.use_item(selected_item.name, actual_target):
+                            print(f"You used {selected_item.name}.")
                             return True  # Continue the battle
                         else:
-                            print(f"Failed to use {selected_item}.")
+                            print(f"Failed to use {selected_item.name}.")
                     else:
                         print("No item was selected. Returning to battle options.")
+
+            # Continue the battle as long as both monster and adventurer are alive
         return monster.hp > 0 and adventurer.hp > 0
 
     def post_battle_logic(self, monster, adventurer, dungeon, current_floor, position):

@@ -1,4 +1,5 @@
 import random
+import sys
 
 import pygame
 from constants import LIGHT_BLUE, FADED_BLUE, FADED_GRAY, PASTEL_RED
@@ -9,19 +10,16 @@ from model.entities.monsters import Monster
 
 
 class InventoryOverlay:
-    def __init__(self, screen, fonts, inventory):
-        """
-        Initializes the inventory overlay.
-
-        :param screen: The main game screen surface.
-        :param fonts: A dictionary of fonts used in the game.
-        :param inventory: The inventory object to display.
-        """
+    def __init__(self, screen, fonts, inventory, current_monster=None, current_room=None, dungeon=None):
+        """Initializes the inventory overlay."""
         self._previous_frame = None
         self.screen = screen
         self.fonts = fonts
         self.inventory = inventory
         self.selected_item = None
+        self.current_monster = current_monster
+        self.current_room = current_room
+        self.dungeon = dungeon
 
     def draw_overlay(self, overlay_x, overlay_y, overlay_width, overlay_height, opacity=200):
         """Draws the inventory overlay background."""
@@ -86,7 +84,6 @@ class InventoryOverlay:
 
         return buttons
 
-
     def draw_close_button(self, close_size, button_size, spacing):
         """Draws the close button at the specified position."""
         close_x = 650 - 40  # Align to the far right of the overlay
@@ -106,49 +103,57 @@ class InventoryOverlay:
         close_button.draw(self.screen)
         return close_button
 
-    def handle_events(self, pillar_buttons, usable_item_buttons, close_button, target):
-        """
-        Handles events for inventory overlay.
-        :param pillar_buttons: List of pillar buttons on the top row.
-        :param usable_item_buttons: List of usable item buttons on the second row.
-        :param close_button: The close button for the overlay.
-        :return: True if the overlay should remain open, False otherwise.
-        """
+    def handle_events(self, pillar_buttons, usable_item_buttons, close_button, target, current_monster, position,
+                      dungeon):
+        """Handles events for inventory overlay."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print("[DEBUG] Quit event detected.")
-                return False
+                print("[DEBUG] Quit event detected. Exiting game.")
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 print(f"[DEBUG] Mouse clicked at {mouse_pos}")
 
-                # Check pillar buttons
-                for button in pillar_buttons:
-                    if button.is_hovered(mouse_pos):
-                        print(f"[DEBUG] {button.text} button clicked (no action).")
-
                 # Check usable item buttons
                 for item_button, name, quantity in usable_item_buttons:
                     if item_button.is_hovered(mouse_pos) and quantity > 0:
-                        print(f"[DEBUG] {name} button clicked, attempting to use...")
-                        # Use the item
-                        if self.inventory.use_item(name, target):
-                            print(f"[DEBUG] Successfully used {name}.")
+                        print(f"[DEBUG] {name} button clicked, quantity available: {quantity}")
+
+                        # Determine the actual target based on item type
+                        if name == "White Box":
+                            if isinstance(dungeon, list):  # Ensure dungeon is a list of floors
+                                current_dungeon = dungeon[self.current_floor - 1]  # Get the current floor
+                            else:
+                                current_dungeon = dungeon  # Single floor passed directly
+                            print(f"[DEBUG] Current dungeon for White Box: {current_dungeon}")
+
+                            actual_target = (position, current_dungeon)
                         else:
-                            print(f"[DEBUG] Failed to use {name}.")
-                        return False  # Keep overlay open (logic for issue 2 to be addressed later)
+                            actual_target = (
+                                current_monster if name == "Code Spike" else
+                                target if name == "Energy Drink" else
+                                None
+                            )
+
+                        print(f"[DEBUG] Resolved target for '{name}': {actual_target}")
+
+                        # Attempt to use the item
+                        if actual_target and self.inventory.use_item(name, actual_target):
+                            print(f"[DEBUG] Successfully used '{name}' on target: {actual_target}.")
+                            return "item_used"
+                        else:
+                            print(f"[DEBUG] Failed to use '{name}' on target: {actual_target}.")
+                            return "close_overlay"
 
                 # Check close button
                 if close_button.is_hovered(mouse_pos):
                     print("[DEBUG] Close button clicked.")
-                    self.screen.blit(self.previous_frame, (0, 0))  # Restore the previous UI frame
-                    pygame.display.flip()  # Refresh the screen
-                    return False  # Close overlay
+                    return "close_overlay"
 
-        return True  # Keep overlay open
+        return "continue"  # Keep overlay open if no exit condition is met
 
-
-    def display(self, target):
+    def display(self, target, position=None, dungeon=None):
         """Displays the inventory overlay and handles item selection."""
         running = True
         self.selected_item = None
@@ -161,7 +166,7 @@ class InventoryOverlay:
 
         # Button layout
         button_size = 128
-        spacing = 6  # Consistent spacing
+        spacing = 6
         close_size = 32
 
         # Save the current screen before displaying the overlay
@@ -170,7 +175,7 @@ class InventoryOverlay:
         print("[DEBUG] Displaying inventory overlay...")
 
         while running:
-            # Draw overlay
+            # Draw overlay background
             self.draw_overlay(overlay_x, overlay_y, overlay_width, overlay_height)
 
             # Draw buttons
@@ -178,9 +183,25 @@ class InventoryOverlay:
             usable_item_buttons = self.draw_usable_item_buttons(button_size, spacing)
             close_button = self.draw_close_button(close_size, button_size, spacing)
 
+            # Update display
             pygame.display.flip()
 
             # Handle events
-            running = self.handle_events(pillar_buttons, usable_item_buttons, close_button, target)
+            event_result = self.handle_events(
+                pillar_buttons,
+                usable_item_buttons,
+                close_button,
+                target,
+                self.current_monster,
+                position or self.current_room,  # Fallback to current_room if position is None
+                dungeon or self.dungeon  # Fallback to self.dungeon if dungeon is None
+            )
+
+            # Process the event result
+            if event_result in {"item_used", "close_overlay"}:
+                print("[DEBUG] Closing inventory overlay due to event.")
+                self.screen.blit(self.previous_frame, (0, 0))  # Restore previous frame
+                pygame.display.flip()
+                running = False
 
         return self.selected_item
