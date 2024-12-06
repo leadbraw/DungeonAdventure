@@ -76,3 +76,13 @@ SPRITE_PATHS = {
     "polymorphism_pillar": os.path.join(ASSETS_DIR, "polymorphism_pillar.png"),
     "white_box": os.path.join(ASSETS_DIR, "white_box.png"),
 }
+
+# Probabilities for room types
+ENTITY_CHANCE = 0.4
+EVENT_CHANCE = 0.4
+EMPTY_CHANCE = 0.2
+
+MONSTER_CHANCE = 0.8
+ELITE_CHANCE = 0.2
+TRAP_CHANCE = 0.5
+ITEM_CHANCE = 0.5
