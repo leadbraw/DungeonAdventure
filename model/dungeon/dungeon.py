@@ -119,6 +119,7 @@ class Dungeon:
         self.map = [[Room('BLOCKED') for _ in range(self.length)] for _ in range(self.width)] # Rooms by default are blocked
         self.entrance_loc = None
         self.exit_loc = None
+        self.pillar_loc = None
         self.room_list = []  # List to store non-blocked room coordinates
         '''Populates the map, in addition to instantiating the entrance_loc, exit_loc, and room_list fields'''
         self.__populate_map()
@@ -142,6 +143,10 @@ class Dungeon:
     def get_exit_coords(self) -> tuple[int, int]:
         """Returns coordinates of exit room"""
         return self.exit_loc
+
+    def get_pillar_coords(self) -> tuple[int, int]:
+        """Returns coordinates of pillar room"""
+        return self.pillar_loc
 
     def fetch_room(self, x, y) -> Room:
         """Fetches room at given coordinates"""
@@ -259,6 +264,7 @@ class Dungeon:
         while x == exit_x and y == exit_y:
             x, y = random.choice(rooms[1:])
         self.map[x][y].set_type("PILLAR")
+        self.pillar_loc = (x, y)
         if (x, y) not in self.room_list:
             self.room_list.append((x, y))  # Add to non-blocked list
 
