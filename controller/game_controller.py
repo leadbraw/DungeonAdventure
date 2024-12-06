@@ -64,7 +64,7 @@ class GameController:
 
                     if self.inventory_button.is_hovered(mouse_pos):
                         inventory_overlay = InventoryOverlay(self.screen, self.fonts, self.active_adventurer.inventory)
-                        inventory_overlay.display()
+                        inventory_overlay.display(target=self.active_adventurer)
 
                 elif event.type == pygame.KEYDOWN:
                     self.player_movement(event.key)

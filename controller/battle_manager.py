@@ -69,7 +69,7 @@ class BattleManager:
 
         pygame.display.flip()
 
-    def handle_battle_event(self, monster, adventurer, inventory_overlay, dungeon, current_floor, fight_button, item_button):
+    def handle_battle_event(self, monster, adventurer, inventory_overlay, active_adventurer, dungeon, current_floor, fight_button, item_button):
         """Handle player input during the battle."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -81,7 +81,7 @@ class BattleManager:
                 if fight_button.is_hovered(mouse_pos):
                     self.execute_fight(monster, adventurer)
                 elif item_button.is_hovered(mouse_pos):
-                    inventory_overlay.display()
+                    inventory_overlay.display(target=active_adventurer)
 
                     # Use the selected item if one was chosen
                     selected_item = inventory_overlay.selected_item
@@ -140,17 +140,12 @@ class BattleManager:
 
     def execute_fight(self, monster, adventurer):
         """Handle the fight action."""
-        player_turns = max(1, adventurer.attack_speed // monster.attack_speed)
-
-        for _ in range(player_turns):  # TODO: fix this maybe? doesn't attack handle the turn calculation?
-            if monster.hp > 0:
-                outcomes = adventurer.attack(monster).split(".")
-                for i in range(len(outcomes)):
-                    self.draw_ui(outcomes[i]+".")  # Call the passed draw_ui method (and add period back in)
-                    pygame.display.flip()
-                    pygame.time.delay(1000)
-            else:
-                break
+        if monster.hp > 0:
+            outcomes = adventurer.attack(monster).split(".")
+            for i in range(len(outcomes)):
+                self.draw_ui(outcomes[i]+".")  # Call the passed draw_ui method (and add period back in)
+                pygame.display.flip()
+                pygame.time.delay(1000)
 
         if monster.hp > 0:
             message = f"{monster.name} is attacking!"

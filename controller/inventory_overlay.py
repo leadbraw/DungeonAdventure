@@ -1,6 +1,11 @@
+import random
+
 import pygame
 from constants import LIGHT_BLUE, FADED_BLUE, FADED_GRAY, PASTEL_RED
+from controller import game_controller
 from controller.gui_elements import Button
+from model.entities.adventurers import Adventurer
+from model.entities.monsters import Monster
 
 
 class InventoryOverlay:
@@ -101,7 +106,7 @@ class InventoryOverlay:
         close_button.draw(self.screen)
         return close_button
 
-    def handle_events(self, pillar_buttons, usable_item_buttons, close_button):
+    def handle_events(self, pillar_buttons, usable_item_buttons, close_button, target):
         """
         Handles events for inventory overlay.
         :param pillar_buttons: List of pillar buttons on the top row.
@@ -126,8 +131,11 @@ class InventoryOverlay:
                 for item_button, name, quantity in usable_item_buttons:
                     if item_button.is_hovered(mouse_pos) and quantity > 0:
                         print(f"[DEBUG] {name} button clicked, attempting to use...")
-                        # Save the selected item for later use
-                        self.selected_item = name
+                        # Use the item
+                        if self.inventory.use_item(name, target):
+                            print(f"[DEBUG] Successfully used {name}.")
+                        else:
+                            print(f"[DEBUG] Failed to use {name}.")
                         return False  # Keep overlay open (logic for issue 2 to be addressed later)
 
                 # Check close button
@@ -139,7 +147,8 @@ class InventoryOverlay:
 
         return True  # Keep overlay open
 
-    def display(self):
+
+    def display(self, target):
         """Displays the inventory overlay and handles item selection."""
         running = True
         self.selected_item = None
@@ -172,6 +181,6 @@ class InventoryOverlay:
             pygame.display.flip()
 
             # Handle events
-            running = self.handle_events(pillar_buttons, usable_item_buttons, close_button)
+            running = self.handle_events(pillar_buttons, usable_item_buttons, close_button, target)
 
         return self.selected_item

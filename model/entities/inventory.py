@@ -88,11 +88,11 @@ class Inventory:
         :param effect_max: The maximum effect value.
         :return: True if the effect was applied successfully, False otherwise.
         """
-        if item_data["target"] == "adventurer":
+        if item_data.target == "adventurer":
             return self._apply_effect_to_adventurer(item_data, target, effect_min, effect_max)
-        elif item_data["target"] == "monster":
+        elif item_data.target == "monster":
             return self._apply_effect_to_monster(item_data, target, effect_min, effect_max)
-        elif item_data["target"] == "room":
+        elif item_data.target == "room":
             return self._apply_effect_to_room(item_data, target)
         else:
             print(f"No valid effect applied for item '{item_data['name']}'.")
@@ -108,8 +108,8 @@ class Inventory:
         :return: True if the effect was applied successfully, False otherwise.
         """
         # Handle Pillar buffs
-        if item.name.startswith("Pillar"):
-            buff_type = item.buff_type
+        if item_data.name.startswith("Pillar"):
+            buff_type = item_data.buff_type
             if not buff_type:
                 raise ValueError(f"Item '{item.name}' is missing a 'buff_type'.")
 
@@ -118,7 +118,7 @@ class Inventory:
             print(f"{adventurer.name} gains {buff_value} to {buff_type} from {item.name}.")
             return True
 
-        elif item.name == "Energy Drink":
+        elif item_data.name == "Energy Drink":
             heal_amount = random.randint(effect_min, effect_max)
             adventurer.heal_from_item(heal_amount)
             print(f"{adventurer.name} heals {heal_amount} HP from {item.name}.")

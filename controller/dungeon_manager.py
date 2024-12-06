@@ -45,13 +45,13 @@ class DungeonManager:
             print(f"[DungeonManager] Floor {i + 1} contains {len(all_rooms)} rooms.")
 
             monster_rooms = [
-                coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).type == 'MONSTER'
+                coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).get_type() == 'MONSTER'
             ]
             elite_rooms = [
-                coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).type == 'ELITE'
+                coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).get_type() == 'ELITE'
             ]
             item_rooms = [
-                coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).type == 'ITEM'
+                coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).get_type() == 'ITEM'
             ]
 
             print(
@@ -139,7 +139,7 @@ class DungeonManager:
         if floor < 1 or floor > len(self.dungeon):
             print(f"[DungeonManager] Error: Invalid floor number {floor}.")
             raise ValueError(f"Invalid floor number: {floor}")
-        entrance = self.dungeon[floor - 1].entrance_loc
+        entrance = self.dungeon[floor - 1].get_entrance_coords()
         print(f"[DungeonManager] Entrance for Floor {floor}: {entrance}")
         return entrance
 

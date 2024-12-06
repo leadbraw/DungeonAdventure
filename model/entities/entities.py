@@ -84,7 +84,7 @@ class Entity:
         :return: number of attacks.
         """
         # determine number of attacks
-        attacks_per_turn = int(self.attack_speed / the_target.attack_speed)
+        attacks_per_turn = int(self.attack_speed // the_target.attack_speed)
         if attacks_per_turn == 0:
             attacks_per_turn = 1
 
