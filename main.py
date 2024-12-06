@@ -6,6 +6,7 @@ from controller.character_screen import CharacterScreen
 from controller.game_controller import GameController
 from controller.game_setup import GameSetup
 from model.managers.sprite_manager import SpriteManager
+from model.managers.game_state_manager import GameStateManager
 
 def main():
     """Entry point for the game."""
@@ -40,6 +41,7 @@ def main():
     # Define game states
     state = "MAIN_MENU"
     selected_hero = None
+    game_controller = None
 
     while state != "QUIT":
         if state == "MAIN_MENU":
@@ -50,9 +52,10 @@ def main():
             if choice == "new_game":
                 state = "CHARACTER_SELECTION"
             elif choice == "load_game":
-                # TODO: Implement load game logic
-                print("Load game functionality is not yet implemented.")
-                state = "MAIN_MENU"
+                game_controller = GameStateManager.load_game_state()
+                # might cause a bug due to surface variables
+                game_controller.screen = screen
+                state = "GAMEPLAY"
 
         elif state == "CHARACTER_SELECTION":
             # Run character selection
@@ -72,8 +75,13 @@ def main():
         elif state == "GAMEPLAY":
             # Initialize and start the game
             if selected_hero:
+                # if game_controller:
+                # TODO uncomment if statement above once load is implemented
                 game_controller = GameController(screen, selected_hero)
                 game_controller.set_active_adventurer(selected_hero)
+
+                # TODO: implement a save button and call the line below
+                # GameStateManager.save_game_state(game_controller)
 
                 # Dungeon is already initialized when DungeonManager is instantiated
                 print("[Main] Dungeon is already initialized through DungeonManager.")

@@ -1,31 +1,31 @@
+import pickle
+
+
 class GameStateManager:
-    def __init__(self, db_manager):
-        self.db_manager = db_manager
-        self.current_level = 1
-        self.player_progress = {}
-        # TODO: Load initial game state if available
 
-    def load_game_state(self):
-        """Loads the saved game state from the database."""
-        # TODO: Implement logic to load game state from the database
-        pass
+    @staticmethod
+    def get_instance():
+        """Static method to fetch the singleton instance."""
+        if GameStateManager._instance is None:
+            GameStateManager._instance = GameStateManager()
+        return GameStateManager._instance
 
-    def save_game_state(self):
-        """Saves the current game state to the database."""
-        # TODO: Implement logic to save the game state to the database
-        pass
+    @staticmethod
+    def load_game_state():
+        """
+        Loads the saved game state from save.pkl file.
+        :return: a saved instance of game_controller.
+        """
+        with open('save.pkl', 'rb') as f:
+            state = pickle.load(f)
+        return state
 
-    def advance_to_next_level(self):
-        """Advances the game to the next level."""
-        # TODO: Implement logic to advance levels and reset or update necessary attributes
-        pass
-
-    def check_win_condition(self):
-        """Checks if the player has met the win condition."""
-        # TODO: Implement logic to determine if the player has won the game
-        pass
-
-    def check_loss_condition(self):
-        """Checks if the player has met the loss condition."""
-        # TODO: Implement logic to determine if the player has lost the game
-        pass
+    @staticmethod
+    def save_game_state(game_controller_instance):
+        """
+        Saves the current game state to save.pkl file.
+        :param game_controller_instance: a game_controller instance.
+        """
+        # TODO change location of save file
+        with open('save.pkl', 'wb') as f:
+            pickle.dump(game_controller_instance, f)
