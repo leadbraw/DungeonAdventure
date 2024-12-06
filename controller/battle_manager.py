@@ -69,7 +69,7 @@ class BattleManager:
 
         pygame.display.flip()
 
-    def handle_battle_event(self, monster, adventurer, inventory_overlay, dungeon, current_floor, fight_button, item_button):
+    def handle_battle_event(self, monster, adventurer, inventory_overlay, active_adventurer, dungeon, current_floor, fight_button, item_button):
         """Handle player input during the battle."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -81,7 +81,7 @@ class BattleManager:
                 if fight_button.is_hovered(mouse_pos):
                     self.execute_fight(monster, adventurer)
                 elif item_button.is_hovered(mouse_pos):
-                    inventory_overlay.display()
+                    inventory_overlay.display(target=active_adventurer)
 
                     # Use the selected item if one was chosen
                     selected_item = inventory_overlay.selected_item
