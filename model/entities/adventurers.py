@@ -87,8 +87,9 @@ class Adventurer(Entity):
             self._update_hp(-buff_value)
             print(f"{self.name}'s maximum HP increased by {buff_value}. New max HP: {self.max_hp}.")
         elif buff_type == "block_chance":
-            self.block_chance = min(self.block_chance + buff_value, 1.0)  # Cap block chance at 100%
-            print(f"{self.name}'s block chance increased by {buff_value}. New block chance: {self.block_chance:.2f}.")
+            self.block_chance = min(self.block_chance + (buff_value / 10), 1.0)
+            print(
+                f"{self.name}'s block chance increased by {buff_value / 10:.2f}. New block chance: {self.block_chance:.2f}.")
         elif buff_type == "attack_damage":
             min_damage, max_damage = self.damage_range
             self.damage_range = (min_damage + buff_value, max_damage + buff_value)  # Uses the setter for damage_range
