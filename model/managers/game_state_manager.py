@@ -1,18 +1,28 @@
+import pickle
+
+
 class GameStateManager:
-    def __init__(self, db_manager):
-        self.db_manager = db_manager
-        self.current_level = 1
-        self.player_progress = {}
-        # TODO: Load initial game state if available
+    __game_state = None  # Singleton instance
+
+    @staticmethod
+    def get_instance():
+        """Static method to fetch the singleton instance."""
+        if GameStateManager._instance is None:
+            GameStateManager._instance = GameStateManager()
+        return GameStateManager._instance
 
     def load_game_state(self):
         """Loads the saved game state from the database."""
-        # TODO: Implement logic to load game state from the database
+        # TODO: Implement logic to load game state from save.pkl
         pass
 
-    def save_game_state(self):
+    def save_game_state(self, the_adventurer):
         """Saves the current game state to the database."""
-        # TODO: Implement logic to save the game state to the database
+        # TODO: Implement logic to save the game state to save.pkl
+        __game_state = [the_adventurer]
+
+        # with open('save.pkl', 'wb') as f:
+        #     pickle.dump(caller, f)
         pass
 
     def advance_to_next_level(self):

@@ -9,6 +9,7 @@ from controller.inventory_overlay import InventoryOverlay
 from model.managers.room_manager import RoomManager
 from model.managers.adventurer_manager import AdventurerManager
 from model.managers.sprite_manager import SpriteManager
+from model.managers.game_state_manager import GameStateManager
 from model.factories.adventurer_factory import AdventurerFactory
 
 class GameController:
@@ -22,6 +23,7 @@ class GameController:
         self.dungeon_manager = DungeonManager.get_instance()
         self.dungeon_manager.initialize_dungeon()
         self.adventurer_manager = AdventurerManager.get_instance()
+        self.game_state_manager = GameStateManager.get_instance()
         self.minimap = None
 
         # Attributes for game state
@@ -306,3 +308,12 @@ class GameController:
         portrait_path = portrait_paths.get(self.hero_name, "assets/images/hero.png")
         portrait = pygame.image.load(portrait_path).convert_alpha()
         return pygame.transform.scale(portrait, (150, 150))
+
+    # not implemented
+    def save_game(self):
+        # self.game_state_manager.save(self.adventurer_manager.)
+        pass
+
+    # not implemented
+    def load_game(self):
+        self.game_state_manager.load_game_state()
