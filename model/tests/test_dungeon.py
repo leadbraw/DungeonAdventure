@@ -56,7 +56,8 @@ def test_reveal_adjacent_rooms(dungeon_1, dungeon_2, dungeon_3, dungeon_4):
         dungeon.reveal_adjacent_rooms(x, y)
         for pair in directions:
             new_x, new_y = x + pair[0], y + pair[1]
-            assert dungeon.fetch_room(new_x, new_y).get_visited
+            if 0 <= new_x < dungeon.get_length() and 0 <= new_y < dungeon.get_width():
+                assert dungeon.fetch_room(new_x, new_y).get_visited
 
 
 def test_traversable(dungeon_1, dungeon_2, dungeon_3, dungeon_4):
