@@ -40,23 +40,26 @@ class BattleManager:
             dungeon=dungeon  # Pass dungeon
         )
 
-        fight_button = Button(color=LIGHT_BLUE, x=150, y=540, width=100, height=30,
+        fight_button = Button(color=LIGHT_BLUE, x=200, y=540, width=100, height=30,
                               font=self.fonts["small"], text_color=(255, 255, 255), text="Fight")
-        item_button = Button(color=LIGHT_BLUE, x=350, y=540, width=100, height=30,
+        item_button = Button(color=LIGHT_BLUE, x=325, y=540, width=100, height=30,
                              font=self.fonts["small"], text_color=(255, 255, 255), text="Use Item")
+        special_button = Button(color=LIGHT_BLUE, x=450, y=540, width=100, height=30,
+                                font=self.fonts["small"], text_color=(255, 255, 255), text="Special")
 
         running = True
         while running and monster.hp > 0 and adventurer.hp > 0:
             # Pass `get_hero_portrait` as a callable
-            self.draw_battle_ui(monster, adventurer, fight_button, item_button, get_hero_portrait, minimap)
+            self.draw_battle_ui(monster, adventurer, fight_button, item_button, special_button, get_hero_portrait, minimap)
             running = self.handle_battle_event(
-                monster, adventurer, inventory_overlay, dungeon, current_floor, position, fight_button, item_button
+                monster, adventurer, inventory_overlay, dungeon, current_floor, position,
+                fight_button, item_button, special_button
             )
 
         if self.post_battle_logic(monster, adventurer, dungeon, current_floor, position) == 1:
             return 1  # Triggers a restart in the game controller and main
 
-    def draw_battle_ui(self, monster, adventurer, fight_button, item_button, get_hero_portrait, minimap):
+    def draw_battle_ui(self, monster, adventurer, fight_button, item_button, special_button, get_hero_portrait, minimap):
         """Draw the battle UI components."""
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         pygame.draw.rect(self.screen, (0, 0, 0), bottom_rect)
@@ -74,11 +77,12 @@ class BattleManager:
 
         fight_button.draw(self.screen)
         item_button.draw(self.screen)
+        special_button.draw(self.screen)
 
         pygame.display.flip()
 
     def handle_battle_event(self, monster, adventurer, inventory_overlay, dungeon, current_floor, position,
-                            fight_button, item_button):
+                            fight_button, item_button, special_button):
         """
         Handle player input during the battle.
 
@@ -103,6 +107,10 @@ class BattleManager:
                 if fight_button.is_hovered(mouse_pos):
                     self.execute_fight(monster, adventurer)
 
+                    # Special Attack Logic
+                elif special_button.is_hovered(mouse_pos):
+                    self.execute_special(monster, adventurer)
+
                 # Item button logic
                 elif item_button.is_hovered(mouse_pos):
                     inventory_overlay.display(target=adventurer)
@@ -126,6 +134,8 @@ class BattleManager:
                             print(f"Failed to use {selected_item.name}.")
                     else:
                         print("No item was selected. Returning to battle options.")
+
+
 
             # Continue the battle as long as both monster and adventurer are alive
         return monster.hp > 0 and adventurer.hp > 0
@@ -190,3 +200,14 @@ class BattleManager:
                 self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method (and add period back in)
                 pygame.display.flip()
                 pygame.time.delay(1000)
+
+    def execute_special(self, monster, adventurer):
+        """Handle the special action."""
+        if monster.hp > 0:
+            # Call the special_action method to get the full message
+            outcomes = adventurer.special_action(monster).split(".")
+            for i in range(len(outcomes)):
+                if outcomes[i].strip():
+                    self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method
+                    pygame.display.flip()
+                    pygame.time.delay(2000)
