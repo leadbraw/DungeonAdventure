@@ -9,7 +9,6 @@ from controller.inventory_overlay import InventoryOverlay
 from model.managers.room_manager import RoomManager
 from model.managers.adventurer_manager import AdventurerManager
 from model.managers.sprite_manager import SpriteManager
-from model.managers.game_state_manager import GameStateManager
 from model.factories.adventurer_factory import AdventurerFactory
 
 class GameController:
@@ -23,7 +22,6 @@ class GameController:
         self.dungeon_manager = DungeonManager.get_instance()
         self.dungeon_manager.initialize_dungeon()
         self.adventurer_manager = AdventurerManager.get_instance()
-        self.game_state_manager = GameStateManager.get_instance()
         self.minimap = None
 
         # Attributes for game state
@@ -309,11 +307,41 @@ class GameController:
         portrait = pygame.image.load(portrait_path).convert_alpha()
         return pygame.transform.scale(portrait, (150, 150))
 
-    # not implemented
-    def save_game(self):
-        # self.game_state_manager.save(self.adventurer_manager.)
-        pass
+    # Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        return {
+                # 'screen': self.screen,    # updated from main
+                'hero_name': self.hero_name,    # string
+                'fonts': self.fonts,    # ???
+                'room_manager': self.room_manager,  # RoomManager ???
+                'sprite_manager': self.sprite_manager,  # SpriteManager ???
+                'battle_manager': self.battle_manager,  # BattleManager ???
+                'dungeon_manager': self.dungeon_manager,    # Dungeon Manager to be pickled
+                'adventurer_manager': self.adventurer_manager,  # to be pickled
+                'minimap':self.minimap, # ???
+                'current_floor': self.current_floor,    # int
+                'position': self.position, # tuple
+                'active_adventurer': self.active_adventurer,    # Adventurer: to be pickled
+                'current_message': self.current_message,    # string
+                'pillars_found': self.pillars_found,    # int
+                'return_to_menu': self.return_to_menu}  # int
 
-    # not implemented
-    def load_game(self):
-        self.game_state_manager.load_game_state()
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        # self.screen = state['screen']
+        self.hero_name = state['hero_name']
+        self.fonts = state['fonts']
+        self.room_manager = state['room_manager']
+        self.sprite_manager = state['sprite_manager']
+        self.battle_manager = state['battle_manager']
+        self.dungeon_manager = state['dungeon_manager']
+        self.adventurer_manager = state['adventurer_manager']
+        self.minimap = state['minimap']
+        self.current_floor = state['current_floor']
+        self.position = state['position']
+        self.active_adventurer = state['active_adventurer']
+        self.current_message = state['current_message']
+        self.pillars_found = state['pillars_found']
+        self.return_to_menu = state['return_to_menu']
