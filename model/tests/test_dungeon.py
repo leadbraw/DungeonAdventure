@@ -46,7 +46,7 @@ def test_room_list(dungeon_1, dungeon_2, dungeon_3, dungeon_4):
     dungeons = [dungeon_1, dungeon_2, dungeon_3, dungeon_4]
     for dungeon in dungeons:
         for x, y in dungeon.get_room_list():
-            assert dungeon.fetch_room(x, y).type != "BLOCKED"
+            assert dungeon.fetch_room(x, y).get_type() != "BLOCKED"
 
 def test_reveal_adjacent_rooms(dungeon_1, dungeon_2, dungeon_3, dungeon_4):
     dungeons = [dungeon_1, dungeon_2, dungeon_3, dungeon_4]

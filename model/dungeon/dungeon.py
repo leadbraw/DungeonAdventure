@@ -114,55 +114,55 @@ class Dungeon:
     def __init__(self, floor_number):
         """Constructor for Dungeon. Instantiates it."""
         # 5x5, 6x6, 7x7, 8x8
-        self.length = floor_number + 4
-        self.width = floor_number + 4
-        self.map = [[Room('BLOCKED') for _ in range(self.length)] for _ in range(self.width)] # Rooms by default are blocked
-        self.entrance_loc = None
-        self.exit_loc = None
-        self.pillar_loc = None
-        self.room_list = []  # List to store non-blocked room coordinates
+        self._length = floor_number + 4
+        self._width = floor_number + 4
+        self._map = [[Room('BLOCKED') for _ in range(self._length)] for _ in range(self._width)] # Rooms by default are blocked
+        self._entrance_loc = None
+        self._exit_loc = None
+        self._pillar_loc = None
+        self._room_list = []  # List to store non-blocked room coordinates
         '''Populates the map, in addition to instantiating the entrance_loc, exit_loc, and room_list fields'''
         self.__populate_map()
 
     def get_width(self) -> int:
         """Returns width"""
-        return self.width
+        return self._width
 
     def get_length(self) -> int:
         """Returns length"""
-        return self.length
+        return self._length
 
     def get_room_list(self) -> list[tuple[int, int]]:
         """Returns deep copy of room coordinate list"""
-        return deepcopy(self.room_list)
+        return deepcopy(self._room_list)
 
     def get_entrance_coords(self) -> tuple[int, int]:
         """Returns coordinates of entrance room"""
-        return self.entrance_loc
+        return self._entrance_loc
 
     def get_exit_coords(self) -> tuple[int, int]:
         """Returns coordinates of exit room"""
-        return self.exit_loc
+        return self._exit_loc
 
     def get_pillar_coords(self) -> tuple[int, int]:
         """Returns coordinates of pillar room"""
-        return self.pillar_loc
+        return self._pillar_loc
 
     def fetch_room(self, x, y) -> Room:
         """Fetches room at given coordinates"""
-        return self.map[x][y]
+        return self._map[x][y]
 
     def reveal_adjacent_rooms(self, x, y):
         """Marks adjacent rooms as visited."""
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
         for pair in directions:
             next_x, next_y = x + pair[0], y + pair[1]
-            if 0 <= next_x < self.length and 0 <= next_y < self.width:
-                self.map[next_x][next_y].set_visited(True)
+            if 0 <= next_x < self._length and 0 <= next_y < self._width:
+                self._map[next_x][next_y].set_visited(True)
 
     def __str__(self):
         result = ""
-        for row in self.map:
+        for row in self._map:
             result += " ".join(str(item) for item in row) + "\n"
         return result
 
@@ -185,45 +185,45 @@ class Dungeon:
         other_rooms = []  # Temporarily store other non-blocked rooms here
 
         # Place entrance
-        entrance_x, entrance_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
-        self.entrance_loc = (entrance_x, entrance_y)
-        self.map[entrance_x][entrance_y] = Room('ENTRANCE')
+        entrance_x, entrance_y = (random.randint(0, self._length - 1), random.randint(0, self._width - 1))
+        self._entrance_loc = (entrance_x, entrance_y)
+        self._map[entrance_x][entrance_y] = Room('ENTRANCE')
         essential_rooms.append((entrance_x, entrance_y))
 
         # Place exit
-        exit_x, exit_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
+        exit_x, exit_y = (random.randint(0, self._length - 1), random.randint(0, self._width - 1))
         distance = self.__distance(entrance_x, entrance_y, exit_x, exit_y)
-        while distance <= self.length - 2:
-            exit_x, exit_y = (random.randint(0, self.length - 1), random.randint(0, self.width - 1))
+        while distance <= self._length - 2:
+            exit_x, exit_y = (random.randint(0, self._length - 1), random.randint(0, self._width - 1))
             distance = self.__distance(entrance_x, entrance_y, exit_x, exit_y)
-        self.exit_loc = (exit_x, exit_y)
-        self.map[exit_x][exit_y] = Room('EXIT')
+        self._exit_loc = (exit_x, exit_y)
+        self._map[exit_x][exit_y] = Room('EXIT')
         essential_rooms.append((exit_x, exit_y))
 
         # Generate path and offshoots
         path = self.__path_to_exit(entrance_x, entrance_y, exit_x, exit_y)
         offshoot_rooms = self.__generate_offshoots(path)
         populated_rooms = path + offshoot_rooms
-        self.room_list = populated_rooms  # Initialize the room list
+        self._room_list = populated_rooms  # Initialize the room list
 
         # Add all other rooms to other_rooms list
         for a in populated_rooms:
             x, y = a
-            self.map[x][y].define_valid_directions(self.length, self.width, self.map, x, y)
+            self._map[x][y].define_valid_directions(self._length, self._width, self._map, x, y)
             other_rooms.append((x, y))
 
         # Place pillar
         self.__place_pillar(populated_rooms, exit_x, exit_y)
         pillar_coords = next(
-            (x, y) for x, y in populated_rooms if self.map[x][y].get_type() == 'PILLAR'
+            (x, y) for x, y in populated_rooms if self._map[x][y].get_type() == 'PILLAR'
         )
         essential_rooms.append(pillar_coords)  # Add pillar as the third room in the list
 
         # Finalize the room list
-        self.room_list = essential_rooms + [room for room in other_rooms if room not in essential_rooms]
+        self._room_list = essential_rooms + [room for room in other_rooms if room not in essential_rooms]
 
     def __generate_offshoots(self, path):
-        offshoot_length = self.length - 2
+        offshoot_length = self._length - 2
         starting_points = random.sample(path[1:-1], offshoot_length - 1)
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
         room_locations = []
@@ -233,10 +233,10 @@ class Dungeon:
                 direction = [-1 * direction[0], -1 * direction[1]]
             for i in range(offshoot_length):
                 next_x, next_y = x + direction[0] * (i + 1), y + direction[1] * (i + 1)
-                if (0 <= next_x < self.length and
-                    0 <= next_y < self.width and
-                    self.map[next_x][next_y].type == 'BLOCKED'):
-                    self.map[next_x][next_y] = Room('RANDOM')
+                if (0 <= next_x < self._length and
+                    0 <= next_y < self._width and
+                    self._map[next_x][next_y].type == 'BLOCKED'):
+                    self._map[next_x][next_y] = Room('RANDOM')
                     room_locations.append((next_x, next_y))
                 else:
                     break
@@ -250,11 +250,11 @@ class Dungeon:
         while current_y != exit_y:
             while current_x != exit_x:
                 current_x = current_x + 1 if current_x < exit_x else current_x - 1
-                self.map[current_x][current_y] = Room('RANDOM')
+                self._map[current_x][current_y] = Room('RANDOM')
                 path.append((current_x, current_y))
             current_y = current_y + 1 if current_y < exit_y else current_y - 1
             if current_x != exit_x or current_y != exit_y:
-                self.map[current_x][current_y] = Room('RANDOM')
+                self._map[current_x][current_y] = Room('RANDOM')
             path.append((current_x, current_y))
         return path
 
@@ -263,23 +263,23 @@ class Dungeon:
         x, y = random.choice(rooms[1:])  # excludes entrance room
         while x == exit_x and y == exit_y:
             x, y = random.choice(rooms[1:])
-        self.map[x][y].set_type("PILLAR")
-        self.pillar_loc = (x, y)
-        if (x, y) not in self.room_list:
-            self.room_list.append((x, y))  # Add to non-blocked list
+        self._map[x][y].set_type("PILLAR")
+        self._pillar_loc = (x, y)
+        if (x, y) not in self._room_list:
+            self._room_list.append((x, y))  # Add to non-blocked list
 
     def __valid_direction_for_offshoot(self, direction, x, y) -> bool:
         new_x, new_y = x + direction[0], y + direction[1]
-        return (0 <= new_x < self.length and 0 <= new_y < self.width and
-                self.map[new_x][new_y].type == 'BLOCKED')
+        return (0 <= new_x < self._length and 0 <= new_y < self._width and
+                self._map[new_x][new_y].type == 'BLOCKED')
 
     def create_map(self, debug=False):
         """Creates the map of the floor. By default, only returns visited rooms. Returns a Surface"""
         tile_size = 50
         map_surface = Surface((500, 500))
-        for row in range(self.length):
-            for col in range(self.width):
-                room = self.map[row][col]
+        for row in range(self._length):
+            for col in range(self._width):
+                room = self._map[row][col]
                 x = col * tile_size
                 y = row * tile_size
                 if room.type == "MONSTER":
@@ -313,7 +313,7 @@ if __name__ == "__main__":
     # Testing code
     d = Dungeon(4)
     print(d.__str__())
-    print(f"Non-blocked rooms ({len(d.room_list)}): {d.room_list}")
+    print(f"Non-blocked rooms ({len(d._room_list)}): {d._room_list}")
     running = True
     map = d.create_map()
     while running:
