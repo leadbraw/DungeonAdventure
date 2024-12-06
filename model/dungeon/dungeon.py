@@ -6,7 +6,8 @@ from copy import deepcopy
 
 from pygame import Surface
 
-from constants import BACKGROUND_COLOR
+from constants import BACKGROUND_COLOR, TRAP_CHANCE, ITEM_CHANCE, MONSTER_CHANCE, ELITE_CHANCE, EMPTY_CHANCE, \
+    EVENT_CHANCE, ENTITY_CHANCE
 
 '''
 MONSTER: Room with monster, battle begins upon entry
@@ -23,7 +24,7 @@ class Room:
             # First roll: Decide the major category
             main_category = random.choices(
                 population=['ENTITY', 'EVENT', 'EMPTY'],
-                weights=[0.4, 0.4, 0.2],  # 40% entity, 40% event, 20% empty
+                weights=[ENTITY_CHANCE, EVENT_CHANCE, EMPTY_CHANCE],  # 40% entity, 40% event, 20% empty
                 k=1
             )[0]
 
@@ -31,7 +32,7 @@ class Room:
                 # 80% chance for 'MONSTER', 20% for 'ELITE'
                 self.type = random.choices(
                     population=['MONSTER', 'ELITE'],
-                    weights=[0.8, 0.2],
+                    weights=[MONSTER_CHANCE, ELITE_CHANCE],
                     k=1
                 )[0]
 
@@ -39,7 +40,7 @@ class Room:
                 # 50% chance for 'TRAP', 50% for 'ITEM'
                 self.type = random.choices(
                     population=['TRAP', 'ITEM'],
-                    weights=[0.5, 0.5],
+                    weights=[TRAP_CHANCE, ITEM_CHANCE],
                     k=1
                 )[0]
 
