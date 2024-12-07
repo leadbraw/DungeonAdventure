@@ -12,7 +12,7 @@ from model.managers.sprite_manager import SpriteManager
 from model.factories.adventurer_factory import AdventurerFactory
 
 class GameController:
-    def __init__(self, screen, hero_name):
+    def __init__(self, screen, hero_name, debug):
         self.screen = screen
         self.hero_name = hero_name
         self.fonts = get_fonts()  # Dictionary of fonts
@@ -23,6 +23,8 @@ class GameController:
         self.dungeon_manager.initialize_dungeon()
         self.adventurer_manager = AdventurerManager.get_instance()
         self.minimap = None
+        self.inventory_button = None
+        self.debug = debug
 
         # Attributes for game state
         self.current_floor = 1
@@ -277,9 +279,20 @@ class GameController:
         portrait = self.get_hero_portrait()
         self.screen.blit(portrait, (650, 450))
 
-        # Display adventurer HP
+        # Display adventurer stats
         current_hp, max_hp = self.active_adventurer.hp, self.active_adventurer.max_hp
-        hp_text = self.fonts["small"].render(f"{current_hp} / {max_hp}", True, OFF_WHITE)
+        block_chance, attack_speed = self.active_adventurer.block_chance, self.active_adventurer.attack_speed
+        damage_range, hit_chance = self.active_adventurer.damage_range, self.active_adventurer.hit_chance
+        hp_text = self.fonts["small"].render(f"HP: {current_hp} / {max_hp}", True, OFF_WHITE)
+        if self.debug: # TODO: implement debug mode widely
+            block_text = self.fonts["extra_small"].render(f"Block %: {block_chance * 100}%", True, OFF_WHITE)
+            speed_text = self.fonts["extra_small"].render(f"Speed: {attack_speed}", True, OFF_WHITE)
+            range_text = self.fonts["extra_small"].render(f"Attack: {damage_range[0]}-{damage_range[1]}", True, OFF_WHITE)
+            hit_text = self.fonts["extra_small"].render(f"Hit %: {hit_chance * 100}%", True, OFF_WHITE)
+            self.screen.blit(block_text, (660, 385))
+            self.screen.blit(speed_text, (660, 350))
+            self.screen.blit(range_text, (660, 315))
+            self.screen.blit(hit_text, (660, 280))
         self.screen.blit(hp_text, (660, 420))
 
         # Display room message
@@ -293,7 +306,7 @@ class GameController:
         self.screen.blit(self.minimap, (650, 0))
 
         #Draw inventory button
-        inventory_button = Button(color=LIGHT_BLUE, x=660, y=380, width=100, height=30,
+        inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
                                     font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
         inventory_button.draw(self.screen)
         self.inventory_button = inventory_button

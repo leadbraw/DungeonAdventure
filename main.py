@@ -77,7 +77,7 @@ def main():
             if selected_hero:
                 # if game_controller:
                 # TODO uncomment if statement above once load is implemented
-                game_controller = GameController(screen, selected_hero)
+                game_controller = GameController(screen, selected_hero, True)
                 game_controller.set_active_adventurer(selected_hero)
 
                 # TODO: implement a save button and call the line below
