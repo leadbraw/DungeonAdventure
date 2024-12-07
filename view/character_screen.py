@@ -18,7 +18,6 @@ class CharacterScreen:
             OFF_WHITE, self.screen.get_width() / 2 - 70, self.screen.get_height() - 100,
             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], DARK_GREY, 'BACK'
         )
-
         # State management for transitions
         self.on_confirmation_screen = False
         self.selected_character = None
@@ -113,12 +112,16 @@ class CharacterScreen:
 
     def handle_event(self, event):
         """Handle events for character selection or confirmation."""
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
+        if event.type == pygame.MOUSEBUTTONDOWN and (event.button == 1 or event.button == 3): # Left or right click
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if self.on_confirmation_screen:
                 if self.confirm_button.is_hovered((mouse_x, mouse_y)):
-                    print(f"{self.selected_character['name']} has been selected!")
-                    return "select", self.selected_character["name"]
+                        if event.button == 1:
+                            print(f"{self.selected_character['name']} has been selected!")
+                            return "select", self.selected_character["name"]
+                        elif event.button == 3:
+                            print(f"{self.selected_character['name']} has been selected in DEBUG mode!")
+                            return "debug", self.selected_character["name"]
                 elif self.confirm_back_button.is_hovered((mouse_x, mouse_y)):
                     self.on_confirmation_screen = False
             else:
@@ -155,9 +158,11 @@ class CharacterScreen:
 
                 action, data = self.handle_event(event)
                 if action == "select":
-                    return data
+                    return data, "select"
                 elif action == "back":
                     return None
+                elif action == "debug":
+                    return data, "debug"
 
             self.draw()
             pygame.display.flip()

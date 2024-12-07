@@ -41,6 +41,7 @@ def main():
     # Define game states
     state = "MAIN_MENU"
     selected_hero = None
+    debug = False
     game_controller = None
 
     while state != "QUIT":
@@ -62,10 +63,13 @@ def main():
             character_screen = CharacterScreen(screen, fonts)
             result = character_screen.run()
 
-            if isinstance(result, str):
+            if isinstance(result, tuple):
+                if result[1] == "debug":
+                    debug = True
                 # Hero selected and confirmed
-                selected_hero = result
+                selected_hero = result[0]
                 state = "GAMEPLAY"
+
 
             elif result is None:
                 # Player returned to main menu
@@ -77,7 +81,7 @@ def main():
             if selected_hero:
                 # if game_controller:
                 # TODO uncomment if statement above once load is implemented
-                game_controller = GameController(screen, selected_hero, True)
+                game_controller = GameController(screen, selected_hero, debug)
                 game_controller.set_active_adventurer(selected_hero)
 
                 # TODO: implement a save button and call the line below
