@@ -211,3 +211,12 @@ class BattleManager:
                     self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method
                     pygame.display.flip()
                     pygame.time.delay(2000)
+
+        if monster.hp > 0:
+            message = f"{monster.name} is attacking!"
+            self.draw_ui(message)  # Call the passed draw_ui method
+            outcomes = monster.attack(adventurer).split(".")
+            for i in range(len(outcomes)):
+                self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method (and add period back in)
+                pygame.display.flip()
+                pygame.time.delay(1000)
