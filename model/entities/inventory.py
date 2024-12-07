@@ -232,7 +232,8 @@ class Inventory:
                 print("[DEBUG] Position or dungeon is None. Cannot apply room effect.")
                 return False
 
-            directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # Up, Right, Down, Left
+            # All 8 adjacent rooms
+            directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
             current_x, current_y = position  # Unpack current position
 
             # Validate dungeon type
