@@ -41,7 +41,7 @@ class InventoryOverlay:
                 y=row_y,
                 width=button_size,
                 height=button_size,
-                font=self.fonts["small"],
+                font=self.fonts["extra_small"],
                 text_color=(255, 255, 255),
                 text=name.split()[-1],  # Display only the pillar type (e.g., "Abstraction")
             )

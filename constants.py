@@ -28,6 +28,7 @@ def get_fonts():
         "large": pygame.font.Font(None, 85),
         "small": pygame.font.Font(None, 30),
         "medium": pygame.font.Font(None, 50),
+        "extra_small": pygame.font.Font(None, 25)
     }
 
 # Sprite Paths
