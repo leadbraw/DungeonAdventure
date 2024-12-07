@@ -113,20 +113,19 @@ class GameController:
     def room_interaction(self):
         """Interact with the current room."""
         current_room = self.dungeon_manager.get_room(self.current_floor, self.position)
-        self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
         if current_room.type in ["MONSTER", "ELITE"] and current_room.has_monster():
             self.handle_monster_room(current_room)
         elif current_room.type == "ITEM" and current_room.has_item():
-            self.handle_item_room(current_room)
+            self.handle_item_room()
         elif current_room.type == "EXIT":
             self.handle_exit_room()
         elif current_room.type == "ENTRANCE":
             self.display_message("You are back at the entrance.")
         elif current_room.type == "PILLAR" and current_room.has_item():
-            self.handle_pillar_room(current_room)
+            self.handle_pillar_room()
         elif current_room.type == "TRAP" and not current_room.visited:
-            self.handle_trap_room(current_room)
+            self.handle_trap_room()
         elif current_room.type == "EMPTY":
             self.display_message("You've found an empty room. It smells in here.")
 
@@ -142,7 +141,7 @@ class GameController:
         )
         self.render_monster_sprite(monster.name)
         self.display_message(message, 2000)
-
+        self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
         battle_result = self.battle_manager.start_battle(
             adventurer=self.active_adventurer,
             monster=monster,
@@ -156,7 +155,7 @@ class GameController:
         if battle_result == 1:
             self.return_to_menu = True
 
-    def handle_item_room(self, room):
+    def handle_item_room(self):
         """Handles interactions in ITEM rooms."""
         item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
         if not item:
@@ -167,8 +166,9 @@ class GameController:
             self.handle_pillar_item(item)
         else:
             self.handle_regular_item(item)
+        self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
-    def handle_pillar_room(self, room):
+    def handle_pillar_room(self):
         """Handles interactions in PILLAR rooms."""
         item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
         if not item:
@@ -177,12 +177,14 @@ class GameController:
 
         self.handle_pillar_item(item)
         self.pillars_found += 1
+        self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
-    def handle_trap_room(self, room):
+    def handle_trap_room(self):
         """Handles interactions in TRAP rooms."""
         trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp - 1)  # Ensure player can't die to trap.
-        self.active_adventurer._update_hp(-trap_dmg)
+        self.active_adventurer._update_hp(trap_dmg)
         self.display_message(f"It's a trap! You take {trap_dmg} damage.")
+        self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
     def handle_pillar_item(self, item):
         """Handles interaction with Pillar items."""
