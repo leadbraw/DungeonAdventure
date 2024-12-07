@@ -127,6 +127,7 @@ class GameController:
         elif current_room.type == "TRAP" and not current_room.visited:
             self.handle_trap_room()
         elif current_room.type == "EMPTY":
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.display_message("You've found an empty room. It smells in here.")
 
     def handle_monster_room(self, room):
@@ -220,6 +221,7 @@ class GameController:
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.display_message(f"You've now entered floor {self.current_floor}.")
         else:
+            self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.display_message(f"You must find the Pillar of O.O. before proceeding!")
 
     def render_room_sprite(self, sprite_config):
