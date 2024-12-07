@@ -1,8 +1,8 @@
 import pygame
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, get_fonts, SPRITE_PATHS
-from controller.splash_screen import SplashScreen
-from controller.main_screen import MainScreen
-from controller.character_screen import CharacterScreen
+from view.splash_screen import SplashScreen
+from view.main_screen import MainScreen
+from view.character_screen import CharacterScreen
 from controller.game_controller import GameController
 from controller.game_setup import GameSetup
 from model.managers.sprite_manager import SpriteManager

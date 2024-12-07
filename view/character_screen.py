@@ -1,6 +1,6 @@
 import pygame
 from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE
-from controller.gui_elements import Button
+from view.gui_elements import Button
 from model.managers.adventurer_manager import AdventurerManager
 
 class CharacterScreen:

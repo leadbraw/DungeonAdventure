@@ -1,7 +1,7 @@
 import pygame
 import sys
-from controller.gui_elements import Button
-from controller.inventory_overlay import InventoryOverlay
+from view.gui_elements import Button
+from view.inventory_overlay import InventoryOverlay
 from constants import LIGHT_BLUE, OFF_WHITE, BACKGROUND_COLOR
 
 class BattleManager:

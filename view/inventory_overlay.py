@@ -1,12 +1,8 @@
-import random
 import sys
 
 import pygame
 from constants import LIGHT_BLUE, FADED_BLUE, FADED_GRAY, PASTEL_RED
-from controller import game_controller
-from controller.gui_elements import Button
-from model.entities.adventurers import Adventurer
-from model.entities.monsters import Monster
+from view.gui_elements import Button
 
 
 class InventoryOverlay:

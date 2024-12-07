@@ -1,11 +1,11 @@
 import random
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, SPRITE_PATHS, LIGHT_BLUE
+from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE
 from controller.battle_manager import BattleManager
 from controller.dungeon_manager import DungeonManager
-from controller.gui_elements import Button
-from controller.inventory_overlay import InventoryOverlay
+from view.gui_elements import Button
+from view.inventory_overlay import InventoryOverlay
 from model.managers.room_manager import RoomManager
 from model.managers.adventurer_manager import AdventurerManager
 from model.managers.sprite_manager import SpriteManager
