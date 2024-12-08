@@ -275,7 +275,7 @@ class Dungeon:
         return (0 <= new_x < self._length and 0 <= new_y < self._width and
                 self._map[new_x][new_y].type == 'BLOCKED')
 
-    def create_map(self, debug=False):
+    def create_map(self, reveal_all=False):
         """Creates the map of the floor. By default, only returns visited rooms. Returns a Surface"""
         tile_size = MAP_SURFACE_TILE_SIZE
         map_surface = Surface((MAP_SURFACE_TILE_SIZE * 8, MAP_SURFACE_TILE_SIZE * 8)) # 8 is max floor width/height
@@ -302,9 +302,9 @@ class Dungeon:
                     color = MEDIUM_GREY
                 elif room.type == "BLOCKED":
                     color = BLACK
-                if not debug and room.visited:
+                if not reveal_all and room.visited:
                     pygame.draw.rect(map_surface, color, (x, y, tile_size, tile_size))
-                elif debug:
+                elif reveal_all:
                     pygame.draw.rect(map_surface, color, (x, y, tile_size, tile_size))
 
         return map_surface

@@ -1,7 +1,8 @@
 import random
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH
+from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH, MENU_BUTTON_HEIGHT, \
+    MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT
 from src.controller.battle_manager import BattleManager
 from src.controller.dungeon_manager import DungeonManager
 from src.view.gui_elements import Button
@@ -26,7 +27,9 @@ class GameController:
         self.dungeon_manager.initialize_dungeon()
         self.adventurer_manager = AdventurerManager.get_instance()
         self.minimap = None
-
+        self.full_maps = []
+        for i in range(4): # Collect all fully revealed maps for display upon game completion
+            self.full_maps.append(self.dungeon_manager.get_floor_map(i + 1, reveal_all=True))
         # Attributes for game state
         self.current_floor = 1
         self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)  # Fetch entrance position
@@ -175,7 +178,6 @@ class GameController:
         if not item:
             self.display_message("There's no item here.")
             return
-
         if item.name.startswith("Pillar"):
             self.handle_pillar_item(item)
         else:
@@ -188,7 +190,6 @@ class GameController:
         if not item:
             self.display_message("There's no pillar here. Strange...")
             return
-
         self.handle_pillar_item(item)
         self.pillars_found += 1
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -225,9 +226,9 @@ class GameController:
     def handle_exit_room(self):
         """Handles interaction with the Exit room."""
         if self.current_floor == len(self.dungeon_manager.dungeon):
-            self.display_message("You found the exit! Congratulations!", 3000)
-            pygame.quit()
-            sys.exit()
+            self.display_message("You found the exit! Congratulations!", 2000)
+            if self.end_message() == 1: # User chose to return to main menu.
+                self.return_to_menu = True
         elif self.pillars_found == self.current_floor:
             self.current_floor += 1
             self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)
@@ -240,6 +241,76 @@ class GameController:
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             self.display_message(f"You must find the Pillar of O.O. before proceeding!")
 
+    def end_message(self):
+        end_running = True
+        end_menu_button = Button(DARK_GREY, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        end_title = self.fonts["large"].render("CONGRATULATIONS", True, GOLD)
+        end_body = self.fonts["medium"].render("You have proven yourself an excellent hero",
+                                                 True, OFF_WHITE)
+        end_body2 = self.fonts["medium"].render("who will surely go down in history as one",
+                                                  True, OFF_WHITE)
+        end_body3 = self.fonts["medium"].render("of the best to ever go adventuring. You",
+                                                  True, OFF_WHITE)
+        end_body4 = self.fonts["medium"].render("vanquished countless monsters, obtained all",
+                                                True, OFF_WHITE)
+        end_body5 = self.fonts["medium"].render("pillars, and escaped with your life. Well done!",
+                                               True, OFF_WHITE)
+        end_body6 = self.fonts["medium"].render("Hit \"NEXT\" to view the complete map!",
+                                                True, OFF_WHITE)
+        next_button = Button(OFF_WHITE, 600, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
+                             DARK_GREY, "NEXT")
+        prev_button = Button(OFF_WHITE, 60, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
+                             DARK_GREY, "PREVIOUS")
+        main_menu_button = Button(OFF_WHITE, 330, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
+                                  DARK_GREY, "MAIN MENU")
+        position = 0
+        while end_running:
+            clicked = False
+            mouse_pos = pygame.mouse.get_pos()
+            end_menu_button.draw(self.screen, outline=True)
+            main_menu_button.draw(self.screen, outline=True)
+            if position == 0:
+                self.screen.blit(end_title, (self.screen.get_width() / 2 - end_title.get_width() / 2,
+                                               self.screen.get_height() / 8 - end_title.get_height() / 2))
+                self.screen.blit(end_body, (self.screen.get_width() / 2 - end_body.get_width() / 2,
+                                               self.screen.get_height() / 5 - end_body.get_height() / 2 + 50))
+                self.screen.blit(end_body2, (self.screen.get_width() / 2 - end_body.get_width() / 2,
+                                                self.screen.get_height() / 5 - end_body.get_height() / 2 + 103))
+                self.screen.blit(end_body3, (self.screen.get_width() / 2 - end_body.get_width() / 2,
+                                                self.screen.get_height() / 5 - end_body.get_height() / 2 + 156))
+                self.screen.blit(end_body4, (self.screen.get_width() / 2 - end_body.get_width() / 2,
+                                                self.screen.get_height() / 5 - end_body.get_height() / 2 + 209))
+                self.screen.blit(end_body5, (self.screen.get_width() / 2 - end_body.get_width() / 2,
+                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 262))
+                self.screen.blit(end_body6, (self.screen.get_width() / 2 - end_body.get_width() / 2,
+                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 315))
+                next_button.draw(self.screen, True)
+
+            elif 0 < position < 5:
+                map_surface = pygame.transform.scale(self.full_maps[position - 1], (400, 400))
+                self.screen.blit(map_surface, (0, 0))
+                floor_text = self.fonts["small"].render(f"Floor {position}", True, OFF_WHITE)
+                self.screen.blit(floor_text, (30, 430))
+                prev_button.draw(self.screen, True)
+                if position != 4:
+                    next_button.draw(self.screen, True)
+
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left click
+                    clicked = True
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            if clicked:
+                if next_button.is_hovered(mouse_pos) and position < 4:
+                    position += 1
+                elif prev_button.is_hovered(mouse_pos) and position > 0:
+                    position -= 1
+                elif main_menu_button.is_hovered(mouse_pos):
+                    return 1 # Will be seen by handle_exit_room, which will set the return_to_menu field to True
+
+            pygame.display.flip()
     def render_room_sprite(self, sprite_config):
         """Renders the sprite for the current room."""
         if sprite_config and "sprite_name" in sprite_config and "rotation" in sprite_config:
