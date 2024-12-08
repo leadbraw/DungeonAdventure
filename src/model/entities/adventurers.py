@@ -127,10 +127,51 @@ class Adventurer(Entity):
     def inventory(self):
         return self.__inventory
 
+    @type.setter
+    def type(self, the_type):
+        self.__my_type = the_type
+
     @block_chance.setter
     def block_chance(self, the_block_chance):
         if 1 >= the_block_chance >= 0:
             self.__my_block_chance = the_block_chance
+
+    @inventory.setter
+    def inventory(self, the_inventory):
+        self.__inventory = the_inventory
+
+    # Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        state = super().__getstate__()
+        state['__my_type'] = self.__my_type
+        state['__my_block_chance'] = self.__my_block_chance
+        state['__inventory'] = self.__inventory
+        # state.append({
+        #         # '__my_name': self.__my_name,
+        #         # '__my_max_hp': self.__my_max_hp,
+        #         # '__my_attack_speed': self.__my_attack_speed,
+        #         # '__my_hit_chance': self.__my_hit_chance,
+        #         # '__my_damage_range': self.__my_damage_range,
+        #         # '__my_hp': self.__my_hp,
+        #         '__my_type': self.__my_type,
+        #         '__my_block_chance': self.__my_block_chance,
+        #         '__inventory': self.__inventory})
+        return state
+
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        # self.__my_name = state['__my_name']
+        # self.__my_max_hp = state['__my_max_hp']
+        # self.__my_attack_speed = state['__my_attack_speed']
+        # self.__my_hit_chance = state['__my_hit_chance']
+        # self.__my_damage_range = state['__my_damage_range']
+        # self.__my_hp = state['__my_hp']
+        super().__setstate__(state)
+        self.__my_type = state['__my_type']
+        self.__my_block_chance = state['__my_block_chance']
+        self.__inventory = state['__inventory']
 
 
 ### ADVENTURER CLASSES ###
@@ -313,3 +354,4 @@ class Bard(Adventurer):
         :return: Discombobulating Thought message.
         """
         return f"{self.name} uses Discombobulating Thought on {the_target.name}."
+
