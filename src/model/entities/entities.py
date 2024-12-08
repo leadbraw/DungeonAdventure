@@ -152,9 +152,10 @@ class Entity:
 
     @max_hp.setter
     def max_hp(self, the_max_hp):
+        # TODO fix data scrubbing for max_hp and hp setters without creating a circular dependency
         self.__my_max_hp = min(max(1, the_max_hp), 999)  # Clamp between 1 and 999
-        if self.__my_hp > self.__my_max_hp:
-            self.__my_hp = self.__my_max_hp
+        # if self.__my_hp > self.__my_max_hp:
+        #     self.__my_hp = self.__my_max_hp
 
     @attack_speed.setter
     def attack_speed(self, the_attack_speed):
@@ -174,5 +175,25 @@ class Entity:
 
     @hp.setter
     def hp(self, the_hp):
-        if self.__my_max_hp >= the_hp >= 0:
-            self.__my_hp = the_hp
+        # if self.__my_max_hp >= the_hp >= 0:
+        self.__my_hp = the_hp
+
+    # Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        return {'__my_name': self.__my_name,
+                '__my_max_hp': self.__my_max_hp,
+                '__my_attack_speed': self.__my_attack_speed,
+                '__my_hit_chance': self.__my_hit_chance,
+                '__my_damage_range': self.__my_damage_range,
+                '__my_hp': self.__my_hp}
+
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        self.__my_name = state['__my_name']
+        self.__my_max_hp = state['__my_max_hp']
+        self.__my_attack_speed = state['__my_attack_speed']
+        self.__my_hit_chance = state['__my_hit_chance']
+        self.__my_damage_range = state['__my_damage_range']
+        self.__my_hp = state['__my_hp']
