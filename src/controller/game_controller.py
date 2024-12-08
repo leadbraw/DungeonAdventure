@@ -374,7 +374,7 @@ class GameController:
         block_chance, attack_speed = self.active_adventurer.block_chance, self.active_adventurer.attack_speed
         damage_range, hit_chance = self.active_adventurer.damage_range, self.active_adventurer.hit_chance
         hp_text = self.fonts["small"].render(f"HP: {current_hp} / {max_hp}", True, OFF_WHITE)
-        block_text = self.fonts["extra_small"].render(f"Block %: {block_chance * 100}%", True, OFF_WHITE)
+        block_text = self.fonts["extra_small"].render(f"Block %: {block_chance * 100:.0f}%", True, OFF_WHITE)
         speed_text = self.fonts["extra_small"].render(f"Speed: {attack_speed}", True, OFF_WHITE)
         range_text = self.fonts["extra_small"].render(f"Attack: {damage_range[0]}-{damage_range[1]}", True, OFF_WHITE)
         hit_text = self.fonts["extra_small"].render(f"Hit %: {hit_chance * 100}%", True, OFF_WHITE)
