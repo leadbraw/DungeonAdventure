@@ -4,7 +4,7 @@ import os
 # Colors
 RED = (255, 0, 0)
 PASTEL_RED = (250, 145, 147)
-DARK_RED = (200, 0, 0)
+DARK_RED = (139, 0, 0)
 
 BLACK = (0, 0, 0)
 GOLD = (255,165,0)
