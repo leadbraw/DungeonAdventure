@@ -1,6 +1,6 @@
 import pygame
 from constants import DARK_GREY, BACKGROUND_COLOR, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, LIGHT_BLUE, OFF_WHITE
-from view.gui_elements import Button
+from src.view.gui_elements import Button
 
 class MainScreen:
     def __init__(self, screen, fonts):

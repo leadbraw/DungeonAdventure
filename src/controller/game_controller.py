@@ -2,14 +2,14 @@ import random
 import sys
 import pygame
 from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE
-from controller.battle_manager import BattleManager
-from controller.dungeon_manager import DungeonManager
-from view.gui_elements import Button
-from view.inventory_overlay import InventoryOverlay
-from model.managers.room_manager import RoomManager
-from model.managers.adventurer_manager import AdventurerManager
-from model.managers.sprite_manager import SpriteManager
-from model.factories.adventurer_factory import AdventurerFactory
+from src.controller.battle_manager import BattleManager
+from src.controller.dungeon_manager import DungeonManager
+from src.view.gui_elements import Button
+from src.view.inventory_overlay import InventoryOverlay
+from src.model.managers.room_manager import RoomManager
+from src.model.managers.adventurer_manager import AdventurerManager
+from src.model.managers.sprite_manager import SpriteManager
+from src.model.factories.adventurer_factory import AdventurerFactory
 
 class GameController:
     def __init__(self, screen, hero_name, debug):

@@ -1,4 +1,4 @@
-from model.entities.monsters import Monster
+from src.model.entities.monsters import Monster
 
 
 class MonsterFactory:

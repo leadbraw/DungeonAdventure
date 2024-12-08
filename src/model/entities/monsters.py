@@ -1,6 +1,6 @@
 import random
 from typing import final
-from model.entities.entities import Entity
+from src.model.entities.entities import Entity
 
 
 class Monster(Entity):

@@ -1,8 +1,8 @@
-from model.dungeon.dungeon import Dungeon
-from model.factories.monster_factory import MonsterFactory
-from model.factories.item_factory import ItemFactory
-from model.managers.monster_manager import MonsterManager
-from model.managers.item_manager import ItemManager
+from src.model.dungeon.dungeon import Dungeon
+from src.model.factories.monster_factory import MonsterFactory
+from src.model.factories.item_factory import ItemFactory
+from src.model.managers.monster_manager import MonsterManager
+from src.model.managers.item_manager import ItemManager
 
 
 class DungeonManager:

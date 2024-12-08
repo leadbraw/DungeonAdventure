@@ -1,4 +1,4 @@
-from model.entities.adventurers import Warrior, Priest, Thief, Bard
+from src.model.entities.adventurers import Warrior, Priest, Thief, Bard
 
 class AdventurerFactory:
     _instance = None

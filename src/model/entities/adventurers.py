@@ -1,8 +1,8 @@
 import random
 from abc import abstractmethod
 from typing import final
-from model.entities.entities import Entity
-from model.entities.inventory import Inventory
+from src.model.entities.entities import Entity
+from src.model.entities.inventory import Inventory
 
 # optional: move special action constants into database and add parameters to be updated with them
 

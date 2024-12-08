@@ -1,5 +1,5 @@
 import random
-from model.managers.item_manager import ItemManager
+from src.model.managers.item_manager import ItemManager
 
 class Inventory:
     """

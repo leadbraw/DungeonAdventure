@@ -1,4 +1,4 @@
-from model.entities.item import Item
+from src.model.entities.item import Item
 
 class ItemFactory:
     _instance = None
