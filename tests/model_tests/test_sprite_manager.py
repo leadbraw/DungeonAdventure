@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from model.managers.sprite_manager import SpriteManager
+from src.model.managers.sprite_manager import SpriteManager
 
 
 @pytest.fixture
