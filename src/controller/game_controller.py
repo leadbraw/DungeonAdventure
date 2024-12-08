@@ -417,11 +417,20 @@ class GameController:
         portrait = pygame.image.load(portrait_path).convert_alpha()
         return pygame.transform.scale(portrait, (150, 150))
 
-    def set_up_from_load(self, the_screen, the_fonts):
+    def set_up_from_load(self, the_screen, the_fonts, the_debug):
         self.screen = the_screen
         self.fonts = the_fonts
-        # TODO: Put call to self.display_game() here to jump into gameplay after loading a save
-        #  (after pickling for all other needed classes has been implemented)'''
+        self.debug = the_debug
+        self.battle_manager = BattleManager.get_instance(self.screen, self.fonts, self.draw_ui)
+        self.sprite_manager = SpriteManager.get_instance()
+        self.full_maps = []
+        for i in range(4): # mirror constructor
+            self.full_maps.append(self.dungeon_manager.get_floor_map(i + 1, reveal_all=True))
+        self.inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
+                                       font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
+        self.save_button = Button(color=LIGHT_BLUE, x=670, y=200, width=110, height=30,
+                                  font=self.fonts["extra_small"], text_color=(255, 255, 255), text="Save Game")
+
 
     # Method to define what gets pickled
     def __getstate__(self):
@@ -430,13 +439,11 @@ class GameController:
         return {
                 'hero_name': self.hero_name,    # string
                 'room_manager': self.room_manager,  # pickled
-                # 'battle_manager': self.battle_manager,  # BattleManager ???
-                # 'dungeon_manager': self.dungeon_manager,    # to be pickled
+                'dungeon_manager': self.dungeon_manager,
                 # 'adventurer_manager': self.adventurer_manager,  # to be pickled
-                # 'minimap':self.minimap, # A pygame Surface returned from get_floor_map in DungeonManager
                 'current_floor': self.current_floor,    # int
                 'position': self.position, # tuple
-                # 'active_adventurer': self.active_adventurer,    # Adventurer: to be pickled
+                'active_adventurer': self.active_adventurer,
                 'current_message': self.current_message,    # string
                 'pillars_found': self.pillars_found,    # int
                 'return_to_menu': self.return_to_menu  # boolean
@@ -447,13 +454,11 @@ class GameController:
         # Restore the object's state from the dictionary
         self.hero_name = state['hero_name']
         self.room_manager = state['room_manager']
-        # self.battle_manager = state['battle_manager']
-        # self.dungeon_manager = state['dungeon_manager']
+        self.dungeon_manager = state['dungeon_manager']
         # self.adventurer_manager = state['adventurer_manager']
-        # self.minimap = state['minimap']
         self.current_floor = state['current_floor']
         self.position = state['position']
-        # self.active_adventurer = state['active_adventurer']
+        self.active_adventurer = state['active_adventurer']
         self.current_message = state['current_message']
         self.pillars_found = state['pillars_found']
         self.return_to_menu = state['return_to_menu']
