@@ -7,7 +7,7 @@ from copy import deepcopy
 from pygame import Surface
 
 from constants import BACKGROUND_COLOR, TRAP_CHANCE, ITEM_CHANCE, MONSTER_CHANCE, ELITE_CHANCE, EMPTY_CHANCE, \
-    EVENT_CHANCE, ENTITY_CHANCE
+    EVENT_CHANCE, ENTITY_CHANCE, MAP_SURFACE_TILE_SIZE
 
 '''
 MONSTER: Room with monster, battle begins upon entry
@@ -276,8 +276,8 @@ class Dungeon:
 
     def create_map(self, debug=False):
         """Creates the map of the floor. By default, only returns visited rooms. Returns a Surface"""
-        tile_size = 50
-        map_surface = Surface((500, 500))
+        tile_size = MAP_SURFACE_TILE_SIZE
+        map_surface = Surface((MAP_SURFACE_TILE_SIZE * 8, MAP_SURFACE_TILE_SIZE * 8)) # 8 is max floor width/height
         for row in range(self._length):
             for col in range(self._width):
                 room = self._map[row][col]

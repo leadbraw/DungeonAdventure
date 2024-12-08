@@ -165,17 +165,18 @@ class DungeonManager:
         print(f"[DungeonManager] Marking room as visited: Floor {floor}, Position {position}.")
         self.get_room(floor, position).set_visited(True)
 
-    def get_floor_map(self, floor):
+    def get_floor_map(self, floor, debug=False):
         """
         Returns the map for the specified floor.
         :param floor The floor number (1-indexed).
+        :param debug Whether the game is in debug mode.
         :return The map of the floor as a pygame Surface.
         """
         if floor < 1 or floor > len(self.dungeon):
             print(f"[DungeonManager] Error: Invalid floor number {floor}.")
             raise ValueError(f"Invalid floor number: {floor}")
 
-        floor_map = self.dungeon[floor - 1].create_map()
+        floor_map = self.dungeon[floor - 1].create_map(debug)
         # print(f"[DungeonManager] Retrieved map for Floor {floor}.")
         return floor_map
 

@@ -87,3 +87,9 @@ MONSTER_CHANCE = 0.8
 ELITE_CHANCE = 0.2
 TRAP_CHANCE = 0.5
 ITEM_CHANCE = 0.5
+
+# For position marker on minimap
+MAP_CELL_WIDTH = 19
+
+# For constructing minimap surface
+MAP_SURFACE_TILE_SIZE = 64

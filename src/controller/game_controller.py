@@ -1,7 +1,7 @@
 import random
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE
+from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH
 from src.controller.battle_manager import BattleManager
 from src.controller.dungeon_manager import DungeonManager
 from src.view.gui_elements import Button
@@ -17,6 +17,7 @@ class GameController:
     def __init__(self, screen, hero_name, debug):
         self.screen = screen
         self.hero_name = hero_name
+        self.debug = debug
         self.fonts = get_fonts()  # Dictionary of fonts
         self.room_manager = RoomManager.get_instance()
         self.sprite_manager = SpriteManager.get_instance()
@@ -25,8 +26,6 @@ class GameController:
         self.dungeon_manager.initialize_dungeon()
         self.adventurer_manager = AdventurerManager.get_instance()
         self.minimap = None
-        self.inventory_button = None
-        self.debug = debug
 
         # Attributes for game state
         self.current_floor = 1
@@ -47,6 +46,9 @@ class GameController:
 
     def display_game(self):
         """Main gameplay loop."""
+        if self.debug:
+            self.minimap = pygame.transform.scale(self.dungeon_manager.get_floor_map(self.current_floor, self.debug),
+                                                  (150, 150))
         while True:
             self.screen.fill(DARK_GREY)
 
@@ -55,9 +57,9 @@ class GameController:
             room_doors = current_room.valid_directions
             sprite_config = self.room_manager.get_room_by_doors(room_doors)
             self.render_room_sprite(sprite_config)
-
-            map_image = self.dungeon_manager.get_floor_map(self.current_floor)
-            self.minimap = pygame.transform.scale(map_image, (150, 150))
+            if not self.debug: # Don't fetch map every frame if not needed.
+                self.minimap = pygame.transform.scale(self.dungeon_manager.get_floor_map(self.current_floor),
+                                                      (150, 150))
             self.draw_ui() # Draw UI draws map as well
 
             # Handle events
@@ -230,6 +232,9 @@ class GameController:
             self.current_floor += 1
             self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
+            if self.debug:
+                self.minimap = pygame.transform.scale(self.dungeon_manager.get_floor_map(self.current_floor, self.debug),
+                                                    (150, 150))
             self.display_message(f"You've now entered floor {self.current_floor}.")
         else:
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -313,6 +318,11 @@ class GameController:
 
         # Draw minimap
         self.screen.blit(self.minimap, (650, 0))
+
+        # Draw current position on minimap
+        dim = MAP_CELL_WIDTH
+        pygame.draw.circle(self.screen, (255, 255, 255),
+                           (650 + self.position[1] * dim + dim / 2, 5 + self.position[0] * dim + 3) , 5)
 
         # Draw save and inventory buttons
         self.save_button.draw(self.screen)
