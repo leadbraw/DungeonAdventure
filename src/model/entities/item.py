@@ -54,3 +54,25 @@ class Item:
     @property
     def buff_type(self):
         return self.__my_buff_type
+
+    # Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        return {'__my_name': self.__my_name,
+                '__my_description': self.__my_description,
+                '__my_target': self.__my_target,
+                '__my_one_time_item': self.__my_one_time_item,
+                '__my_effect_min': self.__my_effect_min,
+                '__my_effect_max': self.__my_effect_max,
+                '__my_buff_type': self.__my_buff_type}
+
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        self.__my_name = state['__my_name']
+        self.__my_description = state['__my_description']
+        self.__my_target = state['__my_target']
+        self.__my_one_time_item = state['__my_one_time_item']
+        self.__my_effect_min = state['__my_effect_min']
+        self.__my_effect_max = state['__my_effect_max']
+        self.__my_buff_type = state['__my_buff_type']
