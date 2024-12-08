@@ -369,3 +369,4 @@ class GameController:
         self.current_message = state['current_message']
         self.pillars_found = state['pillars_found']
         self.return_to_menu = state['return_to_menu']
+        print("Loaded save for: " + self.hero_name)
