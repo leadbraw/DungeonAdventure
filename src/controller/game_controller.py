@@ -11,6 +11,8 @@ from src.model.managers.adventurer_manager import AdventurerManager
 from src.model.managers.sprite_manager import SpriteManager
 from src.model.factories.adventurer_factory import AdventurerFactory
 
+from src.model.managers.game_state_manager import GameStateManager
+
 class GameController:
     def __init__(self, screen, hero_name, debug):
         self.screen = screen
@@ -324,13 +326,14 @@ class GameController:
         portrait = pygame.image.load(portrait_path).convert_alpha()
         return pygame.transform.scale(portrait, (150, 150))
 
+    def set_up_from_load(self, the_screen, the_fonts):
+        self.screen = the_screen
+        self.fonts = the_fonts
+
     # Method to define what gets pickled
     def __getstate__(self):
         # Return a dictionary of the object's state
-        return {
-                # 'screen': self.screen,    # updated from main
-                'hero_name': self.hero_name,    # string
-                'fonts': self.fonts,    # ???
+        states = {'hero_name': self.hero_name,    # string
                 'room_manager': self.room_manager,  # RoomManager ???
                 'sprite_manager': self.sprite_manager,  # SpriteManager ???
                 'battle_manager': self.battle_manager,  # BattleManager ???
@@ -343,22 +346,35 @@ class GameController:
                 'current_message': self.current_message,    # string
                 'pillars_found': self.pillars_found,    # int
                 'return_to_menu': self.return_to_menu}  # int
+        # print(states)
+        return {
+                # 'screen': self.screen,    # updated from main
+                'hero_name': self.hero_name,    # string
+                'room_manager': self.room_manager,  # pickled
+                # 'battle_manager': self.battle_manager,  # BattleManager ???
+                # 'dungeon_manager': self.dungeon_manager,    # to be pickled
+                # 'adventurer_manager': self.adventurer_manager,  # to be pickled
+                # 'minimap':self.minimap, # ???
+                'current_floor': self.current_floor,    # int
+                'position': self.position, # tuple
+                # 'active_adventurer': self.active_adventurer,    # Adventurer: to be pickled
+                'current_message': self.current_message,    # string
+                'pillars_found': self.pillars_found,    # int
+                'return_to_menu': self.return_to_menu  # boolean
+        }
 
     # Method to define how the object is restored
     def __setstate__(self, state):
         # Restore the object's state from the dictionary
-        # self.screen = state['screen']
         self.hero_name = state['hero_name']
-        self.fonts = state['fonts']
         self.room_manager = state['room_manager']
-        self.sprite_manager = state['sprite_manager']
-        self.battle_manager = state['battle_manager']
-        self.dungeon_manager = state['dungeon_manager']
-        self.adventurer_manager = state['adventurer_manager']
-        self.minimap = state['minimap']
+        # self.battle_manager = state['battle_manager']
+        # self.dungeon_manager = state['dungeon_manager']
+        # self.adventurer_manager = state['adventurer_manager']
+        # self.minimap = state['minimap']
         self.current_floor = state['current_floor']
         self.position = state['position']
-        self.active_adventurer = state['active_adventurer']
+        # self.active_adventurer = state['active_adventurer']
         self.current_message = state['current_message']
         self.pillars_found = state['pillars_found']
         self.return_to_menu = state['return_to_menu']
