@@ -113,3 +113,40 @@ class Monster(Entity):
         :return: The type of the monster.
         """
         return self.__my_type
+
+    @type.setter
+    def type(self, the_type):
+        self.type = the_type
+
+    # Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        state = super().__getstate__()
+        state['__my_type'] = self.__my_type
+        state['__my_heal_chance'] = self.__my_heal_chance
+        state['__my_heal_range'] = self.__my_heal_range
+        # state.append({
+        #         # 'name': self.name,
+        #         # '__my_max_hp': self.__my_max_hp,
+        #         # '__my_attack_speed': self.__my_attack_speed,
+        #         # '__my_hit_chance': self.__my_hit_chance,
+        #         # '__my_damage_range': self.__my_damage_range,
+        #         # '__my_hp': self.__my_hp,
+        #         '__my_type': self.__my_type,
+        #         '__my_heal_chance': self.__my_heal_chance,
+        #         '__my_heal_range': self.__my_heal_range})
+        return state
+
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        # self.name = state['name']
+        # self.max_hp = state['__my_max_hp']
+        # self.attack_speed = state['__my_attack_speed']
+        # self.hit_chance = state['__my_hit_chance']
+        # self.damage_range = state['__my_damage_range']
+        # self.my_hp = state['hp']
+        super().__setstate__(state)
+        self.__my_type = state['__my_type']
+        self.__my_heal_chance = state['__my_heal_chance']
+        self.__my_heal_range = state['__my_heal_range']
