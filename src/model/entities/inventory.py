@@ -309,3 +309,15 @@ class Inventory:
             item = ItemManager.get_instance().get_limited_item_data(entry["name"])
             if item:
                 self.add_item(item, entry["quantity"])
+
+# Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        return {'capacity': self.capacity,
+                'items': self.items}
+
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        self.capacity = state['capacity']
+        self.items = state['items']
