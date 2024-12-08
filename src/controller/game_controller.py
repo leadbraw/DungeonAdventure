@@ -417,10 +417,9 @@ class GameController:
         portrait = pygame.image.load(portrait_path).convert_alpha()
         return pygame.transform.scale(portrait, (150, 150))
 
-    def set_up_from_load(self, the_screen, the_fonts, the_debug):
+    def set_up_from_load(self, the_screen, the_fonts):
         self.screen = the_screen
         self.fonts = the_fonts
-        self.debug = the_debug
         self.battle_manager = BattleManager.get_instance(self.screen, self.fonts, self.draw_ui)
         self.sprite_manager = SpriteManager.get_instance()
         self.full_maps = []
@@ -446,7 +445,8 @@ class GameController:
                 'active_adventurer': self.active_adventurer,
                 'current_message': self.current_message,    # string
                 'pillars_found': self.pillars_found,    # int
-                'return_to_menu': self.return_to_menu  # boolean
+                'return_to_menu': self.return_to_menu, # boolean
+                'debug': self.debug # boolean
         }
 
     # Method to define how the object is restored
@@ -462,4 +462,5 @@ class GameController:
         self.current_message = state['current_message']
         self.pillars_found = state['pillars_found']
         self.return_to_menu = state['return_to_menu']
+        self.debug = state['debug']
         print("Loaded save for: " + self.hero_name)
