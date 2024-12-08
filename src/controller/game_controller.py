@@ -34,6 +34,11 @@ class GameController:
         self.pillars_found = 0
         self.return_to_menu = False # Flag for if user chose to return to menu. Only set to True upon losing a battle.
 
+        self.inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
+                                       font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
+        self.save_button = Button(color=LIGHT_BLUE, x=670, y=200, width=110, height=30,
+                                  font=self.fonts["extra_small"], text_color=(255, 255, 255), text="Save Game")
+
         # Mark the starting room as visited and initialize the adventurer
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
         self.set_active_adventurer(hero_name)
@@ -78,6 +83,8 @@ class GameController:
                             position=self.position,
                             dungeon=self.dungeon_manager.dungeon[self.current_floor - 1]  # Specific dungeon floor
                         )
+                    elif self.save_button.is_hovered(mouse_pos):
+                        pass
 
                 elif event.type == pygame.KEYDOWN:
                     self.player_movement(event.key)
@@ -305,11 +312,9 @@ class GameController:
         # Draw minimap
         self.screen.blit(self.minimap, (650, 0))
 
-        #Draw inventory button
-        inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
-                                    font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
-        inventory_button.draw(self.screen)
-        self.inventory_button = inventory_button
+        # Draw save and inventory buttons
+        self.save_button.draw(self.screen)
+        self.inventory_button.draw(self.screen)
 
 
     def get_hero_portrait(self):
