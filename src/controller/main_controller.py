@@ -7,6 +7,8 @@ from src.controller.game_controller import GameController
 from src.controller.game_setup import GameSetup
 from src.model.managers.sprite_manager import SpriteManager
 from src.model.managers.game_state_manager import GameStateManager
+from tests.model_tests.test_sprite_manager import sprite_manager
+
 
 class MainController:
     def __init__(self):
@@ -52,8 +54,9 @@ class MainController:
             self.state = "CHARACTER_SELECTION"
         elif choice == "load_game":
             self.game_controller = GameStateManager.load_game_state()
-            self.game_controller.screen = self.screen
-            self.state = "GAMEPLAY"
+            self.game_controller.set_up_from_load(self.screen, self.fonts)
+            # uncomment when fully implemented
+            # self.state = "GAMEPLAY"
 
     def character_selection(self):
         character_screen = CharacterScreen(self.screen, self.fonts)
