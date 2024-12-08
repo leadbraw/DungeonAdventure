@@ -105,7 +105,7 @@ class Entity:
         elif self.hp - the_diff > self.max_hp:
             self.hp = self.max_hp
         else:
-            self.hp = self.hp - the_diff
+            self.hp = self.hp - the_diff if self.hp - the_diff <= 999 else 999 # Cap at 99
 
         return message
 
@@ -152,7 +152,7 @@ class Entity:
 
     @max_hp.setter
     def max_hp(self, the_max_hp):
-        self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
+        self.__my_max_hp = min(max(1, the_max_hp), 999)  # Clamp between 1 and 999
         if self.__my_hp > self.__my_max_hp:
             self.__my_hp = self.__my_max_hp
 
