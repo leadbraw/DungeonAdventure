@@ -8,7 +8,7 @@ from pygame import Surface
 
 from constants import BACKGROUND_COLOR, TRAP_CHANCE, ITEM_CHANCE, MONSTER_CHANCE, ELITE_CHANCE, EMPTY_CHANCE, \
     EVENT_CHANCE, ENTITY_CHANCE, MAP_SURFACE_TILE_SIZE, DARK_GREY, OFF_WHITE, FADED_GRAY, RED, DARK_RED, GOLD, BROWN, \
-    VIOLET, DARK_VIOLET, BLACK
+    VIOLET, DARK_VIOLET, BLACK, MEDIUM_GREY
 
 '''
 MONSTER: Room with monster, battle begins upon entry
@@ -299,7 +299,7 @@ class Dungeon:
                 elif room.type == "EXIT":
                     color = DARK_VIOLET
                 elif room.type == "EMPTY":
-                    color = DARK_GREY
+                    color = MEDIUM_GREY
                 elif room.type == "BLOCKED":
                     color = BLACK
                 if not debug and room.visited:
