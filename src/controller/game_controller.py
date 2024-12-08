@@ -334,6 +334,8 @@ class GameController:
     def set_up_from_load(self, the_screen, the_fonts):
         self.screen = the_screen
         self.fonts = the_fonts
+        # TODO: Put call to self.display_game() here to jump into gameplay after loading a save
+        #  (after pickling for all other needed classes has been implemented)'''
 
     # Method to define what gets pickled
     def __getstate__(self):
@@ -345,7 +347,7 @@ class GameController:
                 # 'battle_manager': self.battle_manager,  # BattleManager ???
                 # 'dungeon_manager': self.dungeon_manager,    # to be pickled
                 # 'adventurer_manager': self.adventurer_manager,  # to be pickled
-                # 'minimap':self.minimap, # ???
+                # 'minimap':self.minimap, # A pygame Surface returned from get_floor_map in DungeonManager
                 'current_floor': self.current_floor,    # int
                 'position': self.position, # tuple
                 # 'active_adventurer': self.active_adventurer,    # Adventurer: to be pickled
