@@ -311,6 +311,7 @@ class GameController:
                     return 1 # Will be seen by handle_exit_room, which will set the return_to_menu field to True
 
             pygame.display.flip()
+
     def render_room_sprite(self, sprite_config):
         """Renders the sprite for the current room."""
         if sprite_config and "sprite_name" in sprite_config and "rotation" in sprite_config:
@@ -377,7 +378,7 @@ class GameController:
         block_text = self.fonts["extra_small"].render(f"Block %: {block_chance * 100:.0f}%", True, OFF_WHITE)
         speed_text = self.fonts["extra_small"].render(f"Speed: {attack_speed}", True, OFF_WHITE)
         range_text = self.fonts["extra_small"].render(f"Attack: {damage_range[0]}-{damage_range[1]}", True, OFF_WHITE)
-        hit_text = self.fonts["extra_small"].render(f"Hit %: {hit_chance * 100}%", True, OFF_WHITE)
+        hit_text = self.fonts["extra_small"].render(f"Hit %: {hit_chance * 100:.0f}%", True, OFF_WHITE)
         self.screen.blit(block_text, (660, 385))
         self.screen.blit(speed_text, (660, 350))
         self.screen.blit(range_text, (660, 315))
