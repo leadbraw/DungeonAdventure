@@ -121,7 +121,7 @@ class GameController:
                 self.position = (self.position[0] + dx, self.position[1] + dy)
                 self.room_interaction()
             else:
-                self.display_message("Invalid move: No valid path in that direction.", 1000)
+                self.display_message("Invalid move: No valid path in that direction.", 250)
 
     def room_interaction(self):
         """Interact with the current room."""
