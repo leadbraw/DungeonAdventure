@@ -97,6 +97,8 @@ class Adventurer(Entity):
         elif buff_type == "attack_speed":
             self.attack_speed = self.attack_speed + buff_value  # Uses the setter for attack_speed
             print(f"{self.name}'s attack speed increased by {buff_value}. New attack speed: {self.attack_speed}.")
+        elif buff_type == "hit_chance":
+            self.hit_chance = buff_value
         else:
             print(f"Buff type '{buff_type}' is not recognized.")
 

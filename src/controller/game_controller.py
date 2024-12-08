@@ -247,7 +247,6 @@ class GameController:
             room_sprite = self.sprite_manager.get_transformed_sprite(sprite_name, rotate=rotation)
 
             if room_sprite:
-                test = room_sprite.get_width()
                 x = (650 - room_sprite.get_width()) // 2
                 y = 0
                 self.screen.blit(room_sprite, (x, y))
@@ -278,6 +277,12 @@ class GameController:
         raw_data = self.adventurer_manager.get_adventurer_data(name=adventurer_name)[1:]
         if raw_data:
             self.active_adventurer = AdventurerFactory.get_instance().make_adventurer(raw_data)
+            if self.debug:
+                self.active_adventurer.apply_buff(999 - self.active_adventurer.max_hp, "max_hp") # sets value to 999
+                self.active_adventurer.apply_buff(100, "block_chance")
+                self.active_adventurer.apply_buff(500, "attack_damage")
+                self.active_adventurer.apply_buff(50, "attack_speed")
+                self.active_adventurer.apply_buff(1, "hit_chance")
         else:
             print(f"Adventurer '{adventurer_name}' not found.")
         self.adventurer_manager.active_adventurer = self.active_adventurer
@@ -298,15 +303,14 @@ class GameController:
         block_chance, attack_speed = self.active_adventurer.block_chance, self.active_adventurer.attack_speed
         damage_range, hit_chance = self.active_adventurer.damage_range, self.active_adventurer.hit_chance
         hp_text = self.fonts["small"].render(f"HP: {current_hp} / {max_hp}", True, OFF_WHITE)
-        if self.debug: # TODO: implement debug mode widely
-            block_text = self.fonts["extra_small"].render(f"Block %: {block_chance * 100}%", True, OFF_WHITE)
-            speed_text = self.fonts["extra_small"].render(f"Speed: {attack_speed}", True, OFF_WHITE)
-            range_text = self.fonts["extra_small"].render(f"Attack: {damage_range[0]}-{damage_range[1]}", True, OFF_WHITE)
-            hit_text = self.fonts["extra_small"].render(f"Hit %: {hit_chance * 100}%", True, OFF_WHITE)
-            self.screen.blit(block_text, (660, 385))
-            self.screen.blit(speed_text, (660, 350))
-            self.screen.blit(range_text, (660, 315))
-            self.screen.blit(hit_text, (660, 280))
+        block_text = self.fonts["extra_small"].render(f"Block %: {block_chance * 100}%", True, OFF_WHITE)
+        speed_text = self.fonts["extra_small"].render(f"Speed: {attack_speed}", True, OFF_WHITE)
+        range_text = self.fonts["extra_small"].render(f"Attack: {damage_range[0]}-{damage_range[1]}", True, OFF_WHITE)
+        hit_text = self.fonts["extra_small"].render(f"Hit %: {hit_chance * 100}%", True, OFF_WHITE)
+        self.screen.blit(block_text, (660, 385))
+        self.screen.blit(speed_text, (660, 350))
+        self.screen.blit(range_text, (660, 315))
+        self.screen.blit(hit_text, (660, 280))
         self.screen.blit(hp_text, (660, 420))
 
         # Display room message
