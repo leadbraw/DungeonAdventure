@@ -86,7 +86,7 @@ class GameController:
                             dungeon=self.dungeon_manager.dungeon[self.current_floor - 1]  # Specific dungeon floor
                         )
                     elif self.save_button.is_hovered(mouse_pos):
-                        pass
+                        GameStateManager.save_game_state(self)
 
                 elif event.type == pygame.KEYDOWN:
                     self.player_movement(event.key)
@@ -338,22 +338,8 @@ class GameController:
     # Method to define what gets pickled
     def __getstate__(self):
         # Return a dictionary of the object's state
-        states = {'hero_name': self.hero_name,    # string
-                'room_manager': self.room_manager,  # RoomManager ???
-                'sprite_manager': self.sprite_manager,  # SpriteManager ???
-                'battle_manager': self.battle_manager,  # BattleManager ???
-                'dungeon_manager': self.dungeon_manager,    # Dungeon Manager to be pickled
-                'adventurer_manager': self.adventurer_manager,  # to be pickled
-                'minimap':self.minimap, # ???
-                'current_floor': self.current_floor,    # int
-                'position': self.position, # tuple
-                'active_adventurer': self.active_adventurer,    # Adventurer: to be pickled
-                'current_message': self.current_message,    # string
-                'pillars_found': self.pillars_found,    # int
-                'return_to_menu': self.return_to_menu}  # int
-        # print(states)
+        print("Game Controller state saved.")
         return {
-                # 'screen': self.screen,    # updated from main
                 'hero_name': self.hero_name,    # string
                 'room_manager': self.room_manager,  # pickled
                 # 'battle_manager': self.battle_manager,  # BattleManager ???
