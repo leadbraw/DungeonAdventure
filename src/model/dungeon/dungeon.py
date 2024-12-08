@@ -112,6 +112,25 @@ class Room:
                 self.valid_directions[count] = True
             count += 1
 
+    # Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        return {'type': self.type,
+                'valid_directions': self.valid_directions,
+                'monster': self.monster,
+                'item': self.item,
+                'visited': self.visited}
+
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        self.type = state['type']
+        self.valid_directions = state['valid_directions']
+        self.monster = state['monster']
+        self.item = state['item']
+        self.visited = state['visited']
+
+
 class Dungeon:
     def __init__(self, floor_number):
         """Constructor for Dungeon. Instantiates it."""
@@ -308,6 +327,29 @@ class Dungeon:
                     pygame.draw.rect(map_surface, color, (x, y, tile_size, tile_size))
 
         return map_surface
+
+    # Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        return {'_length': self._length,
+                '_width': self._width,
+                '_map': self._map,
+                '_entrance_loc': self._entrance_loc,
+                '_exit_loc': self._exit_loc,
+                '_pillar_loc': self._pillar_loc,
+                '_room_list': self._room_list}
+
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        self._length = state['_length']
+        self._width = state['_width']
+        self._map = state['_map']
+        self._entrance_loc = state['_entrance_loc']
+        self._exit_loc = state['_exit_loc']
+        self._pillar_loc = state['_pillar_loc']
+        self._room_list = state['_room_list']
+
 
 
 if __name__ == "__main__":
