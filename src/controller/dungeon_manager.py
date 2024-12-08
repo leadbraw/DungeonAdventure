@@ -219,3 +219,13 @@ class DungeonManager:
         room = self.get_room(floor, position)
         if room.has_item():
             room.set_item(None)
+
+# Method to define what gets pickled
+    def __getstate__(self):
+        # Return a dictionary of the object's state
+        return {'dungeon': self.dungeon}
+
+    # Method to define how the object is restored
+    def __setstate__(self, state):
+        # Restore the object's state from the dictionary
+        self.dungeon = state['dungeon']
