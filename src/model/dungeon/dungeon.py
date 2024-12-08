@@ -7,7 +7,8 @@ from copy import deepcopy
 from pygame import Surface
 
 from constants import BACKGROUND_COLOR, TRAP_CHANCE, ITEM_CHANCE, MONSTER_CHANCE, ELITE_CHANCE, EMPTY_CHANCE, \
-    EVENT_CHANCE, ENTITY_CHANCE, MAP_SURFACE_TILE_SIZE
+    EVENT_CHANCE, ENTITY_CHANCE, MAP_SURFACE_TILE_SIZE, DARK_GREY, OFF_WHITE, FADED_GRAY, RED, DARK_RED, GOLD, BROWN, \
+    VIOLET, DARK_VIOLET, BLACK
 
 '''
 MONSTER: Room with monster, battle begins upon entry
@@ -284,23 +285,23 @@ class Dungeon:
                 x = col * tile_size
                 y = row * tile_size
                 if room.type == "MONSTER":
-                    color = (255, 0, 0)
+                    color = RED
                 elif room.type == "ELITE":
-                    color = (200, 0, 0)
+                    color = DARK_RED
                 elif room.type == "ITEM":
-                    color = (0, 255, 0)
+                    color = GOLD
                 elif room.type == "PILLAR":
-                    color = (255, 255, 255)
+                    color = FADED_GRAY
                 elif room.type == "TRAP":
-                    color = (0, 0, 255)
+                    color = BROWN
                 elif room.type == "ENTRANCE":
-                    color = (255, 165, 0)
+                    color = VIOLET
                 elif room.type == "EXIT":
-                    color = (255, 215, 0)
+                    color = DARK_VIOLET
                 elif room.type == "EMPTY":
-                    color = (60, 60, 60)
+                    color = DARK_GREY
                 elif room.type == "BLOCKED":
-                    color = (0, 0, 0)
+                    color = BLACK
                 if not debug and room.visited:
                     pygame.draw.rect(map_surface, color, (x, y, tile_size, tile_size))
                 elif debug:
