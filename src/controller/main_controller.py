@@ -73,8 +73,6 @@ class MainController:
         if self.selected_hero:
             self.game_controller = GameController(self.screen, self.selected_hero, self.debug)
             self.game_controller.set_active_adventurer(self.selected_hero)
-            # Example of where a save button might call save logic:
-            # GameStateManager.save_game_state(self.game_controller)
             print("[Main] Dungeon is already initialized through DungeonManager.")
             if self.game_controller.display_game() == 1:
                 self.state = "MAIN_MENU"
