@@ -30,6 +30,7 @@ class MainController:
         self.state = "MAIN_MENU"
         self.selected_hero = None
         self.debug = False
+        self.loading = False
         self.game_controller = None
 
     def run(self):
@@ -53,10 +54,11 @@ class MainController:
         if choice == "new_game":
             self.state = "CHARACTER_SELECTION"
         elif choice == "load_game":
+            self.loading = True
             self.game_controller = GameStateManager.load_game_state()
-            self.game_controller.set_up_from_load(self.screen, self.fonts)
+            self.game_controller.set_up_from_load(self.screen, self.fonts, self.debug)
             # uncomment when fully implemented
-            # self.state = "GAMEPLAY"
+            self.state = "GAMEPLAY"
 
     def character_selection(self):
         character_screen = CharacterScreen(self.screen, self.fonts)
@@ -70,10 +72,12 @@ class MainController:
             self.state = "MAIN_MENU"
 
     def gameplay(self):
-        if self.selected_hero:
-            self.game_controller = GameController(self.screen, self.selected_hero, self.debug)
-            self.game_controller.set_active_adventurer(self.selected_hero)
-            print("[Main] Dungeon is already initialized through DungeonManager.")
+        if self.selected_hero or self.loading:
+            if not self.loading:
+                self.game_controller = GameController(self.screen, self.selected_hero, self.debug)
+                self.game_controller.set_active_adventurer(self.selected_hero)
+                print("[Main] Dungeon is already initialized through DungeonManager.")
+            self.loading = False
             if self.game_controller.display_game() == 1:
                 self.state = "MAIN_MENU"
             else:
