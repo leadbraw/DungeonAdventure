@@ -4,6 +4,8 @@ from typing import final
 
 # Utilizes Template method: attack(target) calls _hit_response(damage),
 # which is implemented in subclasses.
+
+
 class Entity:
     def __init__(self, the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
         """
@@ -34,7 +36,7 @@ class Entity:
         """
         return f"{self.name} {self.hp}"
 
-    ### PUBLIC METHODS ###
+    """ PUBLIC METHODS """
     @final
     def is_alive(self):
         """
@@ -64,7 +66,7 @@ class Entity:
                 break
 
             # hit: [0, hit_chance]
-            # miss: (hit_chance, 1]
+            # miss: [hit_chance, 1]
             if random.uniform(0, 1) <= self.hit_chance:
                 damage = random.randint(*self.damage_range)
                 message += f"{self.name} hit {the_target.name} for {damage} points."
@@ -74,7 +76,7 @@ class Entity:
 
         return message[:len(message) - 1]
 
-    ### INTERNAL METHODS ###
+    """ INTERNAL METHODS """
     @final
     def __calculate_attack_num(self, the_target):
         """
@@ -105,7 +107,7 @@ class Entity:
         elif self.hp - the_diff > self.max_hp:
             self.hp = self.max_hp
         else:
-            self.hp = self.hp - the_diff if self.hp - the_diff <= 999 else 999 # Cap at 99
+            self.hp = self.hp - the_diff if self.hp - the_diff <= 999 else 999  # Cap at 99
 
         return message
 
@@ -121,7 +123,7 @@ class Entity:
         # implemented in subclasses
         pass
 
-    ### PROPERTIES ###
+    """ PROPERTIES """
     @property
     def name(self):
         return self.__my_name

@@ -4,7 +4,9 @@ from typing import final
 from src.model.entities.entities import Entity
 from src.model.entities.inventory import Inventory
 
+
 # optional: move special action constants into database and add parameters to be updated with them
+
 
 class Adventurer(Entity):
     def __init__(self, the_name, the_type, the_max_hp,
@@ -25,14 +27,13 @@ class Adventurer(Entity):
         self.__my_block_chance = min(max(0, the_block_chance), 1)  # Clamp between 0 and 1
         self.__inventory = Inventory()
 
-
-    ### PUBLIC METHODS ###
+    """ PUBLIC METHODS """
     @abstractmethod
     def special_action(self, the_target):
         # implemented in subclasses
         pass
 
-    ### INTERNAL METHODS ###
+    """ INTERNAL METHODS """
     @final
     def _hit_response(self, the_dmg):
         """
@@ -89,7 +90,8 @@ class Adventurer(Entity):
         elif buff_type == "block_chance":
             self.block_chance = min(self.block_chance + (buff_value / 10), 1.0)
             print(
-                f"{self.name}'s block chance increased by {buff_value / 10:.2f}. New block chance: {self.block_chance:.2f}.")
+                f"{self.name}'s block chance increased by {buff_value / 10:.2f}. "
+                f"New block chance: {self.block_chance:.2f}.")
         elif buff_type == "attack_damage":
             min_damage, max_damage = self.damage_range
             self.damage_range = (min_damage + buff_value, max_damage + buff_value)  # Uses the setter for damage_range
@@ -114,7 +116,7 @@ class Adventurer(Entity):
         else:
             print(f"{self.name} is already at full health.")
 
-    ### PROPERTIES ###
+    """ PROPERTIES """
     @property
     def type(self):
         return self.__my_type
@@ -174,7 +176,7 @@ class Adventurer(Entity):
         self.__inventory = state['__inventory']
 
 
-### ADVENTURER CLASSES ###
+""" ADVENTURER CLASSES """
 """ Provides Warrior specific behavior.
     Attributes:
     __my_special_hit_chance (float): special attack hit chance.
@@ -182,6 +184,8 @@ class Adventurer(Entity):
     Methods:
     special_action(the_target): performs Crushing Blow.
 """
+
+
 class Warrior(Adventurer):
     __my_special_hit_chance = 0.4
     __my_special_dmg_range = (75, 175)
@@ -228,6 +232,8 @@ class Warrior(Adventurer):
     Methods:
     special_action(the_target): performs Divine Prayer.
 """
+
+
 class Priest(Adventurer):
     __my_special_heal_range_percentage = (0.4, 0.7)
 
@@ -265,6 +271,8 @@ class Priest(Adventurer):
     Methods:
     special_action(the_target): performs Surprise Attack.
 """
+
+
 class Thief(Adventurer):
     # __my_special hit chance = 0.4
     __my_normal_attack_chance = 0.4
@@ -354,4 +362,3 @@ class Bard(Adventurer):
         :return: Discombobulating Thought message.
         """
         return f"{self.name} uses Discombobulating Thought on {the_target.name}."
-

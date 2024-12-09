@@ -1,6 +1,7 @@
 import random
 from src.model.managers.item_manager import ItemManager
 
+
 class Inventory:
     """
     A class to manage an inventory system for an adventurer or other entities.
@@ -249,7 +250,8 @@ class Inventory:
                     if not adjacent_room.get_visited():
                         adjacent_room.set_visited(True)
                         print(
-                            f"The White Box reveals an adjacent room: {adjacent_room.get_type()} at ({adj_x}, {adj_y}).")
+                            f"The White Box reveals an adjacent room: "
+                            f"{adjacent_room.get_type()} at ({adj_x}, {adj_y}).")
 
             return True
 
