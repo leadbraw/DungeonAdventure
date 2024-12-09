@@ -93,6 +93,7 @@ class GameController:
                         )
                     elif self.save_button.is_hovered(mouse_pos):
                         GameStateManager.save_game_state(self)
+                        self.display_message("Game saved!", 500)
 
                 elif event.type == pygame.KEYDOWN:
                     self.player_movement(event.key)
