@@ -7,11 +7,11 @@ PASTEL_RED = (250, 145, 147)
 DARK_RED = (139, 0, 0)
 
 BLACK = (0, 0, 0)
-GOLD = (255,165,0)
-BROWN = (210,105,30)
+GOLD = (255, 165, 0)
+BROWN = (210, 105, 30)
 
-VIOLET = (238,130,238)
-DARK_VIOLET = (199,21,133)
+VIOLET = (238, 130, 238)
+DARK_VIOLET = (199, 21, 133)
 
 BACKGROUND_COLOR = (24, 24, 24)
 DARK_GREY = (60, 60, 60)
@@ -27,11 +27,17 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 # Pillar Names (used in game_controller)
-PILLAR_NAMES = ["Pillar of Abstraction", "Pillar of Polymorphism", "Pillar of Inheritance", "Pillar of Encapsulation"]
+PILLAR_NAMES = [
+    "Pillar of Abstraction",
+    "Pillar of Polymorphism",
+    "Pillar of Inheritance",
+    "Pillar of Encapsulation"
+]
 
 # Button Sizes
 MENU_BUTTON_WIDTH = 140
 MENU_BUTTON_HEIGHT = 40
+
 
 # Fonts (initialize after pygame.init())
 def get_fonts():
@@ -42,6 +48,7 @@ def get_fonts():
         "medium": pygame.font.Font(None, 50),
         "extra_small": pygame.font.Font(None, 25)
     }
+
 
 # Sprite Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
