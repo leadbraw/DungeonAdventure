@@ -7,7 +7,7 @@ from copy import deepcopy
 from pygame import Surface
 
 from constants import BACKGROUND_COLOR, TRAP_CHANCE, ITEM_CHANCE, MONSTER_CHANCE, ELITE_CHANCE, EMPTY_CHANCE, \
-    EVENT_CHANCE, ENTITY_CHANCE, MAP_SURFACE_TILE_SIZE, DARK_GREY, OFF_WHITE, FADED_GRAY, RED, DARK_RED, GOLD, BROWN, \
+    EVENT_CHANCE, ENTITY_CHANCE, MAP_SURFACE_TILE_SIZE, FADED_GRAY, RED, DARK_RED, GOLD, BROWN, \
     VIOLET, DARK_VIOLET, BLACK, MEDIUM_GREY
 
 '''
@@ -18,6 +18,7 @@ ENTRANCE: Starting room
 ITEM: Room containing an item, picked up upon entry
 BLOCKED: Inaccessible room
 '''
+
 
 class Room:
     def __init__(self, room_type='BLOCKED'):
@@ -53,7 +54,7 @@ class Room:
             self.type = room_type
 
         self.valid_directions = [False, False, False, False]  # Up, Right, Down, Left
-        #Attributes
+        # Attributes
         self.monster = None
         self.item = None
         self.visited = False
@@ -105,7 +106,7 @@ class Room:
         return self.visited
 
     def define_valid_directions(self, length, width, dungeon, x, y):
-        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)] # Up, Right, Down, Left
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # Up, Right, Down, Left
         count = 0
         for i in directions:
             if 0 <= x + i[0] < length and 0 <= y + i[1] < width and dungeon[x + i[0]][y + i[1]].type != 'BLOCKED':
@@ -137,7 +138,8 @@ class Dungeon:
         # 5x5, 6x6, 7x7, 8x8
         self._length = floor_number + 4
         self._width = floor_number + 4
-        self._map = [[Room('BLOCKED') for _ in range(self._length)] for _ in range(self._width)] # Rooms by default are blocked
+        # Rooms by default are blocked
+        self._map = [[Room('BLOCKED') for _ in range(self._length)] for _ in range(self._width)]
         self._entrance_loc = None
         self._exit_loc = None
         self._pillar_loc = None
@@ -255,8 +257,8 @@ class Dungeon:
             for i in range(offshoot_length):
                 next_x, next_y = x + direction[0] * (i + 1), y + direction[1] * (i + 1)
                 if (0 <= next_x < self._length and
-                    0 <= next_y < self._width and
-                    self._map[next_x][next_y].type == 'BLOCKED'):
+                        0 <= next_y < self._width and
+                        self._map[next_x][next_y].type == 'BLOCKED'):
                     self._map[next_x][next_y] = Room('RANDOM')
                     room_locations.append((next_x, next_y))
                 else:
@@ -297,7 +299,7 @@ class Dungeon:
     def create_map(self, reveal_all=False):
         """Creates the map of the floor. By default, only returns visited rooms. Returns a Surface"""
         tile_size = MAP_SURFACE_TILE_SIZE
-        map_surface = Surface((MAP_SURFACE_TILE_SIZE * 8, MAP_SURFACE_TILE_SIZE * 8)) # 8 is max floor width/height
+        map_surface = Surface((MAP_SURFACE_TILE_SIZE * 8, MAP_SURFACE_TILE_SIZE * 8))  # 8 is max floor width/height
         for row in range(self._length):
             for col in range(self._width):
                 room = self._map[row][col]
@@ -349,7 +351,6 @@ class Dungeon:
         self._exit_loc = state['_exit_loc']
         self._pillar_loc = state['_pillar_loc']
         self._room_list = state['_room_list']
-
 
 
 if __name__ == "__main__":
