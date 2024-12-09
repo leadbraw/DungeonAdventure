@@ -1,5 +1,6 @@
 import json
 
+
 class RoomManager:
     _instance = None  # Singleton instance
 

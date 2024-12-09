@@ -1,5 +1,6 @@
 import random
 
+
 class MonsterManager:
     _instance = None  # Singleton instance
 

@@ -1,5 +1,6 @@
 import random
 
+
 class ItemManager:
     _instance = None  # Singleton instance
 

@@ -1,5 +1,6 @@
 import pygame
 
+
 class SpriteManager:
     _instance = None  # Singleton instance
 
@@ -15,14 +16,14 @@ class SpriteManager:
         if SpriteManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access it.")
         self.sprites = {}
-        #print("[SpriteManager] Singleton instance initialized.")
+        # print("[SpriteManager] Singleton instance initialized.")
 
     def preload_sprites(self, sprite_paths):
         """
         Preloads all sprites from the given dictionary.
         :param sprite_paths: Dictionary with {name: file_path}
         """
-        #print(f"[SpriteManager] Preloading {len(sprite_paths)} sprites...")
+        # print(f"[SpriteManager] Preloading {len(sprite_paths)} sprites...")
         for name, file_path in sprite_paths.items():
             self.load_sprite(name, file_path)
             # print(f"[SpriteManager] Preloading sprite: {name} from {file_path}")  # Debug output
@@ -33,7 +34,7 @@ class SpriteManager:
 
     def load_sprite(self, name, file_path):
         """
-        Loads a sprite image if it hasn’t been loaded already.
+        Loads a sprite image if it has not been loaded already.
         :param name: Unique name for the sprite.
         :param file_path: Path to the sprite image file.
         """
