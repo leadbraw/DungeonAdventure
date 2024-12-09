@@ -1,8 +1,8 @@
 import random
 import sys
 import pygame
-from constants import BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH, MENU_BUTTON_HEIGHT, \
-    MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import (BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH,
+                       MENU_BUTTON_HEIGHT, MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT)
 from src.controller.battle_manager import BattleManager
 from src.controller.dungeon_manager import DungeonManager
 from src.view.gui_elements import Button
@@ -13,6 +13,7 @@ from src.model.managers.sprite_manager import SpriteManager
 from src.model.factories.adventurer_factory import AdventurerFactory
 
 from src.model.managers.game_state_manager import GameStateManager
+
 
 class GameController:
     def __init__(self, screen, hero_name, debug):
@@ -28,7 +29,7 @@ class GameController:
         self.adventurer_manager = AdventurerManager.get_instance()
         self.minimap = None
         self.full_maps = []
-        for i in range(4): # Collect all fully revealed maps for display upon game completion
+        for i in range(4):  # Collect all fully revealed maps for display upon game completion
             self.full_maps.append(self.dungeon_manager.get_floor_map(i + 1, reveal_all=True))
         # Attributes for game state
         self.current_floor = 1
@@ -36,7 +37,7 @@ class GameController:
         self.active_adventurer = None
         self.current_message = None
         self.pillars_found = 0
-        self.return_to_menu = False # Flag for if user chose to return to menu. Only set to True upon losing a battle.
+        self.return_to_menu = False  # Flag for if user chose to return to menu. Only set to True upon losing a battle.
 
         self.inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
                                        font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
@@ -60,10 +61,10 @@ class GameController:
             room_doors = current_room.valid_directions
             sprite_config = self.room_manager.get_room_by_doors(room_doors)
             self.render_room_sprite(sprite_config)
-            if not self.debug: # Don't fetch map every frame if not needed.
+            if not self.debug:  # Don't fetch map every frame if not needed.
                 self.minimap = pygame.transform.scale(self.dungeon_manager.get_floor_map(self.current_floor),
                                                       (150, 150))
-            self.draw_ui() # Draw UI draws map as well
+            self.draw_ui()  # Draw UI draws map as well
 
             # Handle events
             for event in pygame.event.get():
@@ -97,7 +98,7 @@ class GameController:
                     self.player_movement(event.key)
 
             if self.return_to_menu:
-                return 1 # This will be seen by main.py and trigger a return to the main menu.
+                return 1  # This will be seen by main.py and trigger a return to the main menu.
             pygame.display.flip()
 
     def player_movement(self, key):
@@ -227,15 +228,16 @@ class GameController:
         """Handles interaction with the Exit room."""
         if self.current_floor == len(self.dungeon_manager.dungeon):
             self.display_message("You found the exit! Congratulations!", 2000)
-            if self.end_message() == 1: # User chose to return to main menu.
+            if self.end_message() == 1:  # User chose to return to main menu.
                 self.return_to_menu = True
         elif self.pillars_found == self.current_floor:
             self.current_floor += 1
             self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
             if self.debug:
-                self.minimap = pygame.transform.scale(self.dungeon_manager.get_floor_map(self.current_floor, self.debug),
-                                                    (150, 150))
+                self.minimap = pygame.transform.scale(
+                    self.dungeon_manager.get_floor_map(self.current_floor, self.debug),
+                    (150, 150))
             self.display_message(f"You've now entered floor {self.current_floor}.")
         else:
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -246,15 +248,15 @@ class GameController:
         end_menu_button = Button(DARK_GREY, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
         end_title = self.fonts["large"].render("CONGRATULATIONS", True, GOLD)
         end_body = self.fonts["medium"].render("You have proven yourself an excellent hero",
-                                                 True, OFF_WHITE)
+                                               True, OFF_WHITE)
         end_body2 = self.fonts["medium"].render("who will surely go down in history as one",
-                                                  True, OFF_WHITE)
+                                                True, OFF_WHITE)
         end_body3 = self.fonts["medium"].render("of the best to ever go adventuring. You",
-                                                  True, OFF_WHITE)
+                                                True, OFF_WHITE)
         end_body4 = self.fonts["medium"].render("vanquished countless monsters, obtained all",
                                                 True, OFF_WHITE)
         end_body5 = self.fonts["medium"].render("pillars, and escaped with your life. Well done!",
-                                               True, OFF_WHITE)
+                                                True, OFF_WHITE)
         end_body6 = self.fonts["medium"].render("Hit \"NEXT\" to view the complete map!",
                                                 True, OFF_WHITE)
         next_button = Button(OFF_WHITE, 600, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
@@ -271,15 +273,15 @@ class GameController:
             main_menu_button.draw(self.screen, outline=True)
             if position == 0:
                 self.screen.blit(end_title, (self.screen.get_width() / 2 - end_title.get_width() / 2,
-                                               self.screen.get_height() / 8 - end_title.get_height() / 2))
+                                             self.screen.get_height() / 8 - end_title.get_height() / 2))
                 self.screen.blit(end_body, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                               self.screen.get_height() / 5 - end_body.get_height() / 2 + 50))
+                                            self.screen.get_height() / 5 - end_body.get_height() / 2 + 50))
                 self.screen.blit(end_body2, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                                self.screen.get_height() / 5 - end_body.get_height() / 2 + 103))
+                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 103))
                 self.screen.blit(end_body3, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                                self.screen.get_height() / 5 - end_body.get_height() / 2 + 156))
+                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 156))
                 self.screen.blit(end_body4, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                                self.screen.get_height() / 5 - end_body.get_height() / 2 + 209))
+                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 209))
                 self.screen.blit(end_body5, (self.screen.get_width() / 2 - end_body.get_width() / 2,
                                              self.screen.get_height() / 5 - end_body.get_height() / 2 + 262))
                 self.screen.blit(end_body6, (self.screen.get_width() / 2 - end_body.get_width() / 2,
@@ -308,7 +310,7 @@ class GameController:
                 elif prev_button.is_hovered(mouse_pos) and position > 0:
                     position -= 1
                 elif main_menu_button.is_hovered(mouse_pos):
-                    return 1 # Will be seen by handle_exit_room, which will set the return_to_menu field to True
+                    return 1  # Will be seen by handle_exit_room, which will set the return_to_menu field to True
 
             pygame.display.flip()
 
@@ -336,7 +338,6 @@ class GameController:
         sprite_scaled = pygame.transform.scale(sprite, (450, 450))
         self.screen.blit(sprite_scaled, (100, 0))
 
-
     def display_message(self, message, delay=0):
         """Displays a message and optionally delays for a specified duration."""
         self.draw_ui(message)
@@ -350,7 +351,7 @@ class GameController:
         if raw_data:
             self.active_adventurer = AdventurerFactory.get_instance().make_adventurer(raw_data)
             if self.debug:
-                self.active_adventurer.apply_buff(999 - self.active_adventurer.max_hp, "max_hp") # sets value to 999
+                self.active_adventurer.apply_buff(999 - self.active_adventurer.max_hp, "max_hp")  # sets value to 999
                 self.active_adventurer.apply_buff(100, "block_chance")
                 self.active_adventurer.apply_buff(500, "attack_damage")
                 self.active_adventurer.apply_buff(50, "attack_speed")
@@ -398,12 +399,11 @@ class GameController:
         # Draw current position on minimap
         dim = MAP_CELL_WIDTH
         pygame.draw.circle(self.screen, (255, 255, 255),
-                           (650 + self.position[1] * dim + dim / 2, 5 + self.position[0] * dim + 3) , 5)
+                           (650 + self.position[1] * dim + dim / 2, 5 + self.position[0] * dim + 3), 5)
 
         # Draw save and inventory buttons
         self.save_button.draw(self.screen)
         self.inventory_button.draw(self.screen)
-
 
     def get_hero_portrait(self):
         """Returns the portrait for the selected hero."""
@@ -423,30 +423,29 @@ class GameController:
         self.battle_manager = BattleManager.get_instance(self.screen, self.fonts, self.draw_ui)
         self.sprite_manager = SpriteManager.get_instance()
         self.full_maps = []
-        for i in range(4): # mirror constructor
+        for i in range(4):  # mirror constructor
             self.full_maps.append(self.dungeon_manager.get_floor_map(i + 1, reveal_all=True))
         self.inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
                                        font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
         self.save_button = Button(color=LIGHT_BLUE, x=670, y=200, width=110, height=30,
                                   font=self.fonts["extra_small"], text_color=(255, 255, 255), text="Save Game")
 
-
     # Method to define what gets pickled
     def __getstate__(self):
         # Return a dictionary of the object's state
         print("Game Controller state saved.")
         return {
-                'hero_name': self.hero_name,    # string
-                'room_manager': self.room_manager,  # pickled
-                'dungeon_manager': self.dungeon_manager,
-                # 'adventurer_manager': self.adventurer_manager,  # to be pickled
-                'current_floor': self.current_floor,    # int
-                'position': self.position, # tuple
-                'active_adventurer': self.active_adventurer,
-                'current_message': self.current_message,    # string
-                'pillars_found': self.pillars_found,    # int
-                'return_to_menu': self.return_to_menu, # boolean
-                'debug': self.debug # boolean
+            'hero_name': self.hero_name,  # string
+            'room_manager': self.room_manager,  # pickled
+            'dungeon_manager': self.dungeon_manager,
+            # 'adventurer_manager': self.adventurer_manager,  # to be pickled
+            'current_floor': self.current_floor,  # int
+            'position': self.position,  # tuple
+            'active_adventurer': self.active_adventurer,
+            'current_message': self.current_message,  # string
+            'pillars_found': self.pillars_found,  # int
+            'return_to_menu': self.return_to_menu,  # boolean
+            'debug': self.debug  # boolean
         }
 
     # Method to define how the object is restored

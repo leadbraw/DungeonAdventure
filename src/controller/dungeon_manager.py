@@ -12,7 +12,7 @@ class DungeonManager:
     def get_instance():
         """
         Retrieve the singleton instance of DungeonManager.
-        :return The current instance of DungeonManager (a new instance if none existed prior to the get_instance() call).
+        :return current instance of DungeonManager (a new instance if none existed prior to the get_instance() call).
         """
         if DungeonManager._instance is None:
             DungeonManager._instance = DungeonManager()
@@ -45,7 +45,8 @@ class DungeonManager:
             print(f"[DungeonManager] Floor {i + 1} contains {len(all_rooms)} rooms.")
 
             monster_rooms = [
-                coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).get_type() == 'MONSTER'
+                coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0],
+                                                                             coords[1]).get_type() == 'MONSTER'
             ]
             elite_rooms = [
                 coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).get_type() == 'ELITE'
@@ -54,8 +55,6 @@ class DungeonManager:
                 coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0], coords[1]).get_type() == 'ITEM'
             ]
 
-            # print(
-            #   f"[DungeonManager] Floor {i + 1}: {len(monster_rooms)} MONSTER rooms, {len(elite_rooms)} ELITE rooms, {len(item_rooms)} ITEM rooms.")
             self.populate_rooms(i, monster_rooms, elite_rooms, item_rooms, all_rooms)
 
         return self.dungeon
@@ -89,7 +88,6 @@ class DungeonManager:
         :param room_coords The coordinates where the monster will be placed (row, column).
         :param monster_type The type of the monster.
         """
-        # print(f"[DungeonManager] Attempting to place {monster_type} monster in Floor {floor + 1}, Room {room_coords}.")
         raw_data = self.monster_manager.get_monster_data(monster_type=monster_type)
         if raw_data:
             raw_data_sliced = raw_data[1:]
@@ -169,7 +167,7 @@ class DungeonManager:
         """
         Returns the map for the specified floor.
         :param floor The floor number (1-indexed).
-        :param debug Whether the game is in debug mode.
+        :param reveal_all Reveals all rooms
         :return The map of the floor as a pygame Surface.
         """
         if floor < 1 or floor > len(self.dungeon):

@@ -1,6 +1,7 @@
 import os
 import sqlite3
 
+
 class DatabaseInitializer:
     def __init__(self, db_path='data/dungeon_game.db'):
         """

@@ -4,6 +4,7 @@ from src.view.gui_elements import Button
 from src.view.inventory_overlay import InventoryOverlay
 from constants import LIGHT_BLUE, OFF_WHITE, BACKGROUND_COLOR
 
+
 class BattleManager:
     _instance = None
 
@@ -13,7 +14,7 @@ class BattleManager:
             raise ValueError("Missing arguments for initializing or resetting BattleManager.")
         if BattleManager._instance is None:
             BattleManager._instance = BattleManager(screen, fonts, draw_ui)
-        else: # There is an existing instance, let's reset it.
+        else:  # There is an existing instance, let's reset it.
             BattleManager._instance.reset(screen, fonts, draw_ui)
         return BattleManager._instance
 
@@ -50,7 +51,8 @@ class BattleManager:
         running = True
         while running and monster.hp > 0 and adventurer.hp > 0:
             # Pass `get_hero_portrait` as a callable
-            self.draw_battle_ui(monster, adventurer, fight_button, item_button, special_button, get_hero_portrait, minimap)
+            self.draw_battle_ui(monster, adventurer, fight_button, item_button, special_button,
+                                get_hero_portrait, minimap)
             running = self.handle_battle_event(
                 monster, adventurer, inventory_overlay, dungeon, current_floor, position,
                 fight_button, item_button, special_button
@@ -59,7 +61,8 @@ class BattleManager:
         if self.post_battle_logic(monster, adventurer, dungeon, current_floor, position) == 1:
             return 1  # Triggers a restart in the game controller and main
 
-    def draw_battle_ui(self, monster, adventurer, fight_button, item_button, special_button, get_hero_portrait, minimap):
+    def draw_battle_ui(self, monster, adventurer, fight_button, item_button, special_button,
+                       get_hero_portrait, minimap):
         """Draw the battle UI components."""
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         pygame.draw.rect(self.screen, (0, 0, 0), bottom_rect)
@@ -94,6 +97,7 @@ class BattleManager:
         :param position: The current position of the adventurer as a tuple (x, y).
         :param fight_button: The button for fight actions.
         :param item_button: The button for using items.
+        :param special_button: The button for using special ability
         :return: True if the battle continues, False otherwise.
         """
         for event in pygame.event.get():
@@ -121,7 +125,7 @@ class BattleManager:
                         # Handle target logic for item types
                         if selected_item.name == "White Box":
                             actual_target = (
-                            position, dungeon[current_floor - 1])  # Use position and floor for room effects
+                                position, dungeon[current_floor - 1])  # Use position and floor for room effects
                         elif selected_item.name == "Code Spike":
                             actual_target = monster  # Use monster for damage
                         else:
@@ -134,8 +138,6 @@ class BattleManager:
                             print(f"Failed to use {selected_item.name}.")
                     else:
                         print("No item was selected. Returning to battle options.")
-
-
 
             # Continue the battle as long as both monster and adventurer are alive
         return monster.hp > 0 and adventurer.hp > 0
@@ -188,7 +190,7 @@ class BattleManager:
         if monster.hp > 0:
             outcomes = adventurer.attack(monster).split(".")
             for i in range(len(outcomes)):
-                self.draw_ui(outcomes[i]+".")  # Call the passed draw_ui method (and add period back in)
+                self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method (and add period back in)
                 pygame.display.flip()
                 pygame.time.delay(1000)
 
