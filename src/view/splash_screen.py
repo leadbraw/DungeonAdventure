@@ -2,6 +2,7 @@ import time
 import pygame
 from constants import BACKGROUND_COLOR, PASTEL_RED
 
+
 class SplashScreen:
     def __init__(self, screen, font):
         self.screen = screen
@@ -31,7 +32,7 @@ class SplashScreen:
             setup_function()
 
         # Ensure splash screen stays for at least 3000ms
-        elapsed_time = (time.time() - start_time) * 1000  # Convert to milliseconds
+        elapsed_time = int(time.time() - start_time) * 1000  # Convert to milliseconds
         remaining_time = max(0, 3000 - elapsed_time)
         if remaining_time > 0:
             pygame.time.delay(int(remaining_time))

@@ -9,6 +9,7 @@ class InventoryOverlay:
     def __init__(self, screen, fonts, inventory, current_monster=None, current_room=None, dungeon=None):
         """Initializes the inventory overlay."""
         self._previous_frame = None
+        self.previous_frame = None
         self.screen = screen
         self.fonts = fonts
         self.inventory = inventory
@@ -16,6 +17,7 @@ class InventoryOverlay:
         self.current_monster = current_monster
         self.current_room = current_room
         self.dungeon = dungeon
+        self.current_floor = 1  # Initialize with a default value
 
     def draw_overlay(self, overlay_x, overlay_y, overlay_width, overlay_height, opacity=200):
         """Draws the inventory overlay background."""
@@ -84,7 +86,7 @@ class InventoryOverlay:
         """Draws the close button at the specified position."""
         close_x = 650 - 40  # Align to the far right of the overlay
         # Align vertically with the center of the second row
-        row_y = 6 + button_size + 6  # Second row's y position
+        row_y = 6 + button_size + spacing  # Second row's y position
         close_y = row_y + (button_size // 2) - (close_size // 2)
         close_button = Button(
             color=PASTEL_RED,
@@ -102,6 +104,7 @@ class InventoryOverlay:
     def handle_events(self, pillar_buttons, usable_item_buttons, close_button, target, current_monster, position,
                       dungeon):
         """Handles events for inventory overlay."""
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print("[DEBUG] Quit event detected. Exiting game.")

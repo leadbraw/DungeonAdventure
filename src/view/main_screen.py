@@ -2,6 +2,7 @@ import pygame
 from constants import DARK_GREY, BACKGROUND_COLOR, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, LIGHT_BLUE, OFF_WHITE
 from src.view.gui_elements import Button
 
+
 class MainScreen:
     def __init__(self, screen, fonts):
         self.screen = screen
@@ -93,7 +94,7 @@ class MainScreen:
             self.screen.blit(manual_body, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
                                            self.screen.get_height() / 5 - manual_body.get_height() / 2 + 50))
             self.screen.blit(manual_body2, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
-                                           self.screen.get_height() / 5 - manual_body.get_height() / 2 + 82))
+                                            self.screen.get_height() / 5 - manual_body.get_height() / 2 + 82))
             self.screen.blit(manual_body3, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
                                             self.screen.get_height() / 5 - manual_body.get_height() / 2 + 114))
             self.screen.blit(manual_body4, (self.screen.get_width() / 2 - manual_body.get_width() / 2,
