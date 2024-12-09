@@ -57,9 +57,9 @@ class MainScreen:
         title = self.fonts["large"].render("DUNGEON ADVENTURE", True, LIGHT_BLUE)
         self.screen.blit(title, (self.screen.get_width() / 2 - title.get_width() / 2,
                                  self.screen.get_height() / 3 - title.get_height() / 2))
-        self.new_game_button.draw(self.screen)
-        self.load_game_button.draw(self.screen)
-        self.manual_button.draw(self.screen)
+        self.new_game_button.draw(self.screen, True)
+        self.load_game_button.draw(self.screen, True)
+        self.manual_button.draw(self.screen, True)
 
     def show_manual(self):
         """Handles the manual screen."""

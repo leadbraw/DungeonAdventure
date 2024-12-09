@@ -2,7 +2,8 @@ import random
 import sys
 import pygame
 from constants import (BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH,
-                       MENU_BUTTON_HEIGHT, MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT)
+                       MENU_BUTTON_HEIGHT, MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT, DARK_RED, RED, BROWN,
+                       FADED_GRAY, MEDIUM_GREY, VIOLET, DARK_VIOLET)
 from src.controller.battle_manager import BattleManager
 from src.controller.dungeon_manager import DungeonManager
 from src.view.gui_elements import Button
@@ -260,12 +261,31 @@ class GameController:
                                                 True, OFF_WHITE)
         end_body6 = self.fonts["medium"].render("Hit \"NEXT\" to view the complete map!",
                                                 True, OFF_WHITE)
-        next_button = Button(OFF_WHITE, 600, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
+        next_button = Button(OFF_WHITE, 635, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
                              DARK_GREY, "NEXT")
-        prev_button = Button(OFF_WHITE, 60, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
+        prev_button = Button(OFF_WHITE, 25, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
                              DARK_GREY, "PREVIOUS")
         main_menu_button = Button(OFF_WHITE, 330, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
                                   DARK_GREY, "MAIN MENU")
+
+        monster_text = self.fonts["small"].render("Monster", True, OFF_WHITE)
+        elite_text = self.fonts["small"].render("Elite", True, OFF_WHITE)
+        item_text = self.fonts["small"].render("Item", True, OFF_WHITE)
+        trap_text = self.fonts["small"].render("Trap", True, OFF_WHITE)
+        pillar_text = self.fonts["small"].render("Pillar", True, OFF_WHITE)
+        empty_text = self.fonts["small"].render("Empty", True, OFF_WHITE)
+        entrance_text = self.fonts["small"].render("Entrance", True, OFF_WHITE)
+        exit_text = self.fonts["small"].render("Exit", True, OFF_WHITE)
+
+        monster_rect = pygame.Rect(435, 30, 35, 35)
+        elite_rect = pygame.Rect(435, 80, 35, 35)
+        item_rect = pygame.Rect(435, 130, 35, 35)
+        trap_rect = pygame.Rect(435, 180, 35, 35)
+        pillar_rect = pygame.Rect(435, 230, 35, 35)
+        empty_rect = pygame.Rect(435, 280, 35, 35)
+        entrance_rect = pygame.Rect(435, 330, 35, 35)
+        exit_rect = pygame.Rect(435, 380, 35, 35)
+
         position = 0
         while end_running:
             clicked = False
@@ -273,27 +293,44 @@ class GameController:
             end_menu_button.draw(self.screen, outline=True)
             main_menu_button.draw(self.screen, outline=True)
             if position == 0:
-                self.screen.blit(end_title, (self.screen.get_width() / 2 - end_title.get_width() / 2,
-                                             self.screen.get_height() / 8 - end_title.get_height() / 2))
-                self.screen.blit(end_body, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                            self.screen.get_height() / 5 - end_body.get_height() / 2 + 50))
-                self.screen.blit(end_body2, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 103))
-                self.screen.blit(end_body3, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 156))
-                self.screen.blit(end_body4, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 209))
-                self.screen.blit(end_body5, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 262))
-                self.screen.blit(end_body6, (self.screen.get_width() / 2 - end_body.get_width() / 2,
-                                             self.screen.get_height() / 5 - end_body.get_height() / 2 + 315))
+                self.screen.blit(end_title, (SCREEN_WIDTH / 2 - end_title.get_width() / 2,
+                                             SCREEN_HEIGHT / 8 - end_title.get_height() / 2))
+                self.screen.blit(end_body, (SCREEN_WIDTH / 2 - end_body.get_width() / 2,
+                                            SCREEN_HEIGHT / 5 - end_body.get_height() / 2 + 50))
+                self.screen.blit(end_body2, (SCREEN_WIDTH / 2 - end_body.get_width() / 2,
+                                             SCREEN_HEIGHT / 5 - end_body.get_height() / 2 + 103))
+                self.screen.blit(end_body3, (SCREEN_WIDTH / 2 - end_body.get_width() / 2,
+                                             SCREEN_HEIGHT / 5 - end_body.get_height() / 2 + 156))
+                self.screen.blit(end_body4, (SCREEN_WIDTH / 2 - end_body.get_width() / 2,
+                                             SCREEN_HEIGHT / 5 - end_body.get_height() / 2 + 209))
+                self.screen.blit(end_body5, (SCREEN_WIDTH / 2 - end_body.get_width() / 2,
+                                             SCREEN_HEIGHT / 5 - end_body.get_height() / 2 + 262))
+                self.screen.blit(end_body6, (SCREEN_WIDTH / 2 - end_body.get_width() / 2,
+                                             SCREEN_HEIGHT / 5 - end_body.get_height() / 2 + 315))
                 next_button.draw(self.screen, True)
 
             elif 0 < position < 5:
+                # Messy, don't care! Too bad!
+                pygame.draw.rect(self.screen, DARK_RED, elite_rect)
+                pygame.draw.rect(self.screen, RED, monster_rect)
+                pygame.draw.rect(self.screen, BROWN, trap_rect)
+                pygame.draw.rect(self.screen, GOLD, item_rect)
+                pygame.draw.rect(self.screen, FADED_GRAY, pillar_rect)
+                pygame.draw.rect(self.screen, MEDIUM_GREY, empty_rect)
+                pygame.draw.rect(self.screen, VIOLET, entrance_rect)
+                pygame.draw.rect(self.screen, DARK_VIOLET, exit_rect)
+                self.screen.blit(monster_text, (475, 30 + elite_text.get_height() / 2 - 3))
+                self.screen.blit(elite_text, (475, 80 + elite_text.get_height() / 2 - 3))
+                self.screen.blit(item_text, (475, 130 + elite_text.get_height() / 2 - 3))
+                self.screen.blit(trap_text, (475, 180 + elite_text.get_height() / 2 - 3))
+                self.screen.blit(pillar_text, (475, 230 + elite_text.get_height() / 2 - 3))
+                self.screen.blit(empty_text, (475, 280 + elite_text.get_height() / 2 - 3))
+                self.screen.blit(entrance_text, (475, 330 + elite_text.get_height() / 2 - 3))
+                self.screen.blit(exit_text, (475, 380 + elite_text.get_height() / 2 - 3))
                 map_surface = pygame.transform.scale(self.full_maps[position - 1], (400, 400))
-                self.screen.blit(map_surface, (0, 0))
-                floor_text = self.fonts["small"].render(f"Floor {position}", True, OFF_WHITE)
-                self.screen.blit(floor_text, (30, 430))
+                self.screen.blit(map_surface, (25, 25))
+                floor_text = self.fonts["large"].render(f"Floor {position}", True, OFF_WHITE)
+                self.screen.blit(floor_text, (25, 430))
                 prev_button.draw(self.screen, True)
                 if position != 4:
                     next_button.draw(self.screen, True)
