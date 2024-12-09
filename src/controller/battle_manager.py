@@ -40,7 +40,6 @@ class BattleManager:
             current_room=position,  # Pass current position
             dungeon=dungeon  # Pass dungeon
         )
-
         fight_button = Button(color=LIGHT_BLUE, x=200, y=540, width=100, height=30,
                               font=self.fonts["small"], text_color=(255, 255, 255), text="Fight")
         item_button = Button(color=LIGHT_BLUE, x=325, y=540, width=100, height=30,
@@ -190,7 +189,7 @@ class BattleManager:
         if monster.hp > 0:
             outcomes = adventurer.attack(monster).split(".")
             for i in range(len(outcomes)):
-                self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method (and add period back in)
+                self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method (and add period back in)
                 pygame.display.flip()
                 pygame.time.delay(1000)
 
@@ -199,7 +198,7 @@ class BattleManager:
             self.draw_ui(message)  # Call the passed draw_ui method
             outcomes = monster.attack(adventurer).split(".")
             for i in range(len(outcomes)):
-                self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method (and add period back in)
+                self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method (and add period back in)
                 pygame.display.flip()
                 pygame.time.delay(1000)
 
@@ -210,15 +209,15 @@ class BattleManager:
             outcomes = adventurer.special_action(monster).split(".")
             for i in range(len(outcomes)):
                 if outcomes[i].strip():
-                    self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method
+                    self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method
                     pygame.display.flip()
                     pygame.time.delay(2000)
 
         if monster.hp > 0:
             message = f"{monster.name} is attacking!"
-            self.draw_ui(message)  # Call the passed draw_ui method
+            self.draw_ui(message, in_battle=True)  # Call the passed draw_ui method
             outcomes = monster.attack(adventurer).split(".")
             for i in range(len(outcomes)):
-                self.draw_ui(outcomes[i] + ".")  # Call the passed draw_ui method (and add period back in)
+                self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method (and add period back in)
                 pygame.display.flip()
                 pygame.time.delay(1000)

@@ -159,7 +159,7 @@ class GameController:
             else f"An ELITE {monster.name} stands before you! Prepare for a tough fight!"
         )
         self.render_monster_sprite(monster.name)
-        self.display_message(message, 2000)
+        self.display_message(message, delay=2000, in_battle=True)
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
         battle_result = self.battle_manager.start_battle(
             adventurer=self.active_adventurer,
@@ -339,9 +339,9 @@ class GameController:
         sprite_scaled = pygame.transform.scale(sprite, (450, 450))
         self.screen.blit(sprite_scaled, (100, 0))
 
-    def display_message(self, message, delay=0):
+    def display_message(self, message, delay=0, in_battle=False):
         """Displays a message and optionally delays for a specified duration."""
-        self.draw_ui(message)
+        self.draw_ui(message, in_battle=in_battle)
         pygame.display.flip()
         if delay > 0:
             pygame.time.delay(delay)
@@ -361,7 +361,7 @@ class GameController:
             print(f"Adventurer '{adventurer_name}' not found.")
         self.adventurer_manager.active_adventurer = self.active_adventurer
 
-    def draw_ui(self, message=None):
+    def draw_ui(self, message=None, in_battle=False):
         """Draws the game's user interface."""
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         right_rect = pygame.Rect(650, 0, 150, 450)
@@ -401,10 +401,10 @@ class GameController:
         dim = MAP_CELL_WIDTH
         pygame.draw.circle(self.screen, (255, 255, 255),
                            (650 + self.position[1] * dim + dim / 2, 5 + self.position[0] * dim + 3), 5)
-
-        # Draw save and inventory buttons
-        self.save_button.draw(self.screen)
-        self.inventory_button.draw(self.screen)
+        if not in_battle:
+            # Draw save and inventory buttons
+            self.save_button.draw(self.screen)
+            self.inventory_button.draw(self.screen)
 
     def get_hero_portrait(self):
         """Returns the portrait for the selected hero."""
