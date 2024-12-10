@@ -1,5 +1,5 @@
 import pytest
-from model.entities.entities import Entity
+from src.model.entities.entities import Entity
 
 
 # Mock subclass for testing

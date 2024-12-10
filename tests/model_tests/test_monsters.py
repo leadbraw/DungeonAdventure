@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from model.entities.monsters import Monster
+from src.model.entities.monsters import Monster
 
 # Fixtures for standard monster types
 @pytest.fixture

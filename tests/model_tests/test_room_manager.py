@@ -1,6 +1,6 @@
 import pytest
 import json
-from model.managers.room_manager import RoomManager
+from src.model.managers.room_manager import RoomManager
 
 @pytest.fixture
 def sample_rooms_data():

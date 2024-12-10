@@ -1,5 +1,5 @@
 import pytest
-from model.managers.database_manager import DatabaseManager
+from src.model.managers.database_manager import DatabaseManager
 
 @pytest.fixture
 def db_manager():

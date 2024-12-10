@@ -6,7 +6,7 @@ from src.model.managers.sprite_manager import SpriteManager
 @pytest.fixture
 def mock_pygame():
     """Mock the pygame module."""
-    with patch("model.managers.sprite_manager.pygame") as mock_pygame:
+    with patch("src.model.managers.sprite_manager.pygame") as mock_pygame:
         # Mock image loading and transformation methods
         mock_image = MagicMock()
         mock_pygame.image.load.return_value = mock_image
@@ -82,6 +82,7 @@ def test_duplicate_sprite_name(sprite_manager, mock_pygame):
     sprite_manager.load_sprite("sprite1", "path/to/sprite1.png")
     sprite1_second = sprite_manager.get_sprite("sprite1")
     assert sprite1_first == sprite1_second
+    # Ensure load was only called once
     mock_pygame.image.load.assert_called_once_with("path/to/sprite1.png")
 
 

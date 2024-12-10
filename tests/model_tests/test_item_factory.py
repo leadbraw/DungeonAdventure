@@ -1,7 +1,7 @@
 import re
 import pytest
-from model.factories.item_factory import ItemFactory
-from model.entities.item import Item
+from src.model.factories.item_factory import ItemFactory
+from src.model.entities.item import Item
 
 
 @pytest.fixture
@@ -60,6 +60,7 @@ def test_create_unique_item(raw_item_data):
 
 
 def test_create_standard_item(raw_item_data):
+    raw_item_data["one_time_item"] = 0  # Ensure the item is marked as standard in the raw data
     item = ItemFactory.create_standard_item(raw_item_data)
 
     assert isinstance(item, Item)
@@ -117,7 +118,9 @@ def test_create_item_with_invalid_data_types():
 
 
 def test_create_standard_vs_unique_item(raw_item_data):
+    raw_item_data["one_time_item"] = 0
     standard_item = ItemFactory.create_standard_item(raw_item_data)
+    raw_item_data["one_time_item"] = 1
     unique_item = ItemFactory.create_unique_item(raw_item_data)
 
     assert standard_item.one_time_item is False
