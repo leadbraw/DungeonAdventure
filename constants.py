@@ -30,9 +30,9 @@ SCREEN_HEIGHT = 600
 # Pillar Names (used in game_controller)
 PILLAR_NAMES = [
     "Pillar of Abstraction",
-    "Pillar of Polymorphism",
+    "Pillar of Encapsulation",
     "Pillar of Inheritance",
-    "Pillar of Encapsulation"
+    "Pillar of Polymorphism"
 ]
 
 # Button Sizes

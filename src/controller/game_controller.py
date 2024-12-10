@@ -37,7 +37,12 @@ class GameController:
         self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)  # Fetch entrance position
         self.active_adventurer = None
         self.current_message = None
-        self.pillars_found = 0
+        self.pillar_status = {
+            "Pillar of Abstraction": False,
+            "Pillar of Encapsulation": False,
+            "Pillar of Inheritance": False,
+            "Pillar of Polymorphism": False
+        }
         self.return_to_menu = False  # Flag for if user chose to return to menu. Only set to True upon losing a battle.
 
         self.inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
@@ -73,14 +78,19 @@ class GameController:
                     pygame.quit()
                     sys.exit()
 
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
+
                     mouse_pos = pygame.mouse.get_pos()
+
                     if self.inventory_button.is_hovered(mouse_pos):
-                        # Pass the current position and dungeon explicitly
+
+                        # Pass the current position, dungeon, and pillar_status explicitly
                         inventory_overlay = InventoryOverlay(
                             self.screen,
                             self.fonts,
                             self.active_adventurer.inventory,
+                            pillar_status=self.pillar_status,  # Pass pillar_status here
                             current_monster=None,  # No monster when out of combat
                             current_room=self.position,  # Use current position
                             dungeon=self.dungeon_manager.dungeon  # Pass the entire dungeon
@@ -162,6 +172,18 @@ class GameController:
         self.render_monster_sprite(monster.name)
         self.display_message(message, delay=2000, in_battle=True)
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
+
+        # Dynamically create the InventoryOverlay and pass it to start_battle
+        inventory_overlay = InventoryOverlay(
+            screen=self.screen,
+            fonts=self.fonts,
+            inventory=self.active_adventurer.inventory,
+            pillar_status=self.pillar_status,  # Pass current pillar status
+            current_monster=monster,
+            current_room=self.position,
+            dungeon=self.dungeon_manager.dungeon
+        )
+
         battle_result = self.battle_manager.start_battle(
             adventurer=self.active_adventurer,
             monster=monster,
@@ -169,7 +191,8 @@ class GameController:
             current_floor=self.current_floor,
             position=self.position,
             get_hero_portrait=self.get_hero_portrait,
-            minimap=self.minimap
+            minimap=self.minimap,
+            inventory_overlay=inventory_overlay  # Pass the dynamically created overlay
         )
 
         if battle_result == 1:
@@ -193,8 +216,19 @@ class GameController:
         if not item:
             self.display_message("There's no pillar here. Strange...")
             return
+
+        # Update the specific pillar's status in the dictionary
+        if item.name in self.pillar_status:
+            if not self.pillar_status[item.name]:  # Check if the pillar is already acquired
+                self.pillar_status[item.name] = True  # Mark the pillar as acquired
+                self.display_message(f"You acquired the {item.name}!")
+            else:
+                self.display_message(f"You've already acquired the {item.name}.")
+        else:
+            self.display_message("This item doesn't seem to be a recognized pillar.")
+
+        # Handle the item effects and mark the room as visited
         self.handle_pillar_item(item)
-        self.pillars_found += 1
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
     def handle_trap_room(self):
@@ -228,11 +262,16 @@ class GameController:
 
     def handle_exit_room(self):
         """Handles interaction with the Exit room."""
-        if self.current_floor == len(self.dungeon_manager.dungeon) and self.pillars_found == self.current_floor:
+        # Calculate the number of acquired pillars
+        acquired_pillars = sum(self.pillar_status.values())  # Count the number of True values in the dictionary
+
+        if self.current_floor == len(self.dungeon_manager.dungeon) and acquired_pillars == self.current_floor:
+            # Player has found all pillars and is on the final floor
             self.display_message("You found the exit! Congratulations!", 2000)
-            if self.end_message() == 1:  # User chose to return to main menu.
+            if self.end_message() == 1:  # User chose to return to the main menu
                 self.return_to_menu = True
-        elif self.pillars_found == self.current_floor:
+        elif acquired_pillars == self.current_floor:
+            # Player has found all required pillars for the current floor
             self.current_floor += 1
             self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -242,8 +281,12 @@ class GameController:
                     (150, 150))
             self.display_message(f"You've now entered floor {self.current_floor}.")
         else:
+            # Player has not found all required pillars
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-            self.display_message(f"You must find the Pillar of O.O. before proceeding!")
+            missing_pillars = self.current_floor - acquired_pillars
+            self.display_message(
+                f"You must find {missing_pillars} more Pillar(s) of O.O. before proceeding!"
+            )
 
     def end_message(self):
         end_running = True
@@ -489,7 +532,7 @@ class GameController:
             'position': self.position,  # tuple
             'active_adventurer': self.active_adventurer,
             'current_message': self.current_message,  # string
-            'pillars_found': self.pillars_found,  # int
+            'pillar_status': self.pillar_status,  # dictionary
             'return_to_menu': self.return_to_menu,  # boolean
             'debug': self.debug  # boolean
         }
@@ -505,7 +548,7 @@ class GameController:
         self.position = state['position']
         self.active_adventurer = state['active_adventurer']
         self.current_message = state['current_message']
-        self.pillars_found = state['pillars_found']
+        self.pillar_status = state['pillar_status']
         self.return_to_menu = state['return_to_menu']
         self.debug = state['debug']
         print("Loaded save for: " + self.hero_name)

@@ -32,6 +32,9 @@ class DungeonManager:
         Creates and populates all floors of the dungeon.
         :return The newly created dungeon.
         """
+        # Randomize the pillar order
+        self.item_manager.initialize_pillar_order()
+
         print("[DungeonManager] Initializing the dungeon...")
         self.dungeon = [Dungeon(1), Dungeon(2), Dungeon(3), Dungeon(4)]  # Four floors
         # print(f"[DungeonManager] Dungeon generated with {len(self.dungeon)} floors.")

@@ -86,6 +86,7 @@ class ItemFactory:
         :param raw_data: Dictionary containing item attributes.
         :return: A standard Item instance.
         """
+        # Ensure the 'one_time_item' attribute is explicitly set to False (non-unique)
+        raw_data["one_time_item"] = 0  # Representing non-unique in raw data
         item = ItemFactory.create_item_from_raw(raw_data)
-        item.one_time_item = False
         return item
