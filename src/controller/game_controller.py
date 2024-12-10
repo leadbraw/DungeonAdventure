@@ -228,7 +228,7 @@ class GameController:
 
     def handle_exit_room(self):
         """Handles interaction with the Exit room."""
-        if self.current_floor == len(self.dungeon_manager.dungeon):
+        if self.current_floor == len(self.dungeon_manager.dungeon) and self.pillars_found == self.current_floor:
             self.display_message("You found the exit! Congratulations!", 2000)
             if self.end_message() == 1:  # User chose to return to main menu.
                 self.return_to_menu = True
