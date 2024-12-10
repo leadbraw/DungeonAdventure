@@ -1,6 +1,5 @@
 import pygame
-from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE, FADED_BLUE, FADED_GRAY, \
-    MEDIUM_GREY, BACKGROUND_COLOR, PASTEL_RED
+from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE, FADED_BLUE, PASTEL_RED
 from src.view.gui_elements import Button
 from src.model.managers.adventurer_manager import AdventurerManager
 
