@@ -219,7 +219,7 @@ class BattleManager:
                 if outcomes[i].strip():
                     self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method
                     pygame.display.flip()
-                    pygame.time.delay(2000)
+                    pygame.time.delay(1000)
 
         if monster.hp > 0:
             message = f"{monster.name} is attacking!"
