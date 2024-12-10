@@ -50,7 +50,7 @@ class CharacterScreen:
             x, y = positions[idx % len(positions)]
             self.adventurer_buttons[name] = Button(
                 OFF_WHITE, x, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
-                self.fonts["small"], DARK_GREY, name.upper()
+                self.fonts["small"], DARK_GREY, data[2].upper() # Apparently the class is index 2 in this data /shrug
             )
 
     @staticmethod
@@ -102,8 +102,8 @@ class CharacterScreen:
             details.extend(wrapped_lines)
 
             char_image = pygame.image.load(self.selected_character["image"])
-            char_image = pygame.transform.scale(char_image, (256, 256))
-            self.screen.blit(char_image, (self.screen.get_width() / 4 - 128, 100))
+            char_image = pygame.transform.scale(char_image, (400, 400))
+            self.screen.blit(char_image, (self.screen.get_width() / 4 - 128, 25))
 
             self.screen.blit(char_name, (self.screen.get_width() / 2 + 100, 20))
             spacing = 50
