@@ -3,7 +3,7 @@ import sys
 import pygame
 from constants import (BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH,
                        MENU_BUTTON_HEIGHT, MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT, DARK_RED, RED, BROWN,
-                       FADED_GRAY, MEDIUM_GREY, VIOLET, DARK_VIOLET)
+                       FADED_GRAY, MEDIUM_GREY, VIOLET, DARK_VIOLET, BLACK)
 from src.controller.battle_manager import BattleManager
 from src.controller.dungeon_manager import DungeonManager
 from src.view.gui_elements import Button
@@ -402,12 +402,20 @@ class GameController:
         """Draws the game's user interface."""
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         right_rect = pygame.Rect(650, 0, 150, 450)
+        portrait_outline_top = pygame.Rect(650, 450, 150, 4)
+        portrait_outline_left = pygame.Rect(650, 450, 4, 150)
+        portrait_outline_bottom = pygame.Rect(650, 596, 150, 4)
+        portrait_outline_right = pygame.Rect(796, 450, 4, 150)
         pygame.draw.rect(self.screen, BACKGROUND_COLOR, bottom_rect)
         pygame.draw.rect(self.screen, BACKGROUND_COLOR, right_rect)
 
-        # Draw adventurer portrait
+        # Draw adventurer portrait (and outline)
         portrait = self.get_hero_portrait()
         self.screen.blit(portrait, (650, 450))
+        pygame.draw.rect(self.screen, BLACK, portrait_outline_top)
+        pygame.draw.rect(self.screen, BLACK, portrait_outline_left)
+        pygame.draw.rect(self.screen, BLACK, portrait_outline_bottom)
+        pygame.draw.rect(self.screen, BLACK, portrait_outline_right)
 
         # Display adventurer stats
         current_hp, max_hp = self.active_adventurer.hp, self.active_adventurer.max_hp

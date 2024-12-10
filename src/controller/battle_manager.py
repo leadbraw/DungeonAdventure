@@ -2,7 +2,7 @@ import pygame
 import sys
 from src.view.gui_elements import Button
 from src.view.inventory_overlay import InventoryOverlay
-from constants import LIGHT_BLUE, OFF_WHITE, BACKGROUND_COLOR
+from constants import LIGHT_BLUE, OFF_WHITE, BACKGROUND_COLOR, BLACK
 
 
 class BattleManager:
@@ -64,12 +64,20 @@ class BattleManager:
                        get_hero_portrait, minimap):
         """Draw the battle UI components."""
         bottom_rect = pygame.Rect(0, 450, 800, 150)
-        pygame.draw.rect(self.screen, (0, 0, 0), bottom_rect)
         pygame.draw.rect(self.screen, BACKGROUND_COLOR, bottom_rect)
 
-        # Use the callable to fetch the hero portrait
+        portrait_outline_top = pygame.Rect(650, 450, 150, 4)
+        portrait_outline_left = pygame.Rect(650, 450, 4, 150)
+        portrait_outline_bottom = pygame.Rect(650, 596, 150, 4)
+        portrait_outline_right = pygame.Rect(796, 450, 4, 150)
+
+        # Use the callable to fetch the hero portrait, then draw outline
         portrait = get_hero_portrait()
         self.screen.blit(portrait, (650, 450))
+        pygame.draw.rect(self.screen, BLACK, portrait_outline_top)
+        pygame.draw.rect(self.screen, BLACK, portrait_outline_left)
+        pygame.draw.rect(self.screen, BLACK, portrait_outline_bottom)
+        pygame.draw.rect(self.screen, BLACK, portrait_outline_right)
 
         monster_text = self.fonts["small"].render(f"Monster HP: {monster.hp}", True, OFF_WHITE)
         adventurer_text = self.fonts["small"].render(f"Your HP: {adventurer.hp}", True, OFF_WHITE)
