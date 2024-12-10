@@ -7,10 +7,10 @@ class AdventurerSeeder:
     def populate_adventurers(self):
         """Inserts initial hero data into the adventurers table."""
         adventurers_data = [
-            ("Mark", "Warrior", 125, 20, 0.8, 35, 80, 0.3, "Crushing Blow"),
-            ("Noah", "Priest", 75, 20, 0.7, 25, 80, 0.2, "Divine Prayer"),
-            ("Jayne", "Thief", 80, 20, 0.8, 20, 80, 0.4, "Surprise Attack"),
-            ("Sean", "Bard", 85, 20, 0.8, 30, 80, 0.4, "Discombobulating Thought")
+            ("Mark", "Warrior", 135, 4, 0.75, 35, 75, 0.35, "Crushing Blow"),
+            ("Noah", "Priest", 75, 3, 0.7, 25, 50, 0.35, "Divine Prayer"),
+            ("Jayne", "Thief", 80, 6, 0.8, 15, 40, 0.3, "Surprise Attack"),
+            ("Sean", "Bard", 10, 1, 0.1, 1, 2, 0.1, "Discombobulating Tune")
         ]
 
         insert_query = """

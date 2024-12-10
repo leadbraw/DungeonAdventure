@@ -20,8 +20,8 @@ class ItemSeeder:
             # Potions (temporary items)
             ("Code Spike", "Deals 20-25 damage to a Monster.",
              "monster", 0, 20, 25, None),
-            ("Energy Drink", "Heals the adventurer by 5-15 hit points.",
-             "adventurer", 0, 5, 15, None),
+            ("Energy Drink", "Heals the adventurer by 15-25 hit points.",
+             "adventurer", 0, 15, 25, None),
             ("White Box", "Reveals surrounding rooms in the dungeon.",
              "room", 0, None, None, None)
         ]

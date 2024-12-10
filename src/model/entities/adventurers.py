@@ -326,7 +326,7 @@ class Thief(Adventurer):
     Attributes:
     __my_special_dmg_range (tuple): special action damage min and max.
     Methods:
-    special_action(the_target): performs Discombobulating Thought.
+    special_action(the_target): performs Discombobulating Tune.
 """
 
 
@@ -335,12 +335,12 @@ class Bard(Adventurer):
 
     def special_action(self, the_target):
         """
-        Performs Discombobulating Thought: hits the target for 30 to 70 points
+        Performs Discombobulating Tune: hits the target for 30 to 70 points
         of damage. Bard takes half of the dealt damage.
         Tracks the attack and outputs the appropriate message.
         Does nothing if self is dead.
         :param the_target: attack target.
-        :return: Discombobulating Thought outcome message.
+        :return: Discombobulating Tune outcome message.
         """
         message = ""
         if not self.is_alive():
@@ -357,8 +357,8 @@ class Bard(Adventurer):
 
     def __special_action_msg(self, the_target):
         """
-        Returns the Discombobulating Thought action message.
+        Returns the Discombobulating Tune action message.
         :param the_target: attack target.
-        :return: Discombobulating Thought message.
+        :return: Discombobulating Tune message.
         """
-        return f"{self.name} uses Discombobulating Thought on {the_target.name}."
+        return f"{self.name} uses Discombobulating Tune on {the_target.name}."
