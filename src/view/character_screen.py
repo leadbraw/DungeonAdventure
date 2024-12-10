@@ -1,5 +1,6 @@
 import pygame
-from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE, FADED_BLUE, PASTEL_RED
+from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE, FADED_BLUE, PASTEL_RED, \
+    SCREEN_HEIGHT, SCREEN_WIDTH
 from src.view.gui_elements import Button
 from src.model.managers.adventurer_manager import AdventurerManager
 
@@ -17,7 +18,7 @@ class CharacterScreen:
         self._initialize_adventurer_buttons()
 
         self.initial_back_button = Button(
-            PASTEL_RED, self.screen.get_width() / 2 - 70, self.screen.get_height() - 100,
+            PASTEL_RED, SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT - 100,
             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
             self.fonts["small"], DARK_GREY, 'BACK'
         )
@@ -26,12 +27,12 @@ class CharacterScreen:
         self.on_confirmation_screen = False
         self.selected_character = None
         self.confirm_button = Button(
-            FADED_BLUE, self.screen.get_width() / 2 - MENU_BUTTON_WIDTH / 2, self.screen.get_height() - 150,
+            FADED_BLUE, SCREEN_WIDTH / 2 - MENU_BUTTON_WIDTH / 2, SCREEN_HEIGHT - 150,
             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
             self.fonts["small"], DARK_GREY, 'CONFIRM'
         )
         self.confirm_back_button = Button(
-            PASTEL_RED, self.screen.get_width() / 2 - MENU_BUTTON_WIDTH / 2, self.screen.get_height() - 100,
+            PASTEL_RED, SCREEN_WIDTH / 2 - MENU_BUTTON_WIDTH / 2, SCREEN_HEIGHT - 100,
             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
             self.fonts["small"], DARK_GREY, 'BACK'
         )
@@ -40,10 +41,10 @@ class CharacterScreen:
         """Dynamically create buttons for all adventurers."""
         adventurer_data = self.adventurer_manager.get_adventurer_data()
         positions = [
-            (self.screen.get_width() / 4 - 75, self.screen.get_height() / 3),
-            (535, self.screen.get_height() / 3),
-            (self.screen.get_width() / 4 - 75, 2 * self.screen.get_height() / 3),
-            (535, 2 * self.screen.get_height() / 3)
+            (SCREEN_WIDTH / 4 - 75, SCREEN_HEIGHT / 3),
+            (535, SCREEN_HEIGHT / 3),
+            (SCREEN_WIDTH / 4 - 75, 2 * SCREEN_HEIGHT / 3),
+            (535, 2 * SCREEN_HEIGHT / 3)
         ]
 
         for idx, (name, data) in enumerate(adventurer_data.items()):
@@ -103,15 +104,15 @@ class CharacterScreen:
 
             char_image = pygame.image.load(self.selected_character["image"])
             char_image = pygame.transform.scale(char_image, (400, 400))
-            self.screen.blit(char_image, (self.screen.get_width() / 4 - 128, 25))
+            self.screen.blit(char_image, (SCREEN_WIDTH / 4 - 128, 25))
 
-            self.screen.blit(char_name, (self.screen.get_width() / 2 + 100, 20))
+            self.screen.blit(char_name, (SCREEN_WIDTH / 2 + 100, 20))
             spacing = 50
             start_y = 100
             for idx, detail in enumerate(details):
                 text_surface = self.fonts["small"].render(detail, True, OFF_WHITE)
                 self.screen.blit(
-                    text_surface, (self.screen.get_width() / 2 + 100, start_y + idx * spacing)
+                    text_surface, (SCREEN_WIDTH / 2 + 100, start_y + idx * spacing)
                 )
 
             self.confirm_button.draw(self.screen, True)
@@ -121,8 +122,8 @@ class CharacterScreen:
             self.screen.blit(
                 title,
                 (
-                    self.screen.get_width() / 2 - title.get_width() / 2,
-                    self.screen.get_height() / 6 - title.get_height() / 2,
+                    SCREEN_WIDTH / 2 - title.get_width() / 2,
+                    SCREEN_HEIGHT / 6 - title.get_height() / 2,
                 )
             )
 

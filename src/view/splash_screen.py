@@ -1,6 +1,6 @@
 import time
 import pygame
-from constants import BACKGROUND_COLOR, PASTEL_RED
+from constants import BACKGROUND_COLOR, PASTEL_RED, SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class SplashScreen:
@@ -19,8 +19,8 @@ class SplashScreen:
 
         # Render and display the message
         splash_message = self.font.render(message, True, PASTEL_RED)
-        text_x = (self.screen.get_width() / 2 - splash_message.get_width() / 2)
-        text_y = (self.screen.get_height() / 2 - splash_message.get_height() / 2)
+        text_x = (SCREEN_WIDTH / 2 - splash_message.get_width() / 2)
+        text_y = (SCREEN_HEIGHT / 2 - splash_message.get_height() / 2)
         self.screen.blit(splash_message, (text_x, text_y))
 
         pygame.display.update()
