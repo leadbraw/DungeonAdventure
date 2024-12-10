@@ -102,7 +102,7 @@ class MainScreen:
             clicked = False
             mouse_pos = pygame.mouse.get_pos()
 
-            self.manual_menu_button.draw(self.screen)
+            self.manual_menu_button.draw(self.screen, True)
             pygame.draw.rect(self.screen, OFF_WHITE, exit_button)
             exit_button_text = self.fonts["medium"].render("X", True, DARK_GREY)
             exit_text_rect = exit_button_text.get_rect(center=exit_button.center)

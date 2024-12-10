@@ -1,5 +1,6 @@
 import pygame
-from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE
+from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE, FADED_BLUE, FADED_GRAY, \
+    MEDIUM_GREY, BACKGROUND_COLOR, PASTEL_RED
 from src.view.gui_elements import Button
 from src.model.managers.adventurer_manager import AdventurerManager
 
@@ -17,21 +18,22 @@ class CharacterScreen:
         self._initialize_adventurer_buttons()
 
         self.initial_back_button = Button(
-            OFF_WHITE, self.screen.get_width() / 2 - 70, self.screen.get_height() - 100,
-            MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], DARK_GREY, 'BACK'
+            PASTEL_RED, self.screen.get_width() / 2 - 70, self.screen.get_height() - 100,
+            MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
+            self.fonts["small"], DARK_GREY, 'BACK'
         )
 
         # State management for transitions
         self.on_confirmation_screen = False
         self.selected_character = None
         self.confirm_button = Button(
-            LIGHT_BLUE, self.screen.get_width() / 2 - MENU_BUTTON_WIDTH / 2,
-            self.screen.get_height() - 150, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
-            self.fonts["small"], OFF_WHITE, 'CONFIRM'
+            FADED_BLUE, self.screen.get_width() / 2 - MENU_BUTTON_WIDTH / 2, self.screen.get_height() - 150,
+            MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
+            self.fonts["small"], DARK_GREY, 'CONFIRM'
         )
         self.confirm_back_button = Button(
-            OFF_WHITE, self.screen.get_width() / 2 - MENU_BUTTON_WIDTH / 2,
-            self.screen.get_height() - 100, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
+            PASTEL_RED, self.screen.get_width() / 2 - MENU_BUTTON_WIDTH / 2, self.screen.get_height() - 100,
+            MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
             self.fonts["small"], DARK_GREY, 'BACK'
         )
 
@@ -39,17 +41,17 @@ class CharacterScreen:
         """Dynamically create buttons for all adventurers."""
         adventurer_data = self.adventurer_manager.get_adventurer_data()
         positions = [
-            (self.screen.get_width() / 4 - 100, self.screen.get_height() / 3),
-            (3 * self.screen.get_width() / 4 - 100, self.screen.get_height() / 3),
-            (self.screen.get_width() / 4 - 100, 2 * self.screen.get_height() / 3),
-            (3 * self.screen.get_width() / 4 - 100, 2 * self.screen.get_height() / 3)
+            (self.screen.get_width() / 4 - 75, self.screen.get_height() / 3),
+            (535, self.screen.get_height() / 3),
+            (self.screen.get_width() / 4 - 75, 2 * self.screen.get_height() / 3),
+            (535, 2 * self.screen.get_height() / 3)
         ]
 
         for idx, (name, data) in enumerate(adventurer_data.items()):
             x, y = positions[idx % len(positions)]
             self.adventurer_buttons[name] = Button(
-                DARK_GREY, x, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
-                self.fonts["small"], OFF_WHITE, name.upper()
+                OFF_WHITE, x, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
+                self.fonts["small"], DARK_GREY, name.upper()
             )
 
     @staticmethod
@@ -113,8 +115,8 @@ class CharacterScreen:
                     text_surface, (self.screen.get_width() / 2 + 100, start_y + idx * spacing)
                 )
 
-            self.confirm_button.draw(self.screen)
-            self.confirm_back_button.draw(self.screen)
+            self.confirm_button.draw(self.screen, True)
+            self.confirm_back_button.draw(self.screen, True)
         else:
             title = self.fonts["large"].render("CHOOSE ADVENTURER", True, LIGHT_BLUE)
             self.screen.blit(
@@ -126,9 +128,9 @@ class CharacterScreen:
             )
 
             for button in self.adventurer_buttons.values():
-                button.draw(self.screen)
+                button.draw(self.screen, True)
 
-            self.initial_back_button.draw(self.screen)
+            self.initial_back_button.draw(self.screen, True)
 
     def handle_event(self, event):
         """Handle events for character selection or confirmation."""
