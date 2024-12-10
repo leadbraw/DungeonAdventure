@@ -302,11 +302,11 @@ class Thief(Adventurer):
             # not detected: succeeds
             if attack_roll >= self.__my_detection_chance + self.__my_normal_attack_chance:
                 # extra attack
-                message += f"{self.name} gets an extra attack!"
-                message += self.attack(the_target) + ""
+                message += f"{self.name} gets an extra attack."
+                message += self.attack(the_target)
 
             # normal attack
-            message += self.attack(the_target)
+            message += "." + self.attack(the_target)
 
         else:
             message += f"{self.name} was detected."  # end statement
