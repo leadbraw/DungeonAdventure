@@ -3,7 +3,7 @@ import sys
 import pygame
 from constants import (BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH,
                        MENU_BUTTON_HEIGHT, MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT, DARK_RED, RED, BROWN,
-                       FADED_GRAY, MEDIUM_GREY, VIOLET, DARK_VIOLET, BLACK)
+                       FADED_GRAY, MEDIUM_GREY, VIOLET, DARK_VIOLET, BLACK, WHITE)
 from src.controller.battle_manager import BattleManager
 from src.controller.dungeon_manager import DungeonManager
 from src.view.gui_elements import Button
@@ -41,9 +41,9 @@ class GameController:
         self.return_to_menu = False  # Flag for if user chose to return to menu. Only set to True upon losing a battle.
 
         self.inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
-                                       font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")
+                                       font=self.fonts["small"], text_color=WHITE, text="Inventory")
         self.save_button = Button(color=LIGHT_BLUE, x=670, y=200, width=110, height=30,
-                                  font=self.fonts["extra_small"], text_color=(255, 255, 255), text="Save Game")
+                                  font=self.fonts["extra_small"], text_color=WHITE, text="Save Game")
 
         # Mark the starting room as visited and initialize the adventurer
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -448,8 +448,8 @@ class GameController:
                            (650 + self.position[1] * dim + dim / 2, 5 + self.position[0] * dim + 3), 5)
         if not in_battle:
             # Draw save and inventory buttons
-            self.save_button.draw(self.screen)
-            self.inventory_button.draw(self.screen)
+            self.save_button.draw(self.screen, True)
+            self.inventory_button.draw(self.screen, True)
 
     def get_hero_portrait(self):
         """Returns the portrait for the selected hero."""

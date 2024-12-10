@@ -2,7 +2,7 @@ import pygame
 import sys
 from src.view.gui_elements import Button
 from src.view.inventory_overlay import InventoryOverlay
-from constants import LIGHT_BLUE, OFF_WHITE, BACKGROUND_COLOR, BLACK
+from constants import LIGHT_BLUE, OFF_WHITE, BACKGROUND_COLOR, BLACK, WHITE
 
 
 class BattleManager:
@@ -41,11 +41,11 @@ class BattleManager:
             dungeon=dungeon  # Pass dungeon
         )
         fight_button = Button(color=LIGHT_BLUE, x=200, y=540, width=100, height=30,
-                              font=self.fonts["small"], text_color=(255, 255, 255), text="Fight")
+                              font=self.fonts["small"], text_color=WHITE, text="Fight")
         item_button = Button(color=LIGHT_BLUE, x=325, y=540, width=100, height=30,
-                             font=self.fonts["small"], text_color=(255, 255, 255), text="Use Item")
+                             font=self.fonts["small"], text_color=WHITE, text="Use Item")
         special_button = Button(color=LIGHT_BLUE, x=450, y=540, width=100, height=30,
-                                font=self.fonts["small"], text_color=(255, 255, 255), text="Special")
+                                font=self.fonts["small"], text_color=WHITE, text="Special")
 
         running = True
         while running and monster.hp > 0 and adventurer.hp > 0:
@@ -85,9 +85,9 @@ class BattleManager:
         self.screen.blit(adventurer_text, (50, 510))
         self.screen.blit(minimap, (650, 0))
 
-        fight_button.draw(self.screen)
-        item_button.draw(self.screen)
-        special_button.draw(self.screen)
+        fight_button.draw(self.screen, True)
+        item_button.draw(self.screen, True)
+        special_button.draw(self.screen, True)
 
         pygame.display.flip()
 
