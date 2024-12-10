@@ -1,5 +1,4 @@
 import sys
-
 import pygame
 from constants import LIGHT_BLUE, FADED_BLUE, FADED_GRAY, PASTEL_RED
 from src.view.gui_elements import Button

@@ -1,0 +1,122 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' Styling settings
+skinparam linetype ortho
+skinparam rectangle {
+    BackgroundColor #f8f8f8
+    BorderColor #444444
+    Shadowing false
+}
+skinparam ArrowColor #444444
+skinparam Class {
+    BackgroundColor #ffffff
+    ArrowColor #444444
+    FontName Arial
+    FontSize 12
+    BorderThickness 2
+    BorderColor #222222
+}
+left to right direction
+
+' Main classes in Controller
+Class MainController {
+    7 field(s), 1 method(s)
+}
+
+Class GameSetup {
+    6 field(s), 1 method(s)
+}
+
+Class GameController {
+    13 field(s), 6 method(s)
+}
+
+Class DungeonManager {
+    0 field(s) - package: model.managers
+}
+
+Class BattleManager {
+    0 field(s) - package: model.managers
+}
+
+Class DatabaseInitializer {
+    0 field(s), 3 method(s)
+}
+
+Class DatabaseManager {
+    0 field(s) - package: model.managers
+}
+
+Class RoomManager {
+    0 field(s) - package: model.managers
+}
+
+Class SpriteManager {
+    0 field(s) - package: model.managers
+}
+
+Class InventoryOverlay {
+    0 field(s) - package: view
+}
+
+Class AdventurerManager {
+    0 field(s) - package: model.managers
+}
+
+Class MonsterManager {
+    0 field(s) - package: model.managers
+}
+
+Class ItemManager {
+    0 field(s) - package: model.managers
+}
+
+Class Button {
+    0 field(s) - package: view.gui_elements
+}
+
+Class MonsterFactory {
+    0 field(s) - package: model.factories
+}
+
+Class ItemFactory {
+    0 field(s) - package: model.factories
+}
+
+Class Dungeon {
+    0 field(s) - package: model.dungeon
+}
+
+' Relationships
+MainController o-- GameSetup
+MainController o-- GameController
+MainController ..> SpriteManager
+MainController ..> DatabaseManager
+MainController ..> InventoryOverlay
+MainController ..> BattleManager
+MainController ..> RoomManager
+
+GameSetup o-- DatabaseManager
+GameSetup o-- RoomManager
+GameSetup o-- MonsterManager
+GameSetup o-- ItemManager
+GameSetup o-- AdventurerManager
+GameSetup ..> DatabaseInitializer
+
+GameController o-- RoomManager
+GameController o-- SpriteManager
+GameController o-- BattleManager
+GameController o-- DungeonManager
+GameController ..> InventoryOverlay
+
+DungeonManager o-- Dungeon
+DungeonManager o-- MonsterManager
+DungeonManager o-- ItemManager
+DungeonManager ..> MonsterFactory
+DungeonManager ..> ItemFactory
+
+BattleManager ..> InventoryOverlay
+BattleManager ..> Button
+
+@enduml

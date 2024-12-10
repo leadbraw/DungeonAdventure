@@ -1,0 +1,195 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' Styling
+skinparam linetype ortho
+skinparam rectangle {
+    BackgroundColor #f8f8f8
+    BorderColor #444444
+    Shadowing false
+}
+skinparam ArrowColor #444444
+skinparam Class {
+    BackgroundColor #ffffff
+    ArrowColor #444444
+    FontName Arial
+    FontSize 12
+    BorderThickness 2
+    BorderColor #222222
+}
+left to right direction
+
+' Entity Classes
+Class Entity {
+    +is_alive() : bool
+    +attack(target) : str
+    +name : str
+    +max_hp : int
+    +attack_speed : int
+    +hit_chance : float
+    +damage_range : tuple
+    +hp : int
+}
+
+Class Adventurer {
+    +type : str
+    +block_chance : float
+    +inventory : Inventory
+    +special_action(target) : str
+    +apply_buff(buff_value, buff_type) : void
+    +heal_from_item(heal_amount) : void
+}
+
+Class Warrior
+Class Priest
+Class Thief
+Class Bard
+
+Class Monster {
+    +type : str
+    +heal_chance : float
+    +heal_range : tuple
+    +take_item_damage(damage) : str
+}
+
+Class Item {
+    +name : str
+    +description : str
+    +target : str
+    +one_time_item : bool
+    +effect_min : int
+    +effect_max : int
+    +buff_type : str
+}
+
+Class Inventory {
+    +add_item(item, quantity) : bool
+    +remove_item(item_name, quantity) : bool
+    +use_item(item_name, target) : Item
+    +list_items() : void
+    +find_item(item_name) : Item
+    +is_full() : bool
+    +clear_inventory() : void
+    +save_inventory() : list
+    +load_inventory(saved_data) : void
+}
+
+Class Room {
+    +type : str
+    +valid_directions : list
+    +monster : Monster
+    +item : Item
+    +visited : bool
+}
+
+Class Dungeon {
+    +get_width() : int
+    +get_length() : int
+    +get_room_list() : list
+    +fetch_room(x, y) : Room
+    +reveal_adjacent_rooms(x, y) : void
+}
+
+' Factory Classes
+Class AdventurerFactory {
+    +get_instance() : AdventurerFactory
+    +make_adventurer(raw_data) : Adventurer
+}
+
+Class MonsterFactory {
+    +get_instance() : MonsterFactory
+    +make_monster(raw_data) : Monster
+}
+
+Class ItemFactory {
+    +get_instance() : ItemFactory
+    +create_item_from_raw(raw_data) : Item
+    +create_unique_item(raw_data) : Item
+    +create_standard_item(raw_data) : Item
+}
+
+' Manager Classes
+Class AdventurerManager {
+    +get_instance(adventurers_data) : AdventurerManager
+    +load_adventurer_data(adventurers_data) : void
+    +get_adventurer_data(name) : dict
+    +load_active_adventurer(name) : void
+    +reset_active_adventurer() : void
+}
+
+Class MonsterManager {
+    +get_instance(monsters_data) : MonsterManager
+    +load_monsters(monsters_data) : void
+    +get_monster_data(name, type) : tuple
+}
+
+Class ItemManager {
+    +get_instance(items_data) : ItemManager
+    +get_unique_item_data(floor_index) : dict
+    +mark_item_acquired(item_name) : void
+    +get_limited_item_data(item_name) : dict
+    +get_random_consumable_item_data() : dict
+    +reset_unique_items() : void
+    +list_all_items() : void
+}
+
+Class DatabaseManager {
+    +get_instance(db_path) : DatabaseManager
+    +connect() : void
+    +execute_query(query, params) : list
+    +fetch_items() : list
+    +fetch_rooms() : list
+    +fetch_monsters() : list
+    +fetch_adventurers() : list
+}
+
+Class RoomManager {
+    +get_instance(rooms_data) : RoomManager
+    +get_room_by_doors(doors) : dict
+    +get_all_rooms() : dict
+}
+
+Class GameStateManager {
+    +get_instance() : GameStateManager
+    +load_game_state() : dict
+    +save_game_state(game_controller_instance) : void
+}
+
+Class SpriteManager {
+    +get_instance() : SpriteManager
+    +preload_sprites(sprite_paths) : void
+    +load_sprite(name, file_path) : Surface
+    +get_sprite(name) : Surface
+    +get_transformed_sprite(name, flip_x, rotate) : Surface
+    +clear_sprites() : void
+}
+
+' Relationships
+Entity <|-- Adventurer
+Entity <|-- Monster
+Adventurer <|-- Warrior
+Adventurer <|-- Priest
+Adventurer <|-- Thief
+Adventurer <|-- Bard
+Adventurer --> Inventory
+Monster --> Item
+Room --> Monster
+Room --> Item
+Dungeon --> Room
+AdventurerFactory ..> Adventurer
+MonsterFactory ..> Monster
+ItemFactory ..> Item
+AdventurerManager --> Adventurer
+MonsterManager --> Monster
+ItemManager --> Item
+DatabaseManager --> Adventurer
+DatabaseManager --> Monster
+DatabaseManager --> Room
+DatabaseManager --> Item
+RoomManager --> Room
+GameStateManager ..> GameController
+SpriteManager --> Room
+SpriteManager --> Adventurer
+SpriteManager --> Monster
+
+@enduml

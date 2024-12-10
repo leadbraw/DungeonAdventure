@@ -1,11 +1,8 @@
 import random
-
 import pygame
 from colorama import Fore, Style
 from copy import deepcopy
-
 from pygame import Surface
-
 from constants import BACKGROUND_COLOR, TRAP_CHANCE, ITEM_CHANCE, MONSTER_CHANCE, ELITE_CHANCE, EMPTY_CHANCE, \
     EVENT_CHANCE, ENTITY_CHANCE, MAP_SURFACE_TILE_SIZE, FADED_GRAY, RED, DARK_RED, GOLD, BROWN, \
     VIOLET, DARK_VIOLET, BLACK, MEDIUM_GREY

@@ -1,0 +1,188 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' Controller
+
+' Styling settings for a blocky appearance
+skinparam linetype ortho
+skinparam rectangle {
+    BackgroundColor #f8f8f8
+    BorderColor #444444
+    Shadowing false
+}
+skinparam ArrowColor #444444
+skinparam Class {
+    BackgroundColor #ffffff
+    ArrowColor #444444
+    FontName Arial
+    FontSize 12
+    BorderThickness 2
+    BorderColor #222222
+}
+left to right direction
+
+' Classes
+Class MainController {
+    +run() : void
+    -fonts
+    -screen
+    -game_setup
+    -state
+    -selected_hero
+    -debug
+    -game_controller
+}
+
+Class GameSetup {
+    +setup() : tuple
+    -item_manager
+    -room_manager
+    -monster_manager
+    -adventurer_manager
+    -sprite_manager
+}
+
+Class GameController {
+    +display_game() : int
+    +set_active_adventurer(adventurer_name)
+    +player_movement(key)
+    +room_interaction()
+    +draw_ui(message)
+    +get_hero_portrait() : Sprite
+    -screen
+    -hero_name
+    -fonts
+    -room_manager
+    -sprite_manager
+    -battle_manager
+    -dungeon_manager
+    -adventurer_manager
+    -current_floor
+    -position
+    -active_adventurer
+}
+
+Class DungeonManager {
+    +get_instance() : DungeonManager
+    +initialize_dungeon() : List<Dungeon>
+    +populate_rooms(floor, monster_rooms, elite_rooms, item_rooms, all_rooms) : void
+    +place_monster(floor, room_coords, monster_type) : void
+    +place_item(floor, room_coords) : void
+    +place_pillar(floor_index, pillar_coords) : void
+    +get_floor_map(floor) : Map
+    +get_monster_in_room(floor, position) : Monster
+}
+
+Class BattleManager {
+    +get_instance(screen, fonts, draw_ui) : BattleManager
+    +start_battle(adventurer, monster, dungeon, current_floor, position, get_hero_portrait, minimap) : int
+    +draw_battle_ui(monster, adventurer, fight_button, item_button, special_button, get_hero_portrait, minimap) : void
+    +handle_battle_event(monster, adventurer, inventory_overlay, dungeon, current_floor, position, fight_button, item_button, special_button) : bool
+    +post_battle_logic(monster, adventurer, dungeon, current_floor, position) : int
+    +execute_fight(monster, adventurer) : void
+    +execute_special(monster, adventurer) : void
+}
+
+Class DatabaseInitializer {
+    +database_exists() : bool
+    +initialize_database() : void
+    +reset_database() : void
+}
+
+Class DatabaseManager {
+    +get_instance() : DatabaseManager
+    +fetch_items() : list
+    +fetch_rooms() : list
+    +fetch_monsters() : list
+    +fetch_adventurers() : list
+}
+
+Class RoomManager {
+    +get_instance() : RoomManager
+    +get_room_by_doors(doors) : dict
+}
+
+Class SpriteManager {
+    +get_instance() : SpriteManager
+    +preload_sprites(paths)
+    +get_sprite(name) : Sprite
+    +get_transformed_sprite(name, rotate) : Sprite
+}
+
+Class InventoryOverlay {
+    +display(target, position, dungeon) : void
+}
+
+Class AdventurerManager {
+    +get_instance() : AdventurerManager
+    +get_adventurer_data(name) : list
+}
+
+Class MonsterManager {
+    +get_instance() : MonsterManager
+    +get_monster_data(monster_type) : list
+}
+
+Class ItemManager {
+    +get_instance() : ItemManager
+    +get_random_consumable_item_data() : list
+    +get_unique_item_data(floor_index) : list
+}
+
+Class Button {
+    +draw(screen) : void
+    +is_hovered(mouse_pos) : bool
+}
+
+Class MonsterFactory {
+    +get_instance() : MonsterFactory
+    +make_monster(raw_data) : Monster
+}
+
+Class ItemFactory {
+    +get_instance() : ItemFactory
+    +create_item_from_raw(raw_data) : Item
+    +create_unique_item(raw_data) : Item
+}
+
+Class Dungeon {
+    +get_entrance_coords() : tuple
+    +fetch_room(row, column) : Room
+    +get_room_list() : List<tuple>
+    +create_map() : Map
+}
+
+' Relationships
+MainController o-- GameSetup
+MainController o-- GameController
+MainController ..> SpriteManager
+MainController ..> GameStateManager
+MainController ..> SplashScreen
+MainController ..> MainScreen
+MainController ..> CharacterScreen
+
+GameSetup ..> DatabaseInitializer
+GameSetup ..> DatabaseManager
+GameSetup o-- ItemManager
+GameSetup o-- RoomManager
+GameSetup o-- MonsterManager
+GameSetup o-- AdventurerManager
+GameSetup o-- SpriteManager
+
+GameController o-- RoomManager
+GameController o-- BattleManager
+GameController o-- DungeonManager
+GameController ..> InventoryOverlay
+
+DungeonManager o-- Dungeon
+DungeonManager o-- MonsterManager
+DungeonManager o-- ItemManager
+DungeonManager ..> MonsterFactory
+DungeonManager ..> ItemFactory
+
+BattleManager ..> InventoryOverlay
+BattleManager ..> Button
+
+DatabaseInitializer ..> DatabaseManager
+
+@enduml

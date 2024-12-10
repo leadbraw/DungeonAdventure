@@ -1,0 +1,139 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' Styling
+skinparam linetype ortho
+skinparam rectangle {
+    BackgroundColor #f8f8f8
+    BorderColor #444444
+    Shadowing false
+}
+skinparam ArrowColor #444444
+skinparam Class {
+    BackgroundColor #ffffff
+    ArrowColor #444444
+    FontName Arial
+    FontSize 12
+    BorderThickness 2
+    BorderColor #222222
+}
+left to right direction
+
+' Entity Classes
+Class Entity {
+    7 field(s), 2 method(s)
+}
+
+Class Adventurer {
+    3 field(s), 3 method(s)
+}
+
+Class Warrior {
+    0 field(s), 0 method(s)
+}
+
+Class Priest {
+    0 field(s), 0 method(s)
+}
+
+Class Thief {
+    0 field(s), 0 method(s)
+}
+
+Class Bard {
+    0 field(s), 0 method(s)
+}
+
+Class Monster {
+    3 field(s), 2 method(s)
+}
+
+Class Item {
+    6 field(s), 0 method(s)
+}
+
+Class Inventory {
+    2 field(s), 8 method(s)
+}
+
+Class Room {
+    4 field(s), 0 method(s)
+}
+
+Class Dungeon {
+    4 field(s), 2 method(s)
+}
+
+' Factory Classes
+Class AdventurerFactory {
+    0 field(s), 4 method(s)
+}
+
+Class MonsterFactory {
+    0 field(s), 3 method(s)
+}
+
+Class ItemFactory {
+    0 field(s), 3 method(s)
+}
+
+' Manager Classes
+Class AdventurerManager {
+    2 field(s), 4 method(s)
+}
+
+Class MonsterManager {
+    2 field(s), 3 method(s)
+}
+
+Class ItemManager {
+    4 field(s), 6 method(s)
+}
+
+Class DatabaseManager {
+    2 field(s), 4 method(s)
+    -package: controller
+}
+
+Class RoomManager {
+    1 field(s), 2 method(s)
+}
+
+Class GameStateManager {
+    0 field(s), 2 method(s)
+    -package: controller
+}
+
+Class SpriteManager {
+    1 field(s), 5 method(s)
+}
+
+' Relationships
+Entity <|-- Adventurer
+Entity <|-- Monster
+Adventurer <|-- Warrior
+Adventurer <|-- Priest
+Adventurer <|-- Thief
+Adventurer <|-- Bard
+Adventurer --> Inventory
+Monster --> Item
+Room --> Monster
+Room --> Item
+Dungeon --> Room
+AdventurerFactory ..> Adventurer
+MonsterFactory ..> Monster
+ItemFactory ..> Item
+AdventurerManager --> Adventurer
+MonsterManager --> Monster
+ItemManager --> Item
+DatabaseManager --> Adventurer
+DatabaseManager --> Monster
+DatabaseManager --> Room
+DatabaseManager --> Item
+RoomManager --> Room
+GameStateManager --> GameController : interacts
+SpriteManager --> Room
+SpriteManager --> Adventurer
+SpriteManager --> Monster
+
+@enduml

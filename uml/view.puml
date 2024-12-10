@@ -1,0 +1,111 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' View
+
+' Styling settings for a blocky appearance
+skinparam linetype ortho
+skinparam rectangle {
+    BackgroundColor #f8f8f8
+    BorderColor #444444
+    Shadowing false
+}
+skinparam ArrowColor #444444
+skinparam Class {
+    BackgroundColor #ffffff
+    ArrowColor #444444
+    FontName Arial
+    FontSize 12
+    BorderThickness 2
+    BorderColor #222222
+}
+left to right direction
+
+' MainScreen class definition
+Class MainScreen {
+    +__init__(screen, fonts)
+    +run() : string
+    +draw_main_menu() : void
+    +show_manual() : void
+    -screen
+    -fonts
+    -new_game_button : Button
+    -load_game_button : Button
+    -manual_button : Button
+    -manual_menu_button : Button
+}
+
+' SplashScreen class definition
+Class SplashScreen {
+    +__init__(screen, font)
+    +display(message, setup_function) : void
+    -screen
+    -font
+}
+
+' CharacterScreen class definition
+Class CharacterScreen {
+    +__init__(screen, fonts)
+    +_initialize_adventurer_buttons() : void
+    +_wrap_text(text, font, max_width) : List<string>
+    +draw() : void
+    +handle_event(event) : tuple
+    +run() : tuple
+    -screen
+    -fonts
+    -adventurer_manager : AdventurerManager
+    -adventurer_buttons : dict
+    -initial_back_button : Button
+    -on_confirmation_screen : bool
+    -selected_character : dict
+    -confirm_button : Button
+    -confirm_back_button : Button
+}
+
+' InventoryOverlay class definition
+Class InventoryOverlay {
+    +__init__(screen, fonts, inventory, current_monster=None, current_room=None, dungeon=None)
+    +draw_overlay(overlay_x, overlay_y, overlay_width, overlay_height, opacity) : void
+    +draw_pillar_buttons(button_size, spacing) : List<Button>
+    +draw_usable_item_buttons(button_size, spacing) : List<Button>
+    +draw_close_button(close_size, button_size, spacing) : Button
+    +handle_events(pillar_buttons, usable_item_buttons, close_button, target, current_monster, position, dungeon) : string
+    +display(target, position=None, dungeon=None) : Item
+    -_previous_frame
+    -screen
+    -fonts
+    -inventory
+    -selected_item
+    -current_monster
+    -current_room
+    -dungeon
+}
+
+' Button class definition
+Class Button {
+    +__init__(color, x, y, width, height, font=None, text_color=None, text='')
+    +draw(screen, outline=None) : void
+    +is_hovered(mouse_pos) : bool
+    -color
+    -x : int
+    -y : int
+    -width : int
+    -height : int
+    -font
+    -text_color
+    -text : string
+}
+
+' AdventurerManager dependency
+Class AdventurerManager {
+    +get_instance() : AdventurerManager
+    +get_adventurer_data(name=None) : dict
+}
+
+' Relationships
+MainScreen ..> Button : uses
+CharacterScreen o-- Button : owns
+CharacterScreen o-- AdventurerManager : uses
+InventoryOverlay o-- Button : uses
+
+@enduml

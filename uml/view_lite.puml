@@ -1,0 +1,57 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' View Lite UML
+
+' Styling settings
+skinparam linetype ortho
+skinparam rectangle {
+    BackgroundColor #f8f8f8
+    BorderColor #444444
+    Shadowing false
+}
+skinparam ArrowColor #444444
+skinparam Class {
+    BackgroundColor #ffffff
+    ArrowColor #444444
+    FontName Arial
+    FontSize 12
+    BorderThickness 2
+    BorderColor #222222
+}
+left to right direction
+
+' Classes
+Class MainScreen {
+    4 field(s), 3 method(s)
+}
+
+Class SplashScreen {
+    2 field(s), 1 method(s)
+}
+
+Class CharacterScreen {
+    7 field(s), 5 method(s)
+}
+
+Class InventoryOverlay {
+    6 field(s), 6 method(s)
+}
+
+Class Button {
+    6 field(s), 2 method(s)
+}
+
+' External Dependency
+Class AdventurerManager {
+    -package: controller
+    2 field(s), 2 method(s)
+}
+
+' Relationships
+MainScreen ..> Button : uses
+CharacterScreen o-- Button : owns
+CharacterScreen o-- AdventurerManager : uses
+InventoryOverlay o-- Button : uses
+
+@enduml

@@ -124,7 +124,7 @@ class BattleManager:
                         # Handle target logic for item types
                         if selected_item.name == "White Box":
                             actual_target = (
-                                position, dungeon[current_floor - 1])  # Use position and floor for room effects
+                                position, dungeon[current_floor])  # Use position and floor for room effects
                         elif selected_item.name == "Code Spike":
                             actual_target = monster  # Use monster for damage
                         else:
