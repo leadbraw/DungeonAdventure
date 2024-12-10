@@ -7,10 +7,10 @@ class MonsterSeeder:
     def populate_monsters(self):
         """Inserts initial monster data into the monsters table."""
         monsters_data = [
-            ("Ogre", "Normal", 200, 2, 0.65, 30, 45, 0.2, 25, 50),
-            ("Gremlin", "Normal", 70, 5, 0.85, 10, 20, 0.3, 15, 30),
+            ("Ogre", "Normal", 200, 2, 0.65, 30, 45, 0.2, 20, 30),
+            ("Gremlin", "Normal", 70, 5, 0.85, 10, 20, 0.3, 15, 20),
             ("Skeleton", "Normal", 100, 3, 0.8, 20, 30, 0.1, 60, 100),
-            ("Tom", "Elite", 250, 6, .85, 15, 35, .25, 30, 50)
+            ("Tom", "Elite", 250, 6, .85, 15, 35, .25, 25, 40)
         ]
 
         insert_query = """
