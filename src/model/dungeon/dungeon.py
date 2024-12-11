@@ -213,7 +213,7 @@ class Dungeon:
         # Place exit
         exit_x, exit_y = (random.randint(0, self._length - 1), random.randint(0, self._width - 1))
         distance = self.__distance(entrance_x, entrance_y, exit_x, exit_y)
-        while distance <= self._length - 2:
+        while distance <= self._length - 1:
             exit_x, exit_y = (random.randint(0, self._length - 1), random.randint(0, self._width - 1))
             distance = self.__distance(entrance_x, entrance_y, exit_x, exit_y)
         self._exit_loc = (exit_x, exit_y)
