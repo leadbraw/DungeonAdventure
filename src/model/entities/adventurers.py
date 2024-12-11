@@ -187,8 +187,8 @@ class Adventurer(Entity):
 
 
 class Warrior(Adventurer):
-    __my_special_hit_chance = 0.4
-    __my_special_dmg_range = (75, 175)
+    __my_special_hit_chance = 0.6
+    __my_special_dmg_range = (85, 175)
 
     def special_action(self, the_target):
         """
@@ -203,7 +203,7 @@ class Warrior(Adventurer):
             return message
 
         message += self.__special_action_msg(the_target)
-        # crushing blow 75 to 175 dmg 0.4 chance to hit
+        # crushing blow 85 to 175 dmg 60% chance to hit
         # attack roll (random float within the hit chance)
         if random.uniform(0, 1) <= self.__my_special_hit_chance:
             # damage roll (random int within damage_range)

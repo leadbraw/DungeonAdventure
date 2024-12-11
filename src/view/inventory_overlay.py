@@ -1,6 +1,6 @@
 import sys
 import pygame
-from constants import LIGHT_BLUE, FADED_BLUE, FADED_GRAY, PASTEL_RED, SPRITE_PATHS, PILLAR_NAMES
+from constants import LIGHT_BLUE, FADED_BLUE, FADED_GRAY, PASTEL_RED, SPRITE_PATHS
 from src.view.gui_elements import Button
 
 
@@ -19,14 +19,6 @@ class InventoryOverlay:
         self.current_room = current_room
         self.dungeon = dungeon
         self.current_floor = 1  # Initialize with a default value
-
-
-    def draw_overlay(self, overlay_x, overlay_y, overlay_width, overlay_height, opacity=200):
-        """Draws the inventory overlay background."""
-        overlay_surface = pygame.Surface((overlay_width, overlay_height))
-        overlay_surface.set_alpha(opacity)
-        overlay_surface.fill((30, 30, 30))  # Dark gray transparent background
-        self.screen.blit(overlay_surface, (overlay_x, overlay_y))
 
     def draw_pillar_buttons(self, button_size, spacing):
         """Draws the pillar buttons with images centered at the top and text below indicating buffs."""
@@ -228,7 +220,7 @@ class InventoryOverlay:
 
         while running:
             # Draw overlay background
-            self.draw_overlay(overlay_x, overlay_y, overlay_width, overlay_height)
+            pygame.draw.rect(self.screen, (30, 30, 30), (overlay_x, overlay_y, overlay_width, overlay_height))
 
             # Draw buttons
             pillar_buttons = self.draw_pillar_buttons(button_size, spacing)
