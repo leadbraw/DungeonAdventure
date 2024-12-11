@@ -1,6 +1,6 @@
 import random
 import pytest
-from model.dungeon.dungeon import Dungeon
+from src.model.dungeon.dungeon import Dungeon
 
 @pytest.fixture
 def dungeon_1():

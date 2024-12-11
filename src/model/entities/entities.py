@@ -154,10 +154,11 @@ class Entity:
 
     @max_hp.setter
     def max_hp(self, the_max_hp):
-        # TODO fix data scrubbing for max_hp and hp setters without creating a circular dependency
-        self.__my_max_hp = min(max(1, the_max_hp), 999)  # Clamp between 1 and 999
-        # if self.__my_hp > self.__my_max_hp:
-        #     self.__my_hp = self.__my_max_hp
+        """
+        Sets the maximum HP and adjusts current HP if necessary.
+        """
+        self.__my_max_hp = min(max(1, the_max_hp), 999)  # Clamp max_hp between 1 and 999
+        self.__my_hp = min(self.__my_hp, self.__my_max_hp)  # Adjust hp directly without calling the setter
 
     @attack_speed.setter
     def attack_speed(self, the_attack_speed):
@@ -177,8 +178,11 @@ class Entity:
 
     @hp.setter
     def hp(self, the_hp):
-        # if self.__my_max_hp >= the_hp >= 0:
-        self.__my_hp = the_hp
+        """
+        Sets the current HP and ensures it does not exceed max_hp or fall below 0.
+        """
+        # Clamp the_hp between 0 and max_hp
+        self.__my_hp = max(0, min(the_hp, self.__my_max_hp))
 
     # Method to define what gets pickled
     def __getstate__(self):

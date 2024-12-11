@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, Mock
-from model.entities.adventurers import Adventurer, Warrior, Priest, Thief, Bard
+from src.model.entities.adventurers import Adventurer, Warrior, Priest, Thief, Bard
 
 
 @pytest.fixture
@@ -69,14 +69,14 @@ def test_thief_special_action(thief, mocker, adventurer, force_roll, message):
     assert message in result
 
 
-# Test Bard's special action (Discombobulating Thought)
+# Test Bard's special action (Discombobulating Tune)
 @pytest.mark.parametrize("dmg_target, dmg_self", [(20, 10),
                                                   (19, 9)])
 def test_bard_special_action(bard, adventurer, mocker, dmg_target, dmg_self):
     mocker.patch('random.randint', return_value=dmg_target)
     result = bard.special_action(adventurer)
 
-    assert "Sean uses Discombobulating Thought" in result
+    assert "Sean uses Discombobulating Tune" in result
     assert "Sean hit" in result
     assert "Sean takes" in result
     assert bard.max_hp - bard.hp == dmg_self
@@ -123,10 +123,10 @@ def test_apply_buff_max_hp(adventurer):
 
 def test_apply_buff_block_chance(adventurer):
     assert adventurer.block_chance == 0.5  # Verify initial value
-    adventurer.apply_buff(0.1, "block_chance")
+    adventurer.apply_buff(1.0, "block_chance")
     assert adventurer.block_chance == 0.6
 
-    adventurer.apply_buff(0.5, "block_chance")  # Test cap at 1.0
+    adventurer.apply_buff(5.0, "block_chance")  # Test cap at 1.0
     assert adventurer.block_chance == 1.0
 
 

@@ -1,5 +1,5 @@
 import pytest
-from model.managers.adventurer_manager import AdventurerManager
+from src.model.managers.adventurer_manager import AdventurerManager
 
 @pytest.fixture
 def sample_adventurers_data():

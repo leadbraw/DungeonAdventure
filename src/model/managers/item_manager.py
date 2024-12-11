@@ -110,3 +110,12 @@ class ItemManager:
         print("\nLimited Items:")
         for item_name, item_data in self.other_items.items():
             print(f"- {item_name}: {item_data}")
+
+    def initialize_pillar_order(self):
+        """
+        Randomizes the order of one_time_items for unique item placement (pillars).
+        """
+        randomized_items = list(self.one_time_items.items())  # Convert to a list of (key, value) pairs
+        random.shuffle(randomized_items)  # Shuffle the items
+        self.one_time_items = dict(randomized_items)  # Reassign as a randomized dictionary
+        print(f"[ItemManager] Randomized one_time_items: {list(self.one_time_items.keys())}")

@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from model.managers.monster_manager import MonsterManager
+from src.model.managers.monster_manager import MonsterManager
 
 @pytest.fixture
 def sample_monsters_data():

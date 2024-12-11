@@ -30,16 +30,11 @@ class BattleManager:
         self.fonts = fonts
         self.draw_ui = draw_ui
 
-    def start_battle(self, adventurer, monster, dungeon, current_floor, position, get_hero_portrait, minimap):
+    def start_battle(self, adventurer, monster, dungeon, current_floor, position, get_hero_portrait, minimap,
+                     inventory_overlay):
         """Starts and Handles battle action with player vs monster in the Room section."""
-        inventory_overlay = InventoryOverlay(
-            self.screen,
-            self.fonts,
-            adventurer.inventory,
-            current_monster=monster,  # Pass current monster
-            current_room=position,  # Pass current position
-            dungeon=dungeon  # Pass dungeon
-        )
+        self.inventory_overlay = inventory_overlay  # Store the passed InventoryOverlay instance
+
         fight_button = Button(color=LIGHT_BLUE, x=200, y=540, width=100, height=30,
                               font=self.fonts["small"], text_color=WHITE, text="Fight")
         item_button = Button(color=LIGHT_BLUE, x=325, y=540, width=100, height=30,
@@ -53,7 +48,7 @@ class BattleManager:
             self.draw_battle_ui(monster, adventurer, fight_button, item_button, special_button,
                                 get_hero_portrait, minimap)
             running = self.handle_battle_event(
-                monster, adventurer, inventory_overlay, dungeon, current_floor, position,
+                monster, adventurer, self.inventory_overlay, dungeon, current_floor, position,
                 fight_button, item_button, special_button
             )
 

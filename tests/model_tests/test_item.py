@@ -1,5 +1,5 @@
 import pytest
-from model.entities.item import Item
+from src.model.entities.item import Item
 
 
 def test_item_initialization():
@@ -44,4 +44,4 @@ def test_get_name():
         target="adventurer",
         one_time_item=True,
     )
-    assert item.get_name() == "Mana Potion"
+    assert item.name == "Mana Potion"

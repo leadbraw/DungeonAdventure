@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from model.managers.item_manager import ItemManager
+from src.model.managers.item_manager import ItemManager
 
 @pytest.fixture
 def sample_items_data():
