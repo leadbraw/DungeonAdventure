@@ -151,8 +151,8 @@ class CharacterScreen:
                 for name, button in self.adventurer_buttons.items():
                     if button.is_hovered((mouse_x, mouse_y)):
                         raw_data = self.adventurer_manager.get_adventurer_data(name)
-                        if os.path.exists(f'/assets/images/{name.lower()}.png'):
-                            image_path = f'/assets/images/{name.lower()}.png'
+                        if os.path.exists(f'assets/images/{name.lower()}.png'):
+                            image_path = f'assets/images/{name.lower()}.png'
                         else:
                             image_path = f'_internal/assets/images/{name.lower()}.png'
                         self.selected_character = {
