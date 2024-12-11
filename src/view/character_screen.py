@@ -1,3 +1,5 @@
+import os
+
 import pygame
 from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE, FADED_BLUE, PASTEL_RED, \
     SCREEN_HEIGHT, SCREEN_WIDTH
@@ -101,7 +103,6 @@ class CharacterScreen:
                     wrapped_lines[i] = " " * indent_spaces + wrapped_lines[i]
 
             details.extend(wrapped_lines)
-
             char_image = pygame.image.load(self.selected_character["image"])
             char_image = pygame.transform.scale(char_image, (400, 400))
             self.screen.blit(char_image, (SCREEN_WIDTH / 4 - 128, 25))
@@ -150,6 +151,10 @@ class CharacterScreen:
                 for name, button in self.adventurer_buttons.items():
                     if button.is_hovered((mouse_x, mouse_y)):
                         raw_data = self.adventurer_manager.get_adventurer_data(name)
+                        if os.path.exists(f'/assets/images/{name.lower()}.png'):
+                            image_path = f'/assets/images/{name.lower()}.png'
+                        else:
+                            image_path = f'_internal/assets/images/{name.lower()}.png'
                         self.selected_character = {
                             "name": name,
                             "type": raw_data[2],
@@ -160,7 +165,7 @@ class CharacterScreen:
                             "attack_damage_max": raw_data[7],
                             "chance_to_block": raw_data[8],
                             "special_attack": raw_data[9],
-                            "image": f"assets/images/{name.lower()}.png"
+                            "image": image_path
                         }
                         self.on_confirmation_screen = True
                         break

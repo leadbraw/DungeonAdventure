@@ -1,3 +1,4 @@
+import os
 import random
 import sys
 import pygame
@@ -496,13 +497,10 @@ class GameController:
 
     def get_hero_portrait(self):
         """Returns the portrait for the selected hero."""
-        portrait_paths = {
-            "Noah": "assets/images/noah_portrait.png",
-            "Sean": "assets/images/sean_portrait.png",
-            "Jayne": "assets/images/jayne_portrait.png",
-            "Mark": "assets/images/mark_portrait.png"
-        }
-        portrait_path = portrait_paths.get(self.hero_name, "assets/images/hero.png")
+        if os.path.exists(f"assets/images/{self.hero_name}_portrait.png"):
+            portrait_path = f"assets/images/{self.hero_name}_portrait.png"
+        else:
+            portrait_path = f"_internal/assets/images/{self.hero_name}_portrait.png"
         portrait = pygame.image.load(portrait_path).convert_alpha()
         return pygame.transform.scale(portrait, (150, 150))
 
