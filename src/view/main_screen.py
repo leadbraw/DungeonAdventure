@@ -1,3 +1,6 @@
+import math
+import time
+
 import pygame
 from constants import DARK_GREY, BACKGROUND_COLOR, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, LIGHT_BLUE, OFF_WHITE, \
     SCREEN_WIDTH, SCREEN_HEIGHT, DARK_RED, RED, BROWN, GOLD, VIOLET, DARK_VIOLET, MEDIUM_GREY, FADED_GRAY
@@ -56,7 +59,7 @@ class MainScreen:
         """Draws the main menu buttons and title."""
         title = self.fonts["large"].render("DUNGEON ADVENTURE", True, LIGHT_BLUE)
         self.screen.blit(title, (self.screen.get_width() / 2 - title.get_width() / 2,
-                                 self.screen.get_height() / 3 - title.get_height() / 2))
+                                 self.screen.get_height() / 3 - title.get_height() / 2 + math.sin(time.time() * 6)*7))
         self.new_game_button.draw(self.screen, True)
         self.load_game_button.draw(self.screen, True)
         self.manual_button.draw(self.screen, True)
