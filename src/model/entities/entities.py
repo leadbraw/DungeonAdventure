@@ -184,9 +184,10 @@ class Entity:
         # Clamp the_hp between 0 and max_hp
         self.__my_hp = max(0, min(the_hp, self.__my_max_hp))
 
-    # Method to define what gets pickled
     def __getstate__(self):
-        # Return a dictionary of the object's state
+        """ Stores the object's state in a pickled dictionary.
+        :return: dictionary of states to be stored.
+        """
         return {'__my_name': self.__my_name,
                 '__my_max_hp': self.__my_max_hp,
                 '__my_attack_speed': self.__my_attack_speed,
@@ -194,9 +195,10 @@ class Entity:
                 '__my_damage_range': self.__my_damage_range,
                 '__my_hp': self.__my_hp}
 
-    # Method to define how the object is restored
     def __setstate__(self, state):
-        # Restore the object's state from the dictionary
+        """ Restores the object's state from the pickled dictionary.
+        :param state: dictionary of restored states.
+        """
         self.__my_name = state['__my_name']
         self.__my_max_hp = state['__my_max_hp']
         self.__my_attack_speed = state['__my_attack_speed']

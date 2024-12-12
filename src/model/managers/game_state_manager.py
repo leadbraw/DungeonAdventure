@@ -2,6 +2,9 @@ import pickle
 
 
 class GameStateManager:
+    """
+    Handles save/load by initiating pickling/unpickling from save file.
+    """
 
     @staticmethod
     def get_instance():

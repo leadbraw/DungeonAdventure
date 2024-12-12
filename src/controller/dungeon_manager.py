@@ -209,9 +209,13 @@ class DungeonManager:
             room.set_item(None)
 
     def __getstate__(self):
-        """Stores the object's state in a pickled dictionary."""
+        """ Stores the object's state in a pickled dictionary.
+        :return: dictionary of states to be stored.
+        """
         return {'dungeon': self.dungeon}
 
     def __setstate__(self, state):
-        """Restores the object's state from the pickled dictionary."""
+        """ Restores the object's state from the pickled dictionary.
+        :param state: dictionary of restored states.
+        """
         self.dungeon = state['dungeon']

@@ -5,9 +5,6 @@ from src.model.entities.entities import Entity
 from src.model.entities.inventory import Inventory
 
 
-# optional: move special action constants into database and add parameters to be updated with them
-
-
 class Adventurer(Entity):
     def __init__(self, the_name, the_type, the_max_hp,
                  the_attack_speed, the_hit_chance, the_damage_range,
@@ -134,34 +131,20 @@ class Adventurer(Entity):
     def inventory(self, the_inventory):
         self.__inventory = the_inventory
 
-    # Method to define what gets pickled
     def __getstate__(self):
-        # Return a dictionary of the object's state
+        """ Stores the object's state in a pickled dictionary.
+        :return: dictionary of states to be stored.
+        """
         state = super().__getstate__()
         state['__my_type'] = self.__my_type
         state['__my_block_chance'] = self.__my_block_chance
         state['__inventory'] = self.__inventory
-        # state.append({
-        #         # '__my_name': self.__my_name,
-        #         # '__my_max_hp': self.__my_max_hp,
-        #         # '__my_attack_speed': self.__my_attack_speed,
-        #         # '__my_hit_chance': self.__my_hit_chance,
-        #         # '__my_damage_range': self.__my_damage_range,
-        #         # '__my_hp': self.__my_hp,
-        #         '__my_type': self.__my_type,
-        #         '__my_block_chance': self.__my_block_chance,
-        #         '__inventory': self.__inventory})
         return state
 
-    # Method to define how the object is restored
     def __setstate__(self, state):
-        # Restore the object's state from the dictionary
-        # self.__my_name = state['__my_name']
-        # self.__my_max_hp = state['__my_max_hp']
-        # self.__my_attack_speed = state['__my_attack_speed']
-        # self.__my_hit_chance = state['__my_hit_chance']
-        # self.__my_damage_range = state['__my_damage_range']
-        # self.__my_hp = state['__my_hp']
+        """ Restores the object's state from the pickled dictionary.
+        :param state: dictionary of restored states.
+        """
         super().__setstate__(state)
         self.__my_type = state['__my_type']
         self.__my_block_chance = state['__my_block_chance']
@@ -169,16 +152,15 @@ class Adventurer(Entity):
 
 
 """ ADVENTURER CLASSES """
-""" Provides Warrior specific behavior.
-    Attributes:
-    __my_special_hit_chance (float): special attack hit chance.
-    __my_special_dmg_range (tuple): special attack damage min and max.
-    Methods:
-    special_action(the_target): performs Crushing Blow.
-"""
-
 
 class Warrior(Adventurer):
+    """ Provides Warrior specific behavior.
+        Attributes:
+        __my_special_hit_chance (float): special attack hit chance.
+        __my_special_dmg_range (tuple): special attack damage min and max.
+        Methods:
+        special_action(the_target): performs Crushing Blow.
+    """
     __my_special_hit_chance = 0.6
     __my_special_dmg_range = (85, 175)
 
@@ -218,15 +200,13 @@ class Warrior(Adventurer):
         return f"{self.name} uses Crushing Blow on {the_target.name}."
 
 
-""" Provides Priest specific behavior.
-    Attributes:
-    __my_special_heal_range_percentage (float): heal percentage range.
-    Methods:
-    special_action(the_target): performs Divine Prayer.
-"""
-
-
 class Priest(Adventurer):
+    """ Provides Priest specific behavior.
+        Attributes:
+        __my_special_heal_range_percentage (float): heal percentage range.
+        Methods:
+        special_action(the_target): performs Divine Prayer.
+    """
     __my_special_heal_range_percentage = (0.4, 0.7)
 
     def special_action(self, the_target):
@@ -256,16 +236,14 @@ class Priest(Adventurer):
         return f"{self.name} uses Divine Prayer and heals for {the_heal}."
 
 
-""" Provides Thief specific behavior.
-    Attributes:
-    __my_normal_attack_chance (float): chance of a normal attack.
-    __my_detection_chance (float): chance of being detected.
-    Methods:
-    special_action(the_target): performs Surprise Attack.
-"""
-
-
 class Thief(Adventurer):
+    """ Provides Thief specific behavior.
+        Attributes:
+        __my_normal_attack_chance (float): chance of a normal attack.
+        __my_detection_chance (float): chance of being detected.
+        Methods:
+        special_action(the_target): performs Surprise Attack.
+    """
     # __my_special hit chance = 0.4
     __my_normal_attack_chance = 0.4
     __my_detection_chance = 0.2
@@ -314,15 +292,13 @@ class Thief(Adventurer):
         return f"{self.name} uses Surprise Attack on {the_target.name}."
 
 
-""" Provides Bard specific behavior.
-    Attributes:
-    __my_special_dmg_range (tuple): special action damage min and max.
-    Methods:
-    special_action(the_target): performs Discombobulating Tune.
-"""
-
-
 class Bard(Adventurer):
+    """ Provides Bard specific behavior.
+        Attributes:
+        __my_special_dmg_range (tuple): special action damage min and max.
+        Methods:
+        special_action(the_target): performs Discombobulating Tune.
+    """
     __my_special_dmg_range = (30, 70)
 
     def special_action(self, the_target):

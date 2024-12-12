@@ -55,9 +55,10 @@ class Item:
     def buff_type(self):
         return self.__my_buff_type
 
-    # Method to define what gets pickled
     def __getstate__(self):
-        # Return a dictionary of the object's state
+        """ Stores the object's state in a pickled dictionary.
+        :return: dictionary of states to be stored.
+        """
         return {'__my_name': self.__my_name,
                 '__my_description': self.__my_description,
                 '__my_target': self.__my_target,
@@ -66,9 +67,10 @@ class Item:
                 '__my_effect_max': self.__my_effect_max,
                 '__my_buff_type': self.__my_buff_type}
 
-    # Method to define how the object is restored
     def __setstate__(self, state):
-        # Restore the object's state from the dictionary
+        """ Restores the object's state from the pickled dictionary.
+        :param state: dictionary of restored states.
+        """
         self.__my_name = state['__my_name']
         self.__my_description = state['__my_description']
         self.__my_target = state['__my_target']

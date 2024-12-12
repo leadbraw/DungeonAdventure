@@ -43,12 +43,15 @@ class RoomManager:
     def get_all_rooms(self):
         return self.rooms
 
-    # Method to define what gets pickled
     def __getstate__(self):
-        # Return a dictionary of the object's state
+        """ Stores the object's state in a pickled dictionary.
+        :return: dictionary of states to be stored.
+        """
         return {'rooms': self.rooms}
 
     # Method to define how the object is restored
     def __setstate__(self, state):
-        # Restore the object's state from the dictionary
+        """ Restores the object's state from the pickled dictionary.
+        :param state: dictionary of restored states.
+        """
         self.rooms = state['rooms']

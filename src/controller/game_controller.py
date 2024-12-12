@@ -565,27 +565,29 @@ class GameController:
                                   font=self.fonts["extra_small"], text_color=(255, 255, 255), text="Save Game")
 
     def __getstate__(self):
-        """Stores the object's state in a pickled dictionary."""
+        """ Stores the object's state in a pickled dictionary.
+        :return: dictionary of states to be stored.
+        """
         return {
-            'hero_name': self.hero_name,  # string
-            'room_manager': self.room_manager,  # pickled
-            'dungeon_manager': self.dungeon_manager,
-            # 'adventurer_manager': self.adventurer_manager,  # to be pickled
-            'current_floor': self.current_floor,  # int
-            'position': self.position,  # tuple
-            'active_adventurer': self.active_adventurer,
-            'current_message': self.current_message,  # string
-            'pillar_status': self.pillar_status,  # dictionary
-            'return_to_menu': self.return_to_menu,  # boolean
-            'debug': self.debug  # boolean
+            'hero_name': self.hero_name, # string
+            'room_manager': self.room_manager, # pickled
+            'dungeon_manager': self.dungeon_manager, #pickled
+            'current_floor': self.current_floor, # int
+            'position': self.position, # tuple
+            'active_adventurer': self.active_adventurer, #pickled
+            'current_message': self.current_message, # string
+            'pillar_status': self.pillar_status, # dictionary
+            'return_to_menu': self.return_to_menu, # boolean
+            'debug': self.debug # boolean
         }
 
     def __setstate__(self, state):
-        """Restores the object's state from the pickled dictionary."""
+        """ Restores the object's state from the pickled dictionary.
+        :param state: dictionary of restored states.
+        """
         self.hero_name = state['hero_name']
         self.room_manager = state['room_manager']
         self.dungeon_manager = state['dungeon_manager']
-        # self.adventurer_manager = state['adventurer_manager']
         self.current_floor = state['current_floor']
         self.position = state['position']
         self.active_adventurer = state['active_adventurer']
