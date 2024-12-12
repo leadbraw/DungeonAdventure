@@ -57,9 +57,14 @@ class MainController:
             self.state = "CHARACTER_SELECTION"
         elif choice == "load_game":
             self.loading = True
-            self.game_controller = GameStateManager.load_game_state()
-            self.game_controller.set_up_from_load(self.screen, self.fonts)
-            self.state = "GAMEPLAY"
+            try:
+                self.game_controller = GameStateManager.load_game_state()
+                self.game_controller.set_up_from_load(self.screen, self.fonts)
+                self.state = "GAMEPLAY"
+            except:
+                print("No saved game file found. Try saving a game before loading.")
+                self.loading = False
+                self.state = "MAIN_MENU"
 
     def character_selection(self):
         """Handles the character selection screen(s) and state transitions from them."""
