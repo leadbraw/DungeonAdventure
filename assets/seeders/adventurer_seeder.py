@@ -10,7 +10,7 @@ class AdventurerSeeder:
             ("Mark", "Warrior", 135, 4, 0.75, 40, 75, 0.35, "Crushing Blow"),
             ("Noah", "Priest", 75, 3, 0.7, 35, 50, 0.38, "Divine Prayer"),
             ("Jayne", "Thief", 80, 6, 0.8, 25, 40, 0.33, "Surprise Attack"),
-            ("Sean", "Bard", 10, 1, 0.1, 1, 2, 0.1, "Discombobulating Tune")
+            ("Sean", "Bard", 85, 20, 0.8, 30, 80, 0.4, "Discombobulating Tune")
         ]
 
         insert_query = """
