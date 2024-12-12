@@ -164,7 +164,6 @@ class BattleController:
                     inventory_overlay.display(target=adventurer)
 
                     selected_item = inventory_overlay.selected_item
-                    print(f"[DEBUG] Selected item: {selected_item}")  # Debugging line
                     if selected_item:
                         # Handle target logic for item types
                         if selected_item.name == "White Box":
@@ -174,14 +173,10 @@ class BattleController:
                             actual_target = monster  # Use monster for damage
                         else:
                             actual_target = adventurer  # Default target is the adventurer
-
                         if adventurer.inventory.use_item(selected_item.name, actual_target):
-                            print(f"You used {selected_item.name}.")
                             return True  # Continue the battle
-                        else:
-                            print(f"Failed to use {selected_item.name}.")
                     else:
-                        print("No item was selected. Returning to battle options.")
+                        pass
 
             # Continue the battle as long as both monster and adventurer are alive
         return monster.hp > 0 and adventurer.hp > 0
@@ -228,12 +223,10 @@ class BattleController:
                         mouse_pos = pygame.mouse.get_pos()
 
                         if menu_button.is_hovered(mouse_pos):
-                            print("Returning to main menu...")
                             '''This method only returns a value if user chose to replay. This will be sent back
                             to start_battle(), to game controller, and then to main, triggering a restart.'''
                             return 1
                         elif quit_button.is_hovered(mouse_pos):
-                            print("Exiting game...")
                             pygame.quit()
                             sys.exit()
 

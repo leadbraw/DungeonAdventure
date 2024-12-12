@@ -36,6 +36,5 @@ class ItemSeeder:
                 cursor = conn.cursor()
                 cursor.executemany(insert_query, items_data)
                 conn.commit()
-            #print("Items table populated.")
         except sqlite3.Error as e:
             print(f"Error populating items table: {e}")

@@ -35,21 +35,17 @@ class GameSetup:
 
         # Step 2: Check if the database exists
         if not db_initializer.database_exists():
-            print("Database does not exist. Initializing it...")
             db_initializer.initialize_database()
         else:
-            print("Database exists. Resetting it...")
             db_initializer.reset_database()
 
         # Step 3: Run seeders to populate the database
-        print("Populating the database with seeders...")
         AdventurerSeeder().populate_adventurers()
         ItemSeeder().populate_items()
         MonsterSeeder().populate_monsters()
         RoomSeeder().populate_rooms()
 
         # Step 4: Fetch data from the database
-        print("Fetching data for managers...")
         db_manager = DatabaseManager.get_instance()
         db_manager.connect()
         items_data = db_manager.fetch_items()
@@ -59,18 +55,15 @@ class GameSetup:
         db_manager.close_connection()
 
         # Step 5: Initialize managers with the fetched data
-        print("Initializing managers...")
         self.item_manager = ItemManager.get_instance(items_data)
         self.room_manager = RoomManager.get_instance(rooms_data)
         self.monster_manager = MonsterManager.get_instance(monsters_data)
         self.adventurer_manager = AdventurerManager.get_instance(adventurers_data)
 
         # Step 6: Initialize SpriteManager and preload sprites
-        print("Initializing SpriteManager...")
         self.sprite_manager = SpriteManager.get_instance()
         self.sprite_manager.preload_sprites(SPRITE_PATHS)
 
-        print("Game setup complete!")
         return (
             self.item_manager,
             self.room_manager,

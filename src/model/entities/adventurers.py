@@ -86,19 +86,13 @@ class Adventurer(Entity):
         if buff_type == "max_hp":
             self.max_hp = self.max_hp + buff_value  # Uses the setter for max_hp
             self._update_hp(-buff_value)
-            print(f"{self.name}'s maximum HP increased by {buff_value}. New max HP: {self.max_hp}.")
         elif buff_type == "block_chance":
             self.block_chance = min(self.block_chance + (buff_value / 10), 1.0)
-            print(
-                f"{self.name}'s block chance increased by {buff_value / 10:.2f}. "
-                f"New block chance: {self.block_chance:.2f}.")
         elif buff_type == "attack_damage":
             min_damage, max_damage = self.damage_range
             self.damage_range = (min_damage + buff_value, max_damage + buff_value)  # Uses the setter for damage_range
-            print(f"{self.name}'s attack damage increased by {buff_value}. New damage range: {self.damage_range}.")
         elif buff_type == "attack_speed":
             self.attack_speed = self.attack_speed + buff_value  # Uses the setter for attack_speed
-            print(f"{self.name}'s attack speed increased by {buff_value}. New attack speed: {self.attack_speed}.")
         elif buff_type == "hit_chance":
             self.hit_chance = buff_value
         else:
@@ -112,10 +106,8 @@ class Adventurer(Entity):
         if self.hp < self.max_hp:
             healed = min(self.max_hp - self.hp, heal_amount)
             self._update_hp(-healed)  # Negative value to heal
-            print(f"{self.name} healed for {healed} HP from an item. Current HP: {self.hp}/{self.max_hp}.")
         else:
-            print(f"{self.name} is already at full health.")
-
+            pass
     """ PROPERTIES """
     @property
     def type(self):

@@ -25,7 +25,6 @@ class Inventory:
         :return: True if the item was added successfully, False if there was no space.
         """
         if self.is_full():
-            print("Inventory is full!")
             return False
 
             # Check if the item already exists in the inventory
@@ -54,9 +53,7 @@ class Inventory:
                         self.items.remove(entry)
                     return True
                 else:
-                    print("Not enough quantity to remove.")
                     return False
-        print(f"Item '{item_name}' not found in inventory.")
         return False
 
     def use_item(self, item_name, target):
@@ -67,38 +64,24 @@ class Inventory:
         :param target: The target entity or object for the item's effect.
         :return: The used item, or None if the item is not found.
         """
-        print(f"[DEBUG] use_item called with item_name='{item_name}' and target='{target}'.")
 
         # Check inventory structure
         if not self.items:
-            print("[DEBUG] Inventory is empty. Cannot use any item.")
             return None
 
         for entry in self.items:
             item = entry["item"]
-            quantity = entry["quantity"]
-
-            # Debug information about the current item in inventory
-            print(f"[DEBUG] Checking inventory item: {item.name} with quantity={quantity}")
 
             # Check if the current inventory item matches the requested item
             if item.name == item_name:
-                print(f"[DEBUG] Found matching item '{item_name}' in inventory.")
                 effect_min = item.effect_min
                 effect_max = item.effect_max
-                print(f"[DEBUG] Attempting to apply effect: min={effect_min}, max={effect_max} to target '{target}'.")
-
                 # Attempt to apply the item's effect to the target
                 if self.apply_effect(item, target, effect_min, effect_max):
-                    print(f"[DEBUG] Item '{item_name}' successfully applied to target '{target}'.")
                     self.remove_item(item_name, 1)
-                    print(f"[DEBUG] Item '{item_name}' removed from inventory. Remaining quantity: {quantity - 1}")
                     return item
                 else:
-                    print(f"[DEBUG] Failed to apply item '{item_name}' to target '{target}'.")
-
-        # If the item was not found or could not be used
-        print(f"[DEBUG] Item '{item_name}' is not usable or not found in inventory.")
+                    pass
         return None
 
     def apply_effect(self, item_data, target, effect_min, effect_max):
@@ -111,37 +94,27 @@ class Inventory:
         :param effect_max: The maximum effect value.
         :return: True if the effect was applied successfully, False otherwise.
         """
-        print(f"[DEBUG] apply_effect called with item='{item_data.name}', target='{target}', "
-              f"effect_min={effect_min}, effect_max={effect_max}.")
 
         # Check if the item_data is valid
         if not item_data:
-            print("[DEBUG] Invalid item_data provided to apply_effect.")
             return False
 
         # Determine the correct target type for the item
         if item_data.target == "adventurer":
-            print(f"[DEBUG] Target is 'adventurer'. Applying effect to '{target}'.")
             return self._apply_effect_to_adventurer(item_data, target, effect_min, effect_max)
 
         elif item_data.target == "monster":
-            print(f"[DEBUG] Target is 'monster'. Applying effect to '{target}'.")
             return self._apply_effect_to_monster(item_data, target, effect_min, effect_max)
 
         elif item_data.target == "room":
-            print(f"[DEBUG] Target is 'room'. Attempting to apply room effect.")
             # Ensure target contains both position and dungeon
             if isinstance(target, tuple) and len(target) == 2:
                 position, dungeon = target
-                print(f"[DEBUG] Room target identified: position={position}, dungeon={dungeon}.")
                 return self._apply_effect_to_room(item_data, position, dungeon)
             else:
-                print(f"[DEBUG] Invalid room target format: {target}. Expected (position, dungeon).")
                 return False
 
         else:
-            # Log unhandled target types
-            print(f"[DEBUG] No valid effect for item '{item_data.name}' with target type '{item_data.target}'.")
             return False
 
     @staticmethod
@@ -163,18 +136,13 @@ class Inventory:
 
             buff_value = random.randint(effect_min, effect_max)
             adventurer.apply_buff(buff_value, buff_type)
-            print(f"{adventurer.name} gains {buff_value} to {buff_type} from {item_data.name}.")
             return True
 
         # Handle Energy Drink
         elif item_data.name == "Energy Drink":
             heal_amount = random.randint(effect_min, effect_max)
             adventurer.heal_from_item(heal_amount)
-            print(f"{adventurer.name} heals {heal_amount} HP from {item_data.name}.")
             return True
-
-        # Fallback for unhandled cases
-        print(f"Item '{item_data.name}' could not be applied to {adventurer.name}.")
         return False
 
     @staticmethod
@@ -188,33 +156,22 @@ class Inventory:
         :param effect_max: The maximum effect value.
         :return: True if the effect was applied successfully, False otherwise.
         """
-        if not monster:
-            print("[DEBUG] No valid monster target provided.")
+        if not monster or not item_data:
             return False
-
-        if not item_data:
-            print("[DEBUG] No valid item data provided.")
-            return False
-
-        print(f"[DEBUG] Attempting to apply effect from item '{item_data.name}' to monster '{monster.name}'.")
 
         # Check for Code Spike and calculate damage
         if effect_min is not None and effect_max is not None and item_data.name == "Code Spike":
             try:
                 damage = random.randint(effect_min, effect_max)
-                print(f"[DEBUG] Calculated damage: {damage} (min={effect_min}, max={effect_max}).")
 
                 # Apply damage and log monster health
                 result_message = monster.take_item_damage(damage)  # Assuming this method exists and logs health changes
-                print(f"[DEBUG] Monster '{monster.name}' damage result: {result_message}")
                 return True
 
             except Exception as e:
                 print(f"[ERROR] Failed to apply effect to monster. Error: {e}")
                 return False
 
-        # Log unhandled item effect cases
-        print(f"[DEBUG] No valid effect for item '{item_data.name}' on monster '{monster.name}'.")
         return False
 
     @staticmethod
@@ -226,11 +183,9 @@ class Inventory:
         :param dungeon: The dungeon object for the current floor.
         :return: True if the effect was applied successfully, False otherwise.
         """
-        print(f"[DEBUG] Room effect called for item: {item_data.name}. Position: {position}, Dungeon: {dungeon}")
 
         if item_data.name == "White Box":
             if not position or not dungeon:
-                print("[DEBUG] Position or dungeon is None. Cannot apply room effect.")
                 return False
 
             # All 8 adjacent rooms
@@ -239,7 +194,6 @@ class Inventory:
 
             # Validate dungeon type
             if not hasattr(dungeon, "get_length") or not hasattr(dungeon, "get_width"):
-                print("[DEBUG] Dungeon is not a valid dungeon object.")
                 return False
 
             # Check adjacent rooms and mark them as visited
@@ -249,23 +203,8 @@ class Inventory:
                     adjacent_room = dungeon.fetch_room(adj_x, adj_y)
                     if not adjacent_room.get_visited():
                         adjacent_room.set_visited(True)
-                        print(
-                            f"The White Box reveals an adjacent room: "
-                            f"{adjacent_room.get_type()} at ({adj_x}, {adj_y}).")
-
             return True
-
-        print(f"[DEBUG] No valid room effect for item: {item_data.name}.")
         return False
-
-    def list_items(self):
-        """
-        Lists all items in the inventory with their quantities.
-        """
-        if not self.items:
-            print("The inventory is empty.")
-        for entry in self.items:
-            print(f"{entry['item']['name']} (x{entry['quantity']})")
 
     def is_full(self):
         """
@@ -292,7 +231,6 @@ class Inventory:
         Clears all items from the inventory.
         """
         self.items = []
-        print("Inventory cleared.")
 
     def save_inventory(self):
         """

@@ -39,17 +39,10 @@ class DungeonManager:
         # Randomize the pillar order
         self.item_manager.initialize_pillar_order()
 
-        print("[DungeonManager] Initializing the dungeon...")
         self.dungeon = [DungeonFloor(1), DungeonFloor(2), DungeonFloor(3), DungeonFloor(4)]  # Four floors
-        # print(f"[DungeonManager] Dungeon generated with {len(self.dungeon)} floors.")
-
-        for floor_index, floor in enumerate(self.dungeon):
-            print(f"[DungeonManager] Floor {floor_index + 1} initialized:")
-            print(floor)
 
         for i in range(4):
             all_rooms = self.dungeon[i].get_room_list()
-            print(f"[DungeonManager] Floor {i + 1} contains {len(all_rooms)} rooms.")
 
             monster_rooms = [
                 coords for coords in all_rooms if self.dungeon[i].fetch_room(coords[0],
@@ -75,7 +68,6 @@ class DungeonManager:
         :param item_rooms A list of tuples (row, column) which denote the location of ITEM rooms.
         :param all_rooms A list of tuples (row, column) which denote the location of all rooms.
         """
-        print(f"[DungeonManager] Populating rooms for Floor {floor + 1}...")
         for room_coords in monster_rooms:
             self.place_monster(floor, room_coords, monster_type="Normal")
 
@@ -102,7 +94,6 @@ class DungeonManager:
                 monster = MonsterFactory.get_instance().make_monster(raw_data_sliced)
                 if monster:
                     self.dungeon[floor].fetch_room(room_coords[0], room_coords[1]).set_monster(monster)
-                    print(f"[DungeonManager] Placed {monster.name} in a {monster_type.upper()} room at {room_coords}.")
             except ValueError as e:
                 print(f"[DungeonManager] Error creating {monster_type.lower()} monster: {e}")
 
@@ -118,7 +109,6 @@ class DungeonManager:
             item = ItemFactory.get_instance().create_item_from_raw(raw_data)
             if item:
                 self.dungeon[floor].fetch_room(room_coords[0], room_coords[1]).set_item(item)
-                print(f"[DungeonManager] Placed {item.name} in an ITEM room at {room_coords}.")
 
     def place_pillar(self, floor_index, pillar_coords):
         """
@@ -132,7 +122,6 @@ class DungeonManager:
             pillar_item = ItemFactory.get_instance().create_unique_item(raw_data)
             if pillar_item:
                 self.dungeon[floor_index].fetch_room(pillar_coords[0], pillar_coords[1]).set_item(pillar_item)
-                print(f"[DungeonManager] Placed {pillar_item.name} in a PILLAR room at {pillar_coords}.")
             else:
                 print(f"[DungeonManager] Failed to create a unique pillar item for Floor {floor_index + 1}.")
         else:
@@ -148,7 +137,6 @@ class DungeonManager:
             print(f"[DungeonManager] Error: Invalid floor number {floor}.")
             raise ValueError(f"Invalid floor number: {floor}")
         entrance = self.dungeon[floor - 1].get_entrance_coords()
-        print(f"[DungeonManager] Entrance for Floor {floor}: {entrance}")
         return entrance
 
     def get_room(self, floor, position):
@@ -158,7 +146,6 @@ class DungeonManager:
         :param position: The coordinates of the room to be grabbed (row, column).
         :return The room at the specified position.
         """
-        # print(f"[DungeonManager] Fetching room at Floor {floor}, Position {position}.")
         return self.dungeon[floor - 1].fetch_room(position[0], position[1])
 
     def mark_room_visited(self, floor, position):
@@ -167,7 +154,6 @@ class DungeonManager:
         :param floor: The floor number (1-indexed).
         :param position: The coordinates of the room to be marked visited (row, column).
         """
-        print(f"[DungeonManager] Marking room as visited: Floor {floor}, Position {position}.")
         self.get_room(floor, position).set_visited(True)
 
     def get_floor_map(self, floor, reveal_all=False):
@@ -182,7 +168,6 @@ class DungeonManager:
             raise ValueError(f"Invalid floor number: {floor}")
 
         floor_map = self.dungeon[floor - 1].create_map(reveal_all)
-        # print(f"[DungeonManager] Retrieved map for Floor {floor}.")
         return floor_map
 
     def get_monster_in_room(self, floor, position):
@@ -192,7 +177,6 @@ class DungeonManager:
         :param position: The (row, column) tuple for the room's position.
         :return The monster in the room, or None if there is no monster.
         """
-        print(f"[DungeonManager] Fetching monster in room at Floor {floor}, Position {position}.")
         room = self.get_room(floor, position)
         if room.has_monster():
             monster = room.get_monster()
@@ -207,7 +191,6 @@ class DungeonManager:
         :param position: The (row, column) tuple for the room's position.
         :return The item in the room, or None if there is no item.
         """
-        print(f"[DungeonManager] Fetching item in room at Floor {floor}, Position {position}.")
         room = self.get_room(floor, position)
         if room.has_item():
             item = room.get_item()

@@ -24,6 +24,5 @@ class AdventurerSeeder:
                 cursor = conn.cursor()
                 cursor.executemany(insert_query, adventurers_data)
                 conn.commit()
-            #print("Adventurers table populated.")
         except sqlite3.Error as e:
             print(f"Error populating adventurers table: {e}")

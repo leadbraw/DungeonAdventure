@@ -16,21 +16,16 @@ class SpriteManager:
         if SpriteManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access it.")
         self.sprites = {}
-        # print("[SpriteManager] Singleton instance initialized.")
 
     def preload_sprites(self, sprite_paths):
         """
         Preloads all sprites from the given dictionary.
         :param sprite_paths: Dictionary with {name: file_path}
         """
-        # print(f"[SpriteManager] Preloading {len(sprite_paths)} sprites...")
         for name, file_path in sprite_paths.items():
             self.load_sprite(name, file_path)
-            # print(f"[SpriteManager] Preloading sprite: {name} from {file_path}")  # Debug output
 
         loaded_count = len([s for s in self.sprites.values() if s is not None])
-        print(f"[SpriteManager] Preloading complete. {loaded_count}/{len(sprite_paths)} sprites loaded successfully.")
-        # print(f"[SpriteManager] Cached sprite keys: {list(self.sprites.keys())}")  # Debug output
 
     def load_sprite(self, name, file_path):
         """
@@ -40,9 +35,7 @@ class SpriteManager:
         """
         if name not in self.sprites:
             try:
-                # print(f"[SpriteManager] Loading sprite: {name} from {file_path}")
                 self.sprites[name] = pygame.image.load(file_path).convert_alpha()
-                # print(f"[SpriteManager] Successfully loaded: {name}")
             except Exception as e:
                 print(f"[SpriteManager] Error loading sprite '{name}' from {file_path}: {e}")
                 self.sprites[name] = None
@@ -55,10 +48,6 @@ class SpriteManager:
         :return: The original sprite or None if not found.
         """
         sprite = self.sprites.get(name)
-        # if sprite:
-        #     print(f"[SpriteManager] Fetched sprite: {name}")
-        # else:
-        #     print(f"[SpriteManager] Sprite not found: {name}")
         return sprite
 
     def get_transformed_sprite(self, name, flip_x=False, rotate=0):
@@ -75,7 +64,6 @@ class SpriteManager:
             print(f"[SpriteManager] Sprite '{name}' not found for transformation.")
             return None
 
-        # print(f"[SpriteManager] Transforming sprite: {name} (flip_x={flip_x}, rotate={rotate})")
         transformed_sprite = original_sprite
 
         # Apply horizontal flip if needed
@@ -90,6 +78,4 @@ class SpriteManager:
 
     def clear_sprites(self):
         """Clears all loaded sprites and transformations."""
-        print(f"[SpriteManager] Clearing {len(self.sprites)} sprites.")
         self.sprites.clear()
-        print("[SpriteManager] Cache cleared.")

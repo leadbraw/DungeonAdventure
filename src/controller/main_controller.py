@@ -79,7 +79,6 @@ class MainController:
             if not self.loading:
                 self.game_controller = GameController(self.screen, self.selected_hero, self.debug)
                 self.game_controller.set_active_adventurer(self.selected_hero)
-                print("[Main] Dungeon is already initialized through DungeonManager.")
             self.loading = False
             if self.game_controller.display_game() == 1:
                 self.state = "MAIN_MENU"

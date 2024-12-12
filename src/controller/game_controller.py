@@ -566,7 +566,6 @@ class GameController:
 
     def __getstate__(self):
         """Stores the object's state in a pickled dictionary."""
-        print("Game Controller state saved.")
         return {
             'hero_name': self.hero_name,  # string
             'room_manager': self.room_manager,  # pickled
@@ -594,4 +593,3 @@ class GameController:
         self.pillar_status = state['pillar_status']
         self.return_to_menu = state['return_to_menu']
         self.debug = state['debug']
-        print("Loaded save for: " + self.hero_name)

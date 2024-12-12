@@ -88,7 +88,7 @@ class ItemManager:
         :return: Raw data for the item or None if no items are available.
         """
         if not self.other_items:
-            print("Warning: No consumable items available.")
+            print("[ERROR] No consumable items available.")
             return None
 
         return random.choice(list(self.other_items.values()))
@@ -99,18 +99,6 @@ class ItemManager:
         """
         self.unique_items_acquired.clear()
 
-    def list_all_items(self):
-        """
-        Lists all items managed by the ItemManager for debugging purposes.
-        """
-        print("Unique Items:")
-        for item_name, item_data in self.one_time_items.items():
-            print(f"- {item_name}: {item_data}")
-
-        print("\nLimited Items:")
-        for item_name, item_data in self.other_items.items():
-            print(f"- {item_name}: {item_data}")
-
     def initialize_pillar_order(self):
         """
         Randomizes the order of one_time_items for unique item placement (pillars).
@@ -118,4 +106,3 @@ class ItemManager:
         randomized_items = list(self.one_time_items.items())  # Convert to a list of (key, value) pairs
         random.shuffle(randomized_items)  # Shuffle the items
         self.one_time_items = dict(randomized_items)  # Reassign as a randomized dictionary
-        print(f"[ItemManager] Randomized one_time_items: {list(self.one_time_items.keys())}")

@@ -182,17 +182,14 @@ class InventoryOverlay:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print("[DEBUG] Quit event detected. Exiting game.")
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                print(f"[DEBUG] Mouse clicked at {mouse_pos}")
 
                 # Check usable item buttons
                 for item_button, name, quantity in usable_item_buttons:
                     if item_button.is_hovered(mouse_pos) and quantity > 0:
-                        print(f"[DEBUG] {name} button clicked, quantity available: {quantity}")
 
                         # Determine the actual target based on item type
                         if name == "White Box":
@@ -200,8 +197,6 @@ class InventoryOverlay:
                                 current_dungeon = dungeon[self.current_floor - 1]  # Get the current floor
                             else:
                                 current_dungeon = dungeon  # Single floor passed directly
-                            print(f"[DEBUG] Current dungeon for White Box: {current_dungeon}")
-
                             actual_target = (position, current_dungeon)
                         else:
                             actual_target = (
@@ -210,19 +205,14 @@ class InventoryOverlay:
                                 None
                             )
 
-                        print(f"[DEBUG] Resolved target for '{name}': {actual_target}")
-
                         # Attempt to use the item
                         if actual_target and self.inventory.use_item(name, actual_target):
-                            print(f"[DEBUG] Successfully used '{name}' on target: {actual_target}.")
                             return "item_used"
                         else:
-                            print(f"[DEBUG] Failed to use '{name}' on target: {actual_target}.")
                             return "close_overlay"
 
                 # Check close button
                 if close_button.is_hovered(mouse_pos):
-                    print("[DEBUG] Close button clicked.")
                     return "close_overlay"
 
         return "continue"  # Keep overlay open if no exit condition is met
@@ -253,8 +243,6 @@ class InventoryOverlay:
         # Save the current screen before displaying the overlay
         self.previous_frame = self.screen.copy()
 
-        print("[DEBUG] Displaying inventory overlay...")
-
         while running:
             # Draw overlay background
             pygame.draw.rect(self.screen, (30, 30, 30), (overlay_x, overlay_y, overlay_width, overlay_height))
@@ -279,7 +267,6 @@ class InventoryOverlay:
 
             # Process the event result
             if event_result in {"item_used", "close_overlay"}:
-                print("[DEBUG] Closing inventory overlay due to event.")
                 self.screen.blit(self.previous_frame, (0, 0))  # Restore previous frame
                 pygame.display.flip()
                 running = False

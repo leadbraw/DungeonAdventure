@@ -24,6 +24,5 @@ class MonsterSeeder:
                 cursor.execute("DELETE FROM monsters")
                 cursor.executemany(insert_query, monsters_data)
                 conn.commit()
-            #print(f"{len(monsters_data)} monsters added to the table.")
         except sqlite3.Error as e:
             print(f"Error populating monsters table: {e}")

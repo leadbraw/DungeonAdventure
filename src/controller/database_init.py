@@ -26,11 +26,9 @@ class DatabaseInitializer:
         Initializes the database only if it doesn't already exist.
         """
         if not self.database_exists():
-            print("Database not found. Creating and initializing...")
             self.create_tables()
-            print("Database initialized successfully.")
         else:
-            print("Database already exists. Skipping initialization.")
+            pass
 
     def create_tables(self):
         """Creates all necessary tables in the database."""
@@ -114,7 +112,6 @@ class DatabaseInitializer:
         Drops and recreates all tables in the database. Useful for testing and debugging.
         """
         if self.database_exists():
-            print("Resetting the database...")
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute("DROP TABLE IF EXISTS heroes")
@@ -124,9 +121,7 @@ class DatabaseInitializer:
                 cursor.execute("DROP TABLE IF EXISTS rooms")
                 # cursor.execute("DROP TABLE IF EXISTS game_saves")
             self.create_tables()
-            print("Database reset successfully.")
         else:
-            print("No database to reset. Creating a new one...")
             self.create_tables()
 
 

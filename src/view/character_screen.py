@@ -154,10 +154,8 @@ class CharacterScreen:
             if self.on_confirmation_screen:
                 if self.confirm_button.is_hovered((mouse_x, mouse_y)):
                     if event.button == 1:
-                        print(f"{self.selected_character['name']} has been selected!")
                         return "select", self.selected_character["name"]
                     elif event.button == 3:
-                        print(f"{self.selected_character['name']} has been selected in DEBUG mode!")
                         return "debug", self.selected_character["name"]
                 elif self.confirm_back_button.is_hovered((mouse_x, mouse_y)):
                     self.on_confirmation_screen = False

@@ -18,7 +18,6 @@ class AdventurerManager:
         if AdventurerManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
 
-        print(f"Initializing AdventurerManager with {len(adventurers_data)} adventurers.")
         self.adventurer_data = {}  # Dictionary to hold all raw adventurer data
         self.active_adventurer = None  # Placeholder for the single selected adventurer
 
@@ -30,12 +29,9 @@ class AdventurerManager:
         Loads all raw adventurer data.
         :param adventurers_data: List of tuples representing adventurer data.
         """
-        # print(f"Loading adventurer data with data: {adventurers_data}")
         for row in adventurers_data:
-            # print(f"Processing row: {row}")
             name = row[1]
             self.adventurer_data[name] = row  # Store raw data directly
-        print("Adventurer data loaded:", self.adventurer_data.keys())
 
     def get_adventurer_data(self, name=None):
         """
@@ -52,10 +48,9 @@ class AdventurerManager:
         Sets the selected adventurer as the active choice.
         :param name: Name of the adventurer.
         """
-        print(f"Attempting to load adventurer: {name}")
         self.active_adventurer = self.adventurer_data.get(name)
         if self.active_adventurer:
-            print(f"Adventurer {name} loaded successfully.")
+            pass
         else:
             print(f"Adventurer {name} not found in data: {self.adventurer_data.keys()}")
 

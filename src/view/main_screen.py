@@ -56,13 +56,10 @@ class MainScreen:
 
             if clicked:
                 if self.new_game_button.is_hovered(mouse_pos):
-                    print("New Game button clicked!")
                     return "new_game"
                 elif self.load_game_button.is_hovered(mouse_pos):
-                    print("Load Game button clicked!")
                     return "load_game"
                 elif self.manual_button.is_hovered(mouse_pos):
-                    print("Manual button clicked!")
                     self.show_manual()
 
             pygame.display.flip()

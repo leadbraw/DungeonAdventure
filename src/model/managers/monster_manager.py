@@ -31,13 +31,13 @@ class MonsterManager:
         :param monsters_data: List of tuples containing monster attributes.
         """
         if not monsters_data:
-            print("MonsterManager: No monster data provided!")
+            print("[ERROR] No monster data provided!")
             return
 
         for row in monsters_data:
             monster_type = row[2]
             if monster_type not in self.monster_data:
-                print(f"MonsterManager: Unknown monster type '{monster_type}'! Skipping.")
+                print(f"[ERROR] MonsterManager: Unknown monster type '{monster_type}'! Skipping.")
                 continue
 
             # Remove existing monster with the same name
@@ -47,8 +47,6 @@ class MonsterManager:
 
             # Add the new monster data
             self.monster_data[monster_type].append(row)
-
-        print(f"MonsterManager: Loaded {sum(len(v) for v in self.monster_data.values())} monsters.")
 
     def get_monster_data(self, monster_name=None, monster_type="normal"):
         """
@@ -64,16 +62,15 @@ class MonsterManager:
             # Return specific monster data by name
             monster = next((m for m in data if m[1] == monster_name), None)
             if monster:
-                print(f"MonsterManager: Retrieved data for monster '{monster_name}'.")
+                pass
             else:
-                print(f"MonsterManager: Monster '{monster_name}' not found!")
+                print(f"[WARNING] MonsterManager: Monster '{monster_name}' not found!")
             return monster
         else:
             # Return random monster data
             if data:
                 random_monster = random.choice(data)
-                print(f"MonsterManager: Selected random monster '{random_monster[1]}'.")
                 return random_monster
             else:
-                print("MonsterManager: No monsters available!")
+                print("[ERROR] MonsterManager: No monsters available!")
                 return None
