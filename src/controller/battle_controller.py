@@ -200,8 +200,6 @@ class BattleController:
             current_room.set_monster(None)  # Clear monster from the room
 
         elif adventurer.hp <= 0:
-            print("You were defeated, GAME OVER :(")
-
             # Display game-over options
             menu_text = self.fonts["medium"].render("Return to Menu or Quit?", True, OFF_WHITE)
             bottom_rect = pygame.Rect(0, 450, 800, 150)

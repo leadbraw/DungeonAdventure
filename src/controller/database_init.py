@@ -103,7 +103,6 @@ class DatabaseInitializer:
                 for table, command in table_commands.items():
                     cursor.execute(command)
                 conn.commit()
-                print("All tables created successfully.")
         except sqlite3.Error as e:
             print(f"Error creating tables: {e}")
 
