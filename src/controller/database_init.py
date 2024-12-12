@@ -3,6 +3,8 @@ import sqlite3
 
 
 class DatabaseInitializer:
+    """Responsible for initializing the database."""
+
     def __init__(self, db_path='data/dungeon_game.db'):
         """
         Initializes the DatabaseInitializer with the given database path.

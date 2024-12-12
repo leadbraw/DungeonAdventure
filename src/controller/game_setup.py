@@ -13,7 +13,10 @@ from constants import SPRITE_PATHS
 
 
 class GameSetup:
+    """Responsible for setting up the game."""
+
     def __init__(self):
+        """Constructor. Instantiates fields (does not assign values)."""
         self.item_manager = None
         self.room_manager = None
         self.monster_manager = None
@@ -21,6 +24,12 @@ class GameSetup:
         self.sprite_manager = None
 
     def setup(self):
+        """
+        Sets up the game. Responsible for calling the database initializer,
+        fetching data, and instantiating all managers.
+
+        :return: A tuple containing (in order) The item, room, monster, adventurer, and sprite managers.
+        """
         # Step 1: Initialize the DatabaseInitializer
         db_initializer = DatabaseInitializer()
 

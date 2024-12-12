@@ -4,34 +4,67 @@ from src.view.gui_elements import Button
 from constants import LIGHT_BLUE, OFF_WHITE, BACKGROUND_COLOR, BLACK, WHITE
 
 
-class BattleManager:
+class BattleController:
+    """Singleton class. Called by GameController to handle battle logic."""
+
     _instance = None
 
     @staticmethod
     def get_instance(screen=None, fonts=None, draw_ui=None):
+        """
+        Instantiates (or resets) a/the singleton instance of BattleController.
+        :return current instance of DungeonManager (a new instance if none existed prior to the get_instance() call).
+        """
         if not all([screen, fonts, draw_ui]):
-            raise ValueError("Missing arguments for initializing or resetting BattleManager.")
-        if BattleManager._instance is None:
-            BattleManager._instance = BattleManager(screen, fonts, draw_ui)
+            raise ValueError("Missing arguments for initializing or resetting BattleController.")
+        if BattleController._instance is None:
+            BattleController._instance = BattleController(screen, fonts, draw_ui)
         else:  # There is an existing instance, let's reset it.
-            BattleManager._instance.reset(screen, fonts, draw_ui)
-        return BattleManager._instance
+            BattleController._instance.reset(screen, fonts, draw_ui)
+        return BattleController._instance
 
     def __init__(self, screen, fonts, draw_ui):
-        if BattleManager._instance is not None:
+        """
+        Constructor, initializes all fields.
+
+        :param screen: The display (Surface)
+        :param fonts: Dict of fonts (see constants.py)
+        :param draw_ui Passed draw_ui function from GameController
+        """
+        if BattleController._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access it.")
         self.screen = screen
         self.fonts = fonts
         self.draw_ui = draw_ui
+        self.inventory_overlay = None
 
     def reset(self, screen, fonts, draw_ui):
+        """
+        Overrides all fields of the BattleController instance with new values.
+
+        :param screen: The new display Surface
+        :param fonts: The new fonts dict
+        :param draw_ui: The new draw_ui function from GameController (now with a new referencing environment!)
+        """
         self.screen = screen
         self.fonts = fonts
         self.draw_ui = draw_ui
 
-    def start_battle(self, adventurer, monster, dungeon, current_floor, position, get_hero_portrait, minimap,
+    def start_battle(self, adventurer, monster, dungeon, current_floor, position, get_adventurer_portrait, minimap,
                      inventory_overlay):
-        """Starts and Handles battle action with player vs monster in the Room section."""
+        """
+        Handles the main battle loop.
+
+        :param adventurer: The adventurer in the battle.
+        :param monster: The current monster in the battle.
+        :param dungeon: The dungeon object (list of floors).
+        :param current_floor: The current floor (1-indexed).
+        :param position: The current position of the adventurer as a tuple (x, y).
+        :param inventory_overlay: The InventoryOverlay instance.
+        :param get_adventurer_portrait: The get_adventurer_portrait function from GameController.
+        :param minimap: The current minimap.
+        :return: True if the battle continues, False otherwise.
+        """
         self.inventory_overlay = inventory_overlay  # Store the passed InventoryOverlay instance
 
         fight_button = Button(color=LIGHT_BLUE, x=200, y=540, width=100, height=30,
@@ -43,9 +76,9 @@ class BattleManager:
 
         running = True
         while running and monster.hp > 0 and adventurer.hp > 0:
-            # Pass `get_hero_portrait` as a callable
+            # Pass `get_adventurer_portrait` as a callable
             self.draw_battle_ui(monster, adventurer, fight_button, item_button, special_button,
-                                get_hero_portrait, minimap)
+                                get_adventurer_portrait, minimap)
             running = self.handle_battle_event(
                 monster, adventurer, self.inventory_overlay, dungeon, current_floor, position,
                 fight_button, item_button, special_button
@@ -55,8 +88,18 @@ class BattleManager:
             return 1  # Triggers a restart in the game controller and main
 
     def draw_battle_ui(self, monster, adventurer, fight_button, item_button, special_button,
-                       get_hero_portrait, minimap):
-        """Draw the battle UI components."""
+                       get_adventurer_portrait, minimap):
+        """
+        Draw the battle UI components.
+
+        :param monster: The current monster in the battle.
+        :param adventurer: The adventurer in the battle.
+        :param fight_button: The button for fight actions.
+        :param item_button: The button for using items.
+        :param special_button: The button for using special ability
+        :param get_adventurer_portrait: The get_adventurer_portrait function from GameController.
+        :param minimap: The current minimap.
+        """
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         pygame.draw.rect(self.screen, BACKGROUND_COLOR, bottom_rect)
 
@@ -66,7 +109,7 @@ class BattleManager:
         portrait_outline_right = pygame.Rect(796, 450, 4, 150)
 
         # Use the callable to fetch the hero portrait, then draw outline
-        portrait = get_hero_portrait()
+        portrait = get_adventurer_portrait()
         self.screen.blit(portrait, (650, 450))
         pygame.draw.rect(self.screen, BLACK, portrait_outline_top)
         pygame.draw.rect(self.screen, BLACK, portrait_outline_left)
@@ -144,7 +187,15 @@ class BattleManager:
         return monster.hp > 0 and adventurer.hp > 0
 
     def post_battle_logic(self, monster, adventurer, dungeon, current_floor, position):
-        """Handle the aftermath of the battle."""
+        """
+        Handle the aftermath of the battle.
+
+        :param monster: The current monster in the battle.
+        :param adventurer: The adventurer in the battle.
+        :param dungeon: The dungeon object (list of floors).
+        :param current_floor: The current floor (1-indexed).
+        :param position: The current position of the adventurer as a tuple (x, y).
+        """
         if monster.hp <= 0:
             message = f"You defeated {monster.name}, well done!"
             self.draw_ui(message)
@@ -187,7 +238,12 @@ class BattleManager:
                             sys.exit()
 
     def execute_fight(self, monster, adventurer):
-        """Handle the fight action."""
+        """
+        Handle the 'fight' action.
+
+        :param monster: The current monster in the battle.
+        :param adventurer: The adventurer in the battle.
+        """
         if monster.hp > 0:
             outcomes = adventurer.attack(monster).split(".")
             for i in range(len(outcomes)):
@@ -205,7 +261,12 @@ class BattleManager:
                 pygame.time.delay(1000)
 
     def execute_special(self, monster, adventurer):
-        """Handle the special action."""
+        """
+        Handle the 'special' action.
+
+        :param monster: The current monster in the battle.
+        :param adventurer: The adventurer in the battle.
+        """
         if monster.hp > 0:
             # Call the special_action method to get the full message
             outcomes = adventurer.special_action(monster).split(".")

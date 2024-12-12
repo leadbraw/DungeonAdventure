@@ -5,27 +5,31 @@ import pygame
 from constants import (BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH,
                        MENU_BUTTON_HEIGHT, MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT, DARK_RED, RED, BROWN,
                        FADED_GRAY, MEDIUM_GREY, VIOLET, DARK_VIOLET, BLACK, WHITE)
-from src.controller.battle_manager import BattleManager
+from src.controller.battle_controller import BattleController
 from src.controller.dungeon_manager import DungeonManager
 from src.view.gui_elements import Button
 from src.view.inventory_overlay import InventoryOverlay
 from src.model.managers.room_manager import RoomManager
 from src.model.managers.adventurer_manager import AdventurerManager
 from src.model.managers.sprite_manager import SpriteManager
-from src.model.factories.adventurer_factory import AdventurerFactory
-
 from src.model.managers.game_state_manager import GameStateManager
+from src.model.factories.adventurer_factory import AdventurerFactory
 
 
 class GameController:
+    """
+    Contains most of the game state. Handles the main gameplay loop, delegates responsibilities appropriately.
+    """
+
     def __init__(self, screen, hero_name, debug):
+        """Constructor. Initializes all fields, collects completed minimaps, initializes dungeon."""
         self.screen = screen
         self.hero_name = hero_name
         self.debug = debug
         self.fonts = get_fonts()  # Dictionary of fonts
         self.room_manager = RoomManager.get_instance()
         self.sprite_manager = SpriteManager.get_instance()
-        self.battle_manager = BattleManager.get_instance(self.screen, self.fonts, self.draw_ui)
+        self.battle_manager = BattleController.get_instance(self.screen, self.fonts, self.draw_ui)
         self.dungeon_manager = DungeonManager.get_instance()
         self.dungeon_manager.initialize_dungeon()
         self.adventurer_manager = AdventurerManager.get_instance()
@@ -56,7 +60,11 @@ class GameController:
         self.set_active_adventurer(hero_name)
 
     def display_game(self):
-        """Main gameplay loop."""
+        """
+        Main gameplay loop. Delegates appropriate behaviors to other methods
+
+        :return: 1 upon the user choosing to return to the main menu (upon battle defeat).
+        """
         if self.debug:
             self.minimap = pygame.transform.scale(self.dungeon_manager.get_floor_map(self.current_floor, self.debug),
                                                   (150, 150))
@@ -115,7 +123,11 @@ class GameController:
             pygame.display.flip()
 
     def player_movement(self, key):
-        """Handles player movement based on arrow key input."""
+        """
+        Handles player movement based on arrow key input.
+
+        :param key: The key pressed (pygame enum).
+        """
         direction_map = {
             pygame.K_UP: (-1, 0),
             pygame.K_RIGHT: (0, 1),
@@ -141,7 +153,7 @@ class GameController:
                 self.display_message("Invalid move: No valid path in that direction.", 250)
 
     def room_interaction(self):
-        """Interact with the current room."""
+        """Handles interaction with the current room."""
         current_room = self.dungeon_manager.get_room(self.current_floor, self.position)
 
         if current_room.type in ["MONSTER", "ELITE"] and current_room.has_monster():
@@ -161,7 +173,11 @@ class GameController:
             self.display_message("You've found an empty room. It smells in here.")
 
     def handle_monster_room(self, room):
-        """Handles interactions in MONSTER and ELITE rooms."""
+        """
+        Handles interactions in MONSTER and ELITE rooms.
+
+        :param room: The monster/elite room the adventurer is in.
+        """
         monster = self.dungeon_manager.get_monster_in_room(self.current_floor, self.position)
         if not monster:
             return
@@ -191,7 +207,7 @@ class GameController:
             dungeon=self.dungeon_manager.dungeon,
             current_floor=self.current_floor,
             position=self.position,
-            get_hero_portrait=self.get_hero_portrait,
+            get_adventurer_portrait=self.get_adventurer_portrait,
             minimap=self.minimap,
             inventory_overlay=inventory_overlay  # Pass the dynamically created overlay
         )
@@ -200,7 +216,7 @@ class GameController:
             self.return_to_menu = True
 
     def handle_item_room(self):
-        """Handles interactions in ITEM rooms."""
+        """Handles interactions with ITEM rooms."""
         item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
         if not item:
             self.display_message("There's no item here.")
@@ -212,11 +228,15 @@ class GameController:
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
     def handle_pillar_room(self):
-        """Handles interactions in PILLAR rooms."""
+        """
+        Handles interactions with PILLAR rooms.
+
+        :return: 1 if no pillar is found in the room. This indicates an error in placing items in rooms.
+        """
         item = self.dungeon_manager.get_item_in_room(self.current_floor, self.position)
         if not item:
             self.display_message("There's no pillar here. Strange...")
-            return
+            return 1
 
         # Update the specific pillar's status in the dictionary
         if item.name in self.pillar_status:
@@ -233,14 +253,18 @@ class GameController:
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
     def handle_trap_room(self):
-        """Handles interactions in TRAP rooms."""
+        """Handles interactions with TRAP rooms."""
         trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp - 1)  # Ensure player can't die to trap.
         self.active_adventurer._update_hp(trap_dmg)
         self.display_message(f"It's a trap! You take {trap_dmg} damage.")
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
 
     def handle_pillar_item(self, item):
-        """Handles interaction with Pillar items."""
+        """
+        Handles interaction with Pillar items.
+
+        :param item: The pillar item in question.
+        """
         self.display_message(f"The {item.name} grants you its power!")
 
         # Use the existing public apply_effect method
@@ -254,7 +278,11 @@ class GameController:
         self.dungeon_manager.clear_item_in_room(self.current_floor, self.position)
 
     def handle_regular_item(self, item):
-        """Handles interaction with regular items."""
+        """
+        Handles interaction with regular items.
+
+        :param item: The item in question.
+        """
         if self.active_adventurer.inventory.add_item(item):
             self.display_message(f"{item.name} added to your inventory.")
             self.dungeon_manager.clear_item_in_room(self.current_floor, self.position)
@@ -284,14 +312,18 @@ class GameController:
         else:
             # Player has not found all required pillars
             self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
-            missing_pillars = self.current_floor - acquired_pillars
             self.display_message(
-                f"You must find {missing_pillars} more Pillar(s) of O.O. before proceeding!"
+                f"You must find 1 more Pillar of O.O. before proceeding!"
             )
 
     def end_message(self):
-        end_running = True
-        end_menu_button = Button(DARK_GREY, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        """
+        Displays the victory sequence to the player.
+
+        :return: 1 if main menu button is selected. This triggers a return to the main menu.
+        """
+
+        # Victory message text
         end_title = self.fonts["large"].render("CONGRATULATIONS", True, GOLD)
         end_body = self.fonts["medium"].render("You have proven yourself an excellent hero",
                                                True, OFF_WHITE)
@@ -305,6 +337,9 @@ class GameController:
                                                 True, OFF_WHITE)
         end_body6 = self.fonts["medium"].render("Hit \"NEXT\" to view the complete map!",
                                                 True, OFF_WHITE)
+
+        # Buttons
+        end_menu_button = Button(DARK_GREY, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
         next_button = Button(OFF_WHITE, 635, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
                              DARK_GREY, "NEXT")
         prev_button = Button(OFF_WHITE, 25, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
@@ -312,6 +347,7 @@ class GameController:
         main_menu_button = Button(OFF_WHITE, 330, 520, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"],
                                   DARK_GREY, "MAIN MENU")
 
+        # Map key texts
         monster_text = self.fonts["small"].render("Monster", True, OFF_WHITE)
         elite_text = self.fonts["small"].render("Elite", True, OFF_WHITE)
         item_text = self.fonts["small"].render("Item", True, OFF_WHITE)
@@ -321,6 +357,7 @@ class GameController:
         entrance_text = self.fonts["small"].render("Entrance", True, OFF_WHITE)
         exit_text = self.fonts["small"].render("Exit", True, OFF_WHITE)
 
+        # Map key colored rects
         monster_rect = pygame.Rect(540, 30, 35, 35)
         elite_rect = pygame.Rect(540, 80, 35, 35)
         item_rect = pygame.Rect(540, 130, 35, 35)
@@ -331,6 +368,7 @@ class GameController:
         exit_rect = pygame.Rect(540, 380, 35, 35)
 
         position = 0
+        end_running = True
         while end_running:
             clicked = False
             mouse_pos = pygame.mouse.get_pos()
@@ -443,7 +481,12 @@ class GameController:
         self.adventurer_manager.active_adventurer = self.active_adventurer
 
     def draw_ui(self, message=None, in_battle=False):
-        """Draws the game's user interface."""
+        """
+        Draws the game's user interface.
+
+        :param message: The message to be drawn, if any.
+        :param in_battle: Whether the adventurer is currently in battle or not.
+        """
         bottom_rect = pygame.Rect(0, 450, 800, 150)
         right_rect = pygame.Rect(650, 0, 150, 450)
         portrait_outline_top = pygame.Rect(650, 450, 150, 4)
@@ -454,7 +497,7 @@ class GameController:
         pygame.draw.rect(self.screen, BACKGROUND_COLOR, right_rect)
 
         # Draw adventurer portrait (and outline)
-        portrait = self.get_hero_portrait()
+        portrait = self.get_adventurer_portrait()
         self.screen.blit(portrait, (650, 450))
         pygame.draw.rect(self.screen, BLACK, portrait_outline_top)
         pygame.draw.rect(self.screen, BLACK, portrait_outline_left)
@@ -495,8 +538,12 @@ class GameController:
             self.save_button.draw(self.screen, True)
             self.inventory_button.draw(self.screen, True)
 
-    def get_hero_portrait(self):
-        """Returns the portrait for the selected hero."""
+    def get_adventurer_portrait(self):
+        """
+        Returns the scaled portrait for the selected adventurer.
+
+        :param: The portrait for the selected adventurer, scaled to 150x150
+        """
         if os.path.exists(f"assets/images/{self.hero_name}_portrait.png"):
             portrait_path = f"assets/images/{self.hero_name}_portrait.png"
         else:
@@ -507,7 +554,7 @@ class GameController:
     def set_up_from_load(self, the_screen, the_fonts):
         self.screen = the_screen
         self.fonts = the_fonts
-        self.battle_manager = BattleManager.get_instance(self.screen, self.fonts, self.draw_ui)
+        self.battle_manager = BattleController.get_instance(self.screen, self.fonts, self.draw_ui)
         self.sprite_manager = SpriteManager.get_instance()
         self.full_maps = []
         for i in range(4):  # mirror constructor
@@ -517,9 +564,8 @@ class GameController:
         self.save_button = Button(color=LIGHT_BLUE, x=670, y=200, width=110, height=30,
                                   font=self.fonts["extra_small"], text_color=(255, 255, 255), text="Save Game")
 
-    # Method to define what gets pickled
     def __getstate__(self):
-        # Return a dictionary of the object's state
+        """Stores the object's state in a pickled dictionary."""
         print("Game Controller state saved.")
         return {
             'hero_name': self.hero_name,  # string
@@ -535,9 +581,8 @@ class GameController:
             'debug': self.debug  # boolean
         }
 
-    # Method to define how the object is restored
     def __setstate__(self, state):
-        # Restore the object's state from the dictionary
+        """Restores the object's state from the pickled dictionary."""
         self.hero_name = state['hero_name']
         self.room_manager = state['room_manager']
         self.dungeon_manager = state['dungeon_manager']

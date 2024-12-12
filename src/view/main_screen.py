@@ -8,7 +8,15 @@ from src.view.gui_elements import Button
 
 
 class MainScreen:
+    """Represents the main menu and manual."""
+
     def __init__(self, screen, fonts):
+        """
+        Constructor, instantiates fields.
+
+        :param screen: The pygame Surface on which to draw things.
+        :param fonts: The fonts.
+        """
         self.screen = screen
         self.fonts = fonts  # Dictionary of fonts passed from main
         self.new_game_button = Button(
@@ -26,7 +34,11 @@ class MainScreen:
         self.manual_menu_button = Button(DARK_GREY, 75, 75, 650, 450)
 
     def run(self):
-        """Handles the main menu loop."""
+        """
+        Handles the main menu loop/state transitions from it.
+
+        :return: A string representing the new state.
+        """
         running = True
         while running:
             clicked = False
@@ -68,7 +80,9 @@ class MainScreen:
         """Handles the manual screen."""
         manual_running = True
         exit_button = pygame.Rect(680, 75, 45, 45)
+
         # There is a better way to do this, but I can't be bothered.
+        # Manual text
         manual_body = self.fonts["small"].render("Navigate through four floors of a dungeon and gather all",
                                                  True, OFF_WHITE)
         manual_body2 = self.fonts["small"].render("four pillars of O.O. to beat the game. Any room may",
@@ -83,6 +97,7 @@ class MainScreen:
         manual_text = self.fonts["large"].render("MANUAL", True, LIGHT_BLUE)
         key_text = self.fonts["medium"].render("Map Color Key:", True, LIGHT_BLUE)
 
+        # Minimap key rects
         monster_rect = pygame.Rect(125, 400, 35, 35)
         elite_rect = pygame.Rect(270, 400, 35, 35)
         item_rect = pygame.Rect(415, 400, 35, 35)
@@ -92,6 +107,7 @@ class MainScreen:
         entrance_rect = pygame.Rect(415, 450, 35, 35)
         exit_rect = pygame.Rect(560, 450, 35, 35)
 
+        # Minimap key texts
         monster_text = self.fonts["small"].render("Monster", True, OFF_WHITE)
         elite_text = self.fonts["small"].render("Elite", True, OFF_WHITE)
         item_text = self.fonts["small"].render("Item", True, OFF_WHITE)
@@ -101,6 +117,7 @@ class MainScreen:
         entrance_text = self.fonts["small"].render("Entrance", True, OFF_WHITE)
         exit_text = self.fonts["small"].render("Exit", True, OFF_WHITE)
 
+        # Manual loop
         while manual_running:
             clicked = False
             mouse_pos = pygame.mouse.get_pos()

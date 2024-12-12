@@ -10,8 +10,10 @@ from src.model.managers.game_state_manager import GameStateManager
 
 
 class MainController:
+    """Handles the main menu and state transitions to/from it (to character selection, gameplay, et cetera)."""
+
     def __init__(self):
-        """Initialize the game controller."""
+        """Constructor. Initializes pygame, the window, and fields."""
         pygame.init()
         self.fonts = get_fonts()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -26,7 +28,7 @@ class MainController:
         pygame.display.set_icon(dungeon_icon)
 
         self.game_setup = GameSetup()
-        self.state = "MAIN_MENU"
+        self.state = "MAIN_MENU" # Start at main menu.
         self.selected_hero = None
         self.debug = False
         self.loading = False
@@ -48,6 +50,7 @@ class MainController:
         pygame.quit()
 
     def main_menu(self):
+        """Handles the main menu and state transitions from it."""
         main_menu = MainScreen(self.screen, self.fonts)
         choice = main_menu.run()
         if choice == "new_game":
@@ -59,6 +62,7 @@ class MainController:
             self.state = "GAMEPLAY"
 
     def character_selection(self):
+        """Handles the character selection screen(s) and state transitions from them."""
         character_screen = CharacterScreen(self.screen, self.fonts)
         result = character_screen.run()
         if isinstance(result, tuple):
@@ -70,6 +74,7 @@ class MainController:
             self.state = "MAIN_MENU"
 
     def gameplay(self):
+        """Handles gameplay and state transitions from it."""
         if self.selected_hero or self.loading:
             if not self.loading:
                 self.game_controller = GameController(self.screen, self.selected_hero, self.debug)

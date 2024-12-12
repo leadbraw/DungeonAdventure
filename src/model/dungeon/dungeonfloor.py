@@ -13,12 +13,23 @@ BOSS: Room with boss enemy, battle begins upon entry
 EXIT: Allows exiting the dungeon
 ENTRANCE: Starting room
 ITEM: Room containing an item, picked up upon entry
+TRAP: Room that does some amount of damage to the adventurer upon entry
+
 BLOCKED: Inaccessible room
+
+RANDOM: Passed to Room constructor to indicate a random accessible room
 '''
 
 
 class Room:
+    """Represents a single room. Should never be instantiated outside the context of within a Dungeon class."""
+
     def __init__(self, room_type='BLOCKED'):
+        """
+        Constructor. Instantiates fields
+
+        :param room_type: The room type of the room. Room types defined above.
+        """
         if room_type == 'RANDOM':
             # First roll: Decide the major category
             main_category = random.choices(
@@ -57,7 +68,11 @@ class Room:
         self.visited = False
 
     def __str__(self):
-        # Assign colors to specific room types
+        """
+        Prints out a string representation of the room in form 'TYPE' with a specific color for each time.
+
+        :return: A string representation of the room.
+        """
         colors = {
             'MONSTER': Fore.RED,
             'ELITE': Fore.MAGENTA,
@@ -72,37 +87,98 @@ class Room:
         return f"{color}{self.type:<8}{Style.RESET_ALL}"
 
     def set_monster(self, monster):
+        """
+        Sets the monster field of the room to a given monster.
+
+        :param monster: The monster to 'place' in the room.
+        """
         self.monster = monster
 
     def get_monster(self):
+        """
+        Returns the monster in the room.
+
+        :return: The monster currently present in the room
+        """
         return self.monster
 
     def has_monster(self):
+        """
+        Returns a boolean for if the room has a monster or not.
+
+        :return: Whether the room has a monster or not.
+        """
         return self.monster is not None
 
     # Item-related methods
+
     def set_item(self, item):
+        """
+        Setter for the item in the room.
+
+        :param item: The item to place in the room
+        """
         self.item = item
 
     def get_item(self):
+        """
+        Fetches the item in the room.
+
+        :return: The item in the room.
+        """
         return self.item
 
     def has_item(self):
+        """
+        Returns a boolean for if the room has an item or not.
+
+        :return: Whether the room has an item or not.
+        """
         return self.item is not None
 
     def set_type(self, new_type):
+        """
+        Setter for the room type.
+
+        :param new_type: The new room type.
+        """
         self.type = new_type
 
     def get_type(self):
+        """
+        Getter for the room type.
+
+        :return: The room type.
+        """
         return self.type
 
     def set_visited(self, new_visited):
+        """
+        Setter for visited field. Used when adventurer reaches room for the first time.
+
+        :param new_visited: The new visited status of the room.
+        """
         self.visited = new_visited
 
     def get_visited(self):
+        """
+        Getter for visited status.
+
+        :return: The visited status of the room.
+        """
         return self.visited
 
     def define_valid_directions(self, length, width, dungeon, x, y):
+        """
+        Sets the valid directions field of the room according to whether the adjacent rooms
+        are traversable or not.
+
+        :param length: The length of the floor the room is on.
+        :param width: The width of the floor the room is on.
+        :param dungeon: The entire dungeon.
+        :param x: The row position.
+        :param y: The column position.
+        """
         directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # Up, Right, Down, Left
         count = 0
         for i in directions:
@@ -110,18 +186,16 @@ class Room:
                 self.valid_directions[count] = True
             count += 1
 
-    # Method to define what gets pickled
     def __getstate__(self):
-        # Return a dictionary of the object's state
+        """Stores the object's state in a pickled dictionary."""
         return {'type': self.type,
                 'valid_directions': self.valid_directions,
                 'monster': self.monster,
                 'item': self.item,
                 'visited': self.visited}
 
-    # Method to define how the object is restored
     def __setstate__(self, state):
-        # Restore the object's state from the dictionary
+        """Restores the object's state from the pickled dictionary."""
         self.type = state['type']
         self.valid_directions = state['valid_directions']
         self.monster = state['monster']
@@ -129,7 +203,9 @@ class Room:
         self.visited = state['visited']
 
 
-class Dungeon:
+class DungeonFloor:
+    """Represents one floor of a dungeon. Is made up of Rooms. A collection of these make up the whole dungeon."""
+
     def __init__(self, floor_number):
         """Constructor for Dungeon. Instantiates it."""
         # 5x5, 6x6, 7x7, 8x8
@@ -145,35 +221,68 @@ class Dungeon:
         self.__populate_map()
 
     def get_width(self) -> int:
-        """Returns width"""
+        """
+        Returns the width of the floor
+
+        :return: The width.
+        """
         return self._width
 
     def get_length(self) -> int:
-        """Returns length"""
+        """
+        Returns the length of the floor
+
+        :return: The length.
+        """
         return self._length
 
     def get_room_list(self) -> list[tuple[int, int]]:
-        """Returns deep copy of room coordinate list"""
+        """
+        Returns a deep copy of the room coordinate list.
+
+        :return: A deep copy of the room coordinate list.
+        """
         return deepcopy(self._room_list)
 
     def get_entrance_coords(self) -> tuple[int, int]:
-        """Returns coordinates of entrance room"""
+        """
+        Returns coordinates of entrance room.
+
+        :return: The coordinates of the entrance room (row, column).
+        """
         return self._entrance_loc
 
     def get_exit_coords(self) -> tuple[int, int]:
-        """Returns coordinates of exit room"""
+        """
+        Returns coordinates of exit room.
+
+        :return: The coordinates of the exit room (row, column).
+        """
         return self._exit_loc
 
     def get_pillar_coords(self) -> tuple[int, int]:
-        """Returns coordinates of pillar room"""
+        """
+        Returns coordinates of the pillar room.
+
+        :return: The coordinates of the pillar room (row, column).
+        """
         return self._pillar_loc
 
     def fetch_room(self, x, y) -> Room:
-        """Fetches room at given coordinates"""
+        """
+        Fetches room at given coordinates.
+
+        :return: The room at the passed coordinates.
+        """
         return self._map[x][y]
 
     def reveal_adjacent_rooms(self, x, y):
-        """Marks adjacent rooms as visited."""
+        """
+        Marks adjacent rooms to a certain room as visited. For use in the minimap.
+
+        :param x: The row coordinate of the room.
+        :param y: The column coordinate of the room.
+        """
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
         for pair in directions:
             next_x, next_y = x + pair[0], y + pair[1]
@@ -181,6 +290,11 @@ class Dungeon:
                 self._map[next_x][next_y].set_visited(True)
 
     def __str__(self):
+        """
+        Returns a string representation of this floor. Rows separated by a newline character.
+
+        :return: A string representation of this floor.
+        """
         result = ""
         for row in self._map:
             result += " ".join(str(item) for item in row) + "\n"
@@ -188,6 +302,15 @@ class Dungeon:
 
     @staticmethod
     def __distance(a_x, a_y, b_x, b_y):
+        """
+        Static method used for calculating the number of rooms that need to be traversed from room A to B.
+
+        :param a_x: The row coordinate of room A.
+        :param a_y: The column coordinate of room A.
+        :param b_x: The row coordinate of room B.
+        :param b_y: The column coordinate of room B.
+        :return: The distance between the two rooms.
+        """
         current_x = a_x
         current_y = a_y
         count = 0
@@ -200,7 +323,7 @@ class Dungeon:
         return count
 
     def __populate_map(self):
-        """Responsible for populating a fresh map with an entrance, exit, pillar, et cetera"""
+        """Responsible for populating a fresh map with an entrance, exit, pillar, et cetera."""
         essential_rooms = []  # Store the entrance, exit, and pillar here
         other_rooms = []  # Temporarily store other non-blocked rooms here
 
@@ -243,6 +366,12 @@ class Dungeon:
         self._room_list = essential_rooms + [room for room in other_rooms if room not in essential_rooms]
 
     def __generate_offshoots(self, path):
+        """
+        Responsible for generating offshoot paths on the map.
+
+        :param path: The path from the entrance to exit, sequence of (row, column) tuples.
+        :return: The locations of all offshoot rooms.
+        """
         offshoot_length = self._length - 2
         starting_points = random.sample(path[1:-1], offshoot_length - 1)
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
@@ -263,7 +392,15 @@ class Dungeon:
         return room_locations
 
     def __path_to_exit(self, entrance_x, entrance_y, exit_x, exit_y) -> list:
-        """Responsible for creating and returning the path from the entrance to the exit of the dungeon"""
+        """
+        Responsible for creating and returning the path from the entrance to the exit of the dungeon.
+
+        :param entrance_x: The row coordinate of the entrance.
+        :param entrance_y: The column coordinate of the entrance.
+        :param exit_x: The row coordinate of the exit.
+        :param exit_y: The column coordinate of the exit.
+        :return: A list of coordinates (row, column) that is the path from the entrance to the exit.
+        """
         current_x = entrance_x
         current_y = entrance_y
         path = [(current_x, current_y)]
@@ -279,7 +416,13 @@ class Dungeon:
         return path
 
     def __place_pillar(self, rooms, exit_x, exit_y):
-        """Places one pillar somewhere on the map (excluding entrance/exit)"""
+        """
+        Places one pillar somewhere on the map (excluding entrance/exit).
+
+        :param rooms: A list of all traversable room coordinates.
+        :param exit_x: The row coordinate of the exit.
+        :param exit_y: The column coordinate of the exit.
+        """
         x, y = random.choice(rooms[1:])  # excludes entrance room
         while x == exit_x and y == exit_y:
             x, y = random.choice(rooms[1:])
@@ -289,14 +432,27 @@ class Dungeon:
             self._room_list.append((x, y))  # Add to non-blocked list
 
     def __valid_direction_for_offshoot(self, direction, x, y) -> bool:
+        """
+        Whether a direction is a valid direction to place an offshoot on the map or not.
+
+        :param direction: The direction.
+        :param x: The row of the room.
+        :param y: The column of the room.
+        """
         new_x, new_y = x + direction[0], y + direction[1]
         return (0 <= new_x < self._length and 0 <= new_y < self._width and
                 self._map[new_x][new_y].type == 'BLOCKED')
 
     def create_map(self, reveal_all=False):
-        """Creates the map of the floor. By default, only returns visited rooms. Returns a Surface"""
+        """
+        Creates the minimap of the floor. By default, only returns visited rooms. Returns a Surface.
+
+        :param reveal_all: Whether all rooms should be revealed on the map or not.
+        :return A pygame Surface representing the current floor's map.
+        """
         tile_size = MAP_SURFACE_TILE_SIZE
         map_surface = Surface((MAP_SURFACE_TILE_SIZE * 8, MAP_SURFACE_TILE_SIZE * 8))  # 8 is max floor width/height
+        color = None
         for row in range(self._length):
             for col in range(self._width):
                 room = self._map[row][col]
@@ -327,9 +483,8 @@ class Dungeon:
 
         return map_surface
 
-    # Method to define what gets pickled
     def __getstate__(self):
-        # Return a dictionary of the object's state
+        """Stores the object's state in a pickled dictionary."""
         return {'_length': self._length,
                 '_width': self._width,
                 '_map': self._map,
@@ -338,9 +493,8 @@ class Dungeon:
                 '_pillar_loc': self._pillar_loc,
                 '_room_list': self._room_list}
 
-    # Method to define how the object is restored
     def __setstate__(self, state):
-        # Restore the object's state from the dictionary
+        """Restores the object's state from the pickled dictionary."""
         self._length = state['_length']
         self._width = state['_width']
         self._map = state['_map']
@@ -353,15 +507,15 @@ class Dungeon:
 if __name__ == "__main__":
     screen = pygame.display.set_mode((500, 500))
     # Testing code
-    d = Dungeon(4)
+    d = DungeonFloor(4)
     print(d.__str__())
     print(f"Non-blocked rooms ({len(d._room_list)}): {d._room_list}")
     running = True
-    map = d.create_map()
+    d_map = d.create_map(True)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         screen.fill(BACKGROUND_COLOR)
-        screen.blit(map, (0, 0))
+        screen.blit(d_map, (0, 0))
         pygame.display.update()

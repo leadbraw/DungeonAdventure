@@ -5,6 +5,8 @@ from src.view.gui_elements import Button
 
 
 class InventoryOverlay:
+    """Class representing the overlay drawn on screen reflecting the adventurer's inventory."""
+
     def __init__(self, screen, fonts, inventory, pillar_status=None, current_monster=None, current_room=None,
                  dungeon=None):
         """Initializes the inventory overlay."""
@@ -21,7 +23,13 @@ class InventoryOverlay:
         self.current_floor = 1  # Initialize with a default value
 
     def draw_pillar_buttons(self, button_size, spacing):
-        """Draws the pillar buttons with images centered at the top and text below indicating buffs."""
+        """
+        Constructs/draws the pillar buttons with images centered at the top and text below indicating buffs.
+
+        :param button_size: Size of each button.
+        :param spacing: Space between each button.
+        :return: All pillar buttons.
+        """
         total_width = len(self.pillar_status) * button_size + (len(self.pillar_status) - 1) * spacing
         row_start_x = (650 - total_width) // 2  # Center row horizontally
         row_y = 6  # Fixed vertical position for the first row
@@ -76,7 +84,13 @@ class InventoryOverlay:
         return buttons
 
     def draw_usable_item_buttons(self, button_size, spacing):
-        """Draws usable item buttons with item name above, image centered, and quantity below."""
+        """
+        Constructs/draws usable item buttons with item name above, image centered, and quantity below.
+
+        :param button_size: The size of each button.
+        :param spacing: The spacing between each button.
+        :return: All usable item buttons.
+        """
         usable_items = ["Code Spike", "Energy Drink", "White Box"]
         total_width = len(usable_items) * button_size + (len(usable_items) - 1) * spacing
         row_start_x = (650 - total_width) // 2  # Center row horizontally
@@ -129,7 +143,14 @@ class InventoryOverlay:
         return buttons
 
     def draw_close_button(self, close_size, button_size, spacing):
-        """Draws the close button at the specified position."""
+        """
+        Draws the close button at the specified position on the overlay.
+
+        :param close_size: The width/height of the close button.
+        :param button_size: The size of each button. Used for positioning.
+        :param spacing: The spacing between each button.
+        :return: All usable item buttons.
+        """
         close_x = 650 - 40  # Align to the far right of the overlay
         # Align vertically with the center of the second row
         row_y = 6 + button_size + spacing  # Second row's y position
@@ -148,7 +169,16 @@ class InventoryOverlay:
         return close_button
 
     def handle_events(self, usable_item_buttons, close_button, target, current_monster, position, dungeon):
-        """Handles events for inventory overlay."""
+        """
+        Handles events for inventory overlay.
+
+        :param usable_item_buttons: List of consumable item buttons.
+        :param close_button: The close button.
+        :param target: The target for the item to be used.
+        :param current_monster: The current monster being fought, if any.
+        :param position: The position within the floor of the dungeon (or the current room as a fallback).
+        :param dungeon: The current floor the adventurer is on (or the whole dungeon as a fallback).
+        """
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -198,7 +228,14 @@ class InventoryOverlay:
         return "continue"  # Keep overlay open if no exit condition is met
 
     def display(self, target, position=None, dungeon=None):
-        """Displays the inventory overlay and handles item selection."""
+        """
+        Displays the inventory overlay and handles item selection.
+
+        :param target: The target on which an item will be used.
+        :param position: The position of the adventurer.
+        :param dungeon: The dungeon.
+        :return: The selected item.
+        """
         running = True
         self.selected_item = None
 
@@ -223,7 +260,7 @@ class InventoryOverlay:
             pygame.draw.rect(self.screen, (30, 30, 30), (overlay_x, overlay_y, overlay_width, overlay_height))
 
             # Draw buttons
-            pillar_buttons = self.draw_pillar_buttons(button_size, spacing)
+            self.draw_pillar_buttons(button_size, spacing) # buttons discarded
             usable_item_buttons = self.draw_usable_item_buttons(button_size, spacing)
             close_button = self.draw_close_button(close_size, button_size, spacing)
 

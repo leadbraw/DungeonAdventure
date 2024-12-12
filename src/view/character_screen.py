@@ -11,6 +11,7 @@ class CharacterScreen:
     """Handles the character selection and confirmation screen."""
 
     def __init__(self, screen, fonts):
+        """Constructor, initializes fields used."""
         self.screen = screen
         self.fonts = fonts
 
@@ -58,7 +59,14 @@ class CharacterScreen:
 
     @staticmethod
     def _wrap_text(text, font, max_width):
-        """Wrap text to fit within the max width."""
+        """
+        Wrap text to fit within the max width.
+
+        :param text: The text to wrap if needed.
+        :param font: The font with which to draw the text.
+        :param max_width: The maximum allowable width for the text.
+        :return: The text split into multiple strings (one per line).
+        """
         words = text.split(' ')
         lines = []
         current_line = ""
@@ -134,7 +142,13 @@ class CharacterScreen:
             self.initial_back_button.draw(self.screen, True)
 
     def handle_event(self, event):
-        """Handle events for character selection or confirmation."""
+        """
+        Handle events for character selection or confirmation.
+
+        :param event: The pygame event to handle.
+        :return: A tuple containing a string of the chosen event type (if applicable) and
+        the selected character (if applicable)
+        """
         if event.type == pygame.MOUSEBUTTONDOWN and (event.button == 1 or event.button == 3):
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if self.on_confirmation_screen:

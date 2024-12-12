@@ -1,22 +1,22 @@
 import random
 import pytest
-from src.model.dungeon.dungeon import Dungeon
+from src.model.dungeon.dungeonfloor import DungeonFloor
 
 @pytest.fixture
 def dungeon_1():
-    return Dungeon(1)
+    return DungeonFloor(1)
 
 @pytest.fixture
 def dungeon_2():
-    return Dungeon(2)
+    return DungeonFloor(2)
 
 @pytest.fixture
 def dungeon_3():
-    return Dungeon(3)
+    return DungeonFloor(3)
 
 @pytest.fixture
 def dungeon_4():
-    return Dungeon(4)
+    return DungeonFloor(4)
 
 def test_proper_width_1(dungeon_1):
     assert dungeon_1.get_width() == 5

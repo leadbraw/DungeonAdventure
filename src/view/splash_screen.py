@@ -4,7 +4,15 @@ from constants import BACKGROUND_COLOR, PASTEL_RED, SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class SplashScreen:
+    """Represents the splash screen displayed upon launching the game."""
+
     def __init__(self, screen, font):
+        """
+        Constructor, initializes fields.
+
+        :param screen: The pygame Surface on which things will be drawn.
+        :param font: The font with which the splash screen text will be drawn.
+        """
         self.screen = screen
         self.font = font
 

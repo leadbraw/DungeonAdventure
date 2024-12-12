@@ -1,4 +1,4 @@
-from src.model.dungeon.dungeon import Dungeon
+from src.model.dungeon.dungeonfloor import DungeonFloor
 from src.model.factories.monster_factory import MonsterFactory
 from src.model.factories.item_factory import ItemFactory
 from src.model.managers.monster_manager import MonsterManager
@@ -6,6 +6,8 @@ from src.model.managers.item_manager import ItemManager
 
 
 class DungeonManager:
+    """Responsible for handling the current Dungeon."""
+
     _instance = None
 
     @staticmethod
@@ -19,13 +21,15 @@ class DungeonManager:
         return DungeonManager._instance
 
     def __init__(self):
+        """
+        Constructor. Initializes fields. Note that __init__ does NOT call
+        initialize_dungeon(), that is the game controller's responsibility!
+        """
         if DungeonManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance().")
         self.dungeon = []
         self.monster_manager = MonsterManager.get_instance()
         self.item_manager = ItemManager.get_instance()
-        # print("[DungeonManager] Initialized. Ready to generate the dungeon.")
-        # Note that __init__ does NOT call initialize_dungeon(), that is the game controller's responsibility!
 
     def initialize_dungeon(self):
         """
@@ -36,7 +40,7 @@ class DungeonManager:
         self.item_manager.initialize_pillar_order()
 
         print("[DungeonManager] Initializing the dungeon...")
-        self.dungeon = [Dungeon(1), Dungeon(2), Dungeon(3), Dungeon(4)]  # Four floors
+        self.dungeon = [DungeonFloor(1), DungeonFloor(2), DungeonFloor(3), DungeonFloor(4)]  # Four floors
         # print(f"[DungeonManager] Dungeon generated with {len(self.dungeon)} floors.")
 
         for floor_index, floor in enumerate(self.dungeon):
@@ -137,7 +141,7 @@ class DungeonManager:
     def get_floor_entrance(self, floor):
         """
         Returns the entrance position for the specified floor.
-        :param floor The number of the floor to be checked.
+        :param floor: The number of the floor to be checked.
         :return The location of the entrance (row, column).
         """
         if floor < 1 or floor > len(self.dungeon):
@@ -150,8 +154,8 @@ class DungeonManager:
     def get_room(self, floor, position):
         """
         Fetch a room based on floor and position.
-        :param floor The floor number (1-indexed).
-        :param position The coordinates of the room to be grabbed (row, column).
+        :param floor: The floor number (1-indexed).
+        :param position: The coordinates of the room to be grabbed (row, column).
         :return The room at the specified position.
         """
         # print(f"[DungeonManager] Fetching room at Floor {floor}, Position {position}.")
@@ -160,8 +164,8 @@ class DungeonManager:
     def mark_room_visited(self, floor, position):
         """
         Mark a room as visited.
-        :param floor The floor number (1-indexed).
-        :param position The coordinates of the room to be marked visited (row, column).
+        :param floor: The floor number (1-indexed).
+        :param position: The coordinates of the room to be marked visited (row, column).
         """
         print(f"[DungeonManager] Marking room as visited: Floor {floor}, Position {position}.")
         self.get_room(floor, position).set_visited(True)
@@ -169,8 +173,8 @@ class DungeonManager:
     def get_floor_map(self, floor, reveal_all=False):
         """
         Returns the map for the specified floor.
-        :param floor The floor number (1-indexed).
-        :param reveal_all Reveals all rooms
+        :param floor: The floor number (1-indexed).
+        :param reveal_all: Whether to reveal all rooms or not
         :return The map of the floor as a pygame Surface.
         """
         if floor < 1 or floor > len(self.dungeon):
@@ -184,8 +188,8 @@ class DungeonManager:
     def get_monster_in_room(self, floor, position):
         """
         Returns the monster in the specified room on the given floor.
-        :param floor The floor number (1-indexed).
-        :param position The (row, column) tuple for the room's position.
+        :param floor: The floor number (1-indexed).
+        :param position: The (row, column) tuple for the room's position.
         :return The monster in the room, or None if there is no monster.
         """
         print(f"[DungeonManager] Fetching monster in room at Floor {floor}, Position {position}.")
@@ -199,8 +203,8 @@ class DungeonManager:
     def get_item_in_room(self, floor, position):
         """
         Returns the item in the specified room on the given floor.
-        :param floor The floor number (1-indexed).
-        :param position The (row, column) tuple for the room's position.
+        :param floor: The floor number (1-indexed).
+        :param position: The (row, column) tuple for the room's position.
         :return The item in the room, or None if there is no item.
         """
         print(f"[DungeonManager] Fetching item in room at Floor {floor}, Position {position}.")
@@ -214,19 +218,17 @@ class DungeonManager:
     def clear_item_in_room(self, floor, position):
         """
         Clears (removes) the item in the specified room on the given floor.
-        :param floor The floor number (1-indexed).
-        :param position The (row, column) tuple for the room's position.
+        :param floor: The floor number (1-indexed).
+        :param position: The (row, column) tuple for the room's position.
         """
         room = self.get_room(floor, position)
         if room.has_item():
             room.set_item(None)
 
-# Method to define what gets pickled
     def __getstate__(self):
-        # Return a dictionary of the object's state
+        """Stores the object's state in a pickled dictionary."""
         return {'dungeon': self.dungeon}
 
-    # Method to define how the object is restored
     def __setstate__(self, state):
-        # Restore the object's state from the dictionary
+        """Restores the object's state from the pickled dictionary."""
         self.dungeon = state['dungeon']
