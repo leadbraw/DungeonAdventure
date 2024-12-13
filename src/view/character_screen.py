@@ -1,21 +1,24 @@
 import os
-
 import pygame
 from constants import DARK_GREY, LIGHT_BLUE, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, OFF_WHITE, FADED_BLUE, PASTEL_RED, \
-    SCREEN_HEIGHT, SCREEN_WIDTH
+    SCREEN_HEIGHT, SCREEN_WIDTH, SPRITE_PATHS
 from src.view.gui_elements import Button
-from src.model.managers.adventurer_manager import AdventurerManager
 
 
 class CharacterScreen:
     """Handles the character selection and confirmation screen."""
 
-    def __init__(self, screen, fonts):
-        """Constructor, initializes fields used."""
+    def __init__(self, screen, fonts, adventurer_data):
+        """
+        Constructor, initializes fields used.
+
+        :param screen: The pygame screen to draw on.
+        :param fonts: A dictionary of fonts for rendering text.
+        :param adventurer_data: A dictionary containing adventurer data.
+        """
         self.screen = screen
         self.fonts = fonts
-
-        self.adventurer_manager = AdventurerManager.get_instance()
+        self.adventurer_data = adventurer_data
 
         self.adventurer_buttons = {}
         self._initialize_adventurer_buttons()
@@ -42,7 +45,6 @@ class CharacterScreen:
 
     def _initialize_adventurer_buttons(self):
         """Dynamically create buttons for all adventurers."""
-        adventurer_data = self.adventurer_manager.get_adventurer_data()
         positions = [
             (SCREEN_WIDTH / 4 - 75, SCREEN_HEIGHT / 3),
             (535, SCREEN_HEIGHT / 3),
@@ -50,11 +52,11 @@ class CharacterScreen:
             (535, 2 * SCREEN_HEIGHT / 3)
         ]
 
-        for idx, (name, data) in enumerate(adventurer_data.items()):
+        for idx, (name, data) in enumerate(self.adventurer_data.items()):
             x, y = positions[idx % len(positions)]
             self.adventurer_buttons[name] = Button(
                 OFF_WHITE, x, y, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
-                self.fonts["small"], DARK_GREY, data[2].upper() # Apparently the class is index 2 in this data /shrug
+                self.fonts["small"], DARK_GREY, data[2].upper()
             )
 
     @staticmethod
@@ -162,11 +164,11 @@ class CharacterScreen:
             else:
                 for name, button in self.adventurer_buttons.items():
                     if button.is_hovered((mouse_x, mouse_y)):
-                        raw_data = self.adventurer_manager.get_adventurer_data(name)
-                        if os.path.exists(f'assets/images/{name.lower()}.png'):
-                            image_path = f'assets/images/{name.lower()}.png'
-                        else:
-                            image_path = f'_internal/assets/images/{name.lower()}.png'
+                        raw_data = self.adventurer_data[name]
+
+                        # Fetch image path from SPRITE_PATHS
+                        image_path = SPRITE_PATHS.get(name.lower(), SPRITE_PATHS["hero"])
+
                         self.selected_character = {
                             "name": name,
                             "type": raw_data[2],

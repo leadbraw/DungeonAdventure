@@ -1,5 +1,6 @@
 import pygame
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, get_fonts, SPRITE_PATHS
+from src.model.managers.adventurer_manager import AdventurerManager
 from src.view.splash_screen import SplashScreen
 from src.view.main_screen import MainScreen
 from src.view.character_screen import CharacterScreen
@@ -68,7 +69,10 @@ class MainController:
 
     def character_selection(self):
         """Handles the character selection screen(s) and state transitions from them."""
-        character_screen = CharacterScreen(self.screen, self.fonts)
+        adventurer_manager = AdventurerManager.get_instance()
+        adventurer_data = adventurer_manager.get_adventurer_data()  # Fetch data
+
+        character_screen = CharacterScreen(self.screen, self.fonts, adventurer_data)  # Pass data to view
         result = character_screen.run()
         if isinstance(result, tuple):
             if result[1] == "debug":
