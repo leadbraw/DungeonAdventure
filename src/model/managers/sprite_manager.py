@@ -2,7 +2,8 @@ import pygame
 
 
 class SpriteManager:
-    _instance = None  # Singleton instance
+    # Singleton instance
+    _instance = None
 
     @staticmethod
     def get_instance():

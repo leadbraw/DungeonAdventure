@@ -40,7 +40,7 @@ class SplashScreen:
             setup_function()
 
         # Ensure splash screen stays for at least 3000ms
-        elapsed_time = int(time.time() - start_time) * 1000  # Convert to milliseconds
+        elapsed_time = int(time.time() - start_time) * 1000
         remaining_time = max(0, 3000 - elapsed_time)
         if remaining_time > 0:
             pygame.time.delay(int(remaining_time))

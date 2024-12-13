@@ -1,7 +1,7 @@
-import pygame
 import sys
+import pygame
+from constants import BACKGROUND_COLOR, BLACK, LIGHT_BLUE, OFF_WHITE, WHITE
 from src.view.gui_elements import Button
-from constants import LIGHT_BLUE, OFF_WHITE, BACKGROUND_COLOR, BLACK, WHITE
 
 
 class BattleController:
@@ -19,7 +19,8 @@ class BattleController:
             raise ValueError("Missing arguments for initializing or resetting BattleController.")
         if BattleController._instance is None:
             BattleController._instance = BattleController(screen, fonts, draw_ui)
-        else:  # There is an existing instance, let's reset it.
+        else:
+            # There is an existing instance, let's reset it.
             BattleController._instance.reset(screen, fonts, draw_ui)
         return BattleController._instance
 
@@ -85,7 +86,8 @@ class BattleController:
             )
 
         if self.post_battle_logic(monster, adventurer, dungeon, current_floor, position) == 1:
-            return 1  # Triggers a restart in the game controller and main
+            # Triggers a restart in the game controller and main
+            return 1
 
     def draw_battle_ui(self, monster, adventurer, fight_button, item_button, special_button,
                        get_adventurer_portrait, minimap):
@@ -155,7 +157,7 @@ class BattleController:
                 if fight_button.is_hovered(mouse_pos):
                     self.execute_fight(monster, adventurer)
 
-                    # Special Attack Logic
+                # Special Attack Logic
                 elif special_button.is_hovered(mouse_pos):
                     self.execute_special(monster, adventurer)
 
@@ -168,17 +170,18 @@ class BattleController:
                         # Handle target logic for item types
                         if selected_item.name == "White Box":
                             actual_target = (
-                                position, dungeon[current_floor])  # Use position and floor for room effects
+                                position, dungeon[current_floor])
                         elif selected_item.name == "Code Spike":
-                            actual_target = monster  # Use monster for damage
+                            actual_target = monster
                         else:
-                            actual_target = adventurer  # Default target is the adventurer
+                            actual_target = adventurer
                         if adventurer.inventory.use_item(selected_item.name, actual_target):
-                            return True  # Continue the battle
+                            # Continue the battle
+                            return True
                     else:
                         pass
 
-            # Continue the battle as long as both monster and adventurer are alive
+        # Continue the battle as long as both monster and adventurer are alive
         return monster.hp > 0 and adventurer.hp > 0
 
     def post_battle_logic(self, monster, adventurer, dungeon, current_floor, position):
@@ -197,7 +200,7 @@ class BattleController:
             pygame.display.flip()
             pygame.time.delay(2000)
             current_room = dungeon[current_floor - 1].fetch_room(position[0], position[1])
-            current_room.set_monster(None)  # Clear monster from the room
+            current_room.set_monster(None)
 
         elif adventurer.hp <= 0:
             # Display game-over options
@@ -238,16 +241,19 @@ class BattleController:
         if monster.hp > 0:
             outcomes = adventurer.attack(monster).split(".")
             for i in range(len(outcomes)):
-                self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method (and add period back in)
+                # Call the passed draw_ui method (and add period back in)
+                self.draw_ui(outcomes[i] + ".", in_battle=True)
                 pygame.display.flip()
                 pygame.time.delay(1000)
 
         if monster.hp > 0:
             message = f"{monster.name} is attacking!"
-            self.draw_ui(message)  # Call the passed draw_ui method
+            # Call the passed draw_ui method
+            self.draw_ui(message)
             outcomes = monster.attack(adventurer).split(".")
             for i in range(len(outcomes)):
-                self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method (and add period back in)
+                # Call the passed draw_ui method (and add period back in)
+                self.draw_ui(outcomes[i] + ".", in_battle=True)
                 pygame.display.flip()
                 pygame.time.delay(1000)
 
@@ -263,15 +269,18 @@ class BattleController:
             outcomes = adventurer.special_action(monster).split(".")
             for i in range(len(outcomes)):
                 if outcomes[i].strip():
-                    self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method
+                    # Call the passed draw_ui method
+                    self.draw_ui(outcomes[i] + ".", in_battle=True)
                     pygame.display.flip()
                     pygame.time.delay(1000)
 
         if monster.hp > 0:
             message = f"{monster.name} is attacking!"
-            self.draw_ui(message, in_battle=True)  # Call the passed draw_ui method
+            # Call the passed draw_ui method
+            self.draw_ui(message, in_battle=True)
             outcomes = monster.attack(adventurer).split(".")
             for i in range(len(outcomes)):
-                self.draw_ui(outcomes[i] + ".", in_battle=True)  # Call the passed draw_ui method (and add period back in)
+                # Call the passed draw_ui method (and add period back in)
+                self.draw_ui(outcomes[i] + ".", in_battle=True)
                 pygame.display.flip()
                 pygame.time.delay(1000)

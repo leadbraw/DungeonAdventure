@@ -2,10 +2,9 @@ import random
 from abc import abstractmethod
 from typing import final
 
+
 # Utilizes Template method: attack(target) calls _hit_response(damage),
 # which is implemented in subclasses.
-
-
 class Entity:
     def __init__(self, the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range):
         """
@@ -17,17 +16,21 @@ class Entity:
         :param the_damage_range: Damage range of the entity.
         """
 
-        self.__my_name = the_name.strip() if the_name else "Unnamed Entity"  # Validate name
-        self.__my_max_hp = max(1, the_max_hp)  # Ensure at least 1 HP
-        self.__my_attack_speed = max(1, the_attack_speed)  # Ensure non-zero attack speed
-        self.__my_hit_chance = min(max(0.1, the_hit_chance), 1)  # Clamp between 0.1 and 1
+        # Validate name
+        self.__my_name = the_name.strip() if the_name else "Unnamed Entity"
+        # Ensure at least 1 HP
+        self.__my_max_hp = max(1, the_max_hp)
+        # Ensure non-zero attack speed
+        self.__my_attack_speed = max(1, the_attack_speed)
+        # Clamp between 0.1 and 1
+        self.__my_hit_chance = min(max(0.1, the_hit_chance), 1)
+        # if damage range is incomplete defaults to 1
         self.__my_damage_range = (
             max(1, the_damage_range[0]),
             max(1, the_damage_range[0], the_damage_range[1])
-            # if damage range is incomplete defaults to 1
         ) if the_damage_range and len(the_damage_range) == 2 else (1, 1)
-
-        self.__my_hp = self.__my_max_hp  # Initialize HP to max HP
+        # Initialize HP to max HP
+        self.__my_hp = self.__my_max_hp
 
     def __str__(self):
         """
@@ -150,30 +153,35 @@ class Entity:
 
     @name.setter
     def name(self, the_name):
-        self.__my_name = the_name.strip() if the_name else "Unnamed Entity"  # Validate name
+        # Validate name
+        self.__my_name = the_name.strip() if the_name else "Unnamed Entity"
 
     @max_hp.setter
     def max_hp(self, the_max_hp):
         """
         Sets the maximum HP and adjusts current HP if necessary.
         """
-        self.__my_max_hp = min(max(1, the_max_hp), 999)  # Clamp max_hp between 1 and 999
-        self.__my_hp = min(self.__my_hp, self.__my_max_hp)  # Adjust hp directly without calling the setter
+        # Clamp max_hp between 1 and 999
+        self.__my_max_hp = min(max(1, the_max_hp), 999)
+        # Adjust hp directly without calling the setter
+        self.__my_hp = min(self.__my_hp, self.__my_max_hp)
 
     @attack_speed.setter
     def attack_speed(self, the_attack_speed):
-        self.__my_attack_speed = max(1, the_attack_speed)  # Ensure non-zero attack speed
+        # Ensure non-zero attack speed
+        self.__my_attack_speed = max(1, the_attack_speed)
 
     @hit_chance.setter
     def hit_chance(self, the_hit_chance):
-        self.__my_hit_chance = min(max(0.1, the_hit_chance), 1)  # Clamp between 0 and 1
+        # Clamp between 0.1 and 1
+        self.__my_hit_chance = min(max(0.1, the_hit_chance), 1)
 
     @damage_range.setter
     def damage_range(self, the_damage_range):
+        # if damage range is incomplete defaults to 1
         self.__my_damage_range = (
             max(1, the_damage_range[0]),
             max(1, the_damage_range[0], the_damage_range[1])
-            # if damage range is incomplete defaults to 1
         ) if the_damage_range and len(the_damage_range) == 2 else (1, 1)
 
     @hp.setter

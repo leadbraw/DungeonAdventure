@@ -20,7 +20,8 @@ class MonsterManager:
     def __init__(self, monsters_data):
         if MonsterManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
-        self.monster_data = {"Normal": [], "Elite": []}  # Store monster data categorized by type
+        # Store monster data categorized by type
+        self.monster_data = {"Normal": [], "Elite": []}
         self.load_monsters(monsters_data)
 
     def load_monsters(self, monsters_data):

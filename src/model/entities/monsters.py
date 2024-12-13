@@ -22,13 +22,14 @@ class Monster(Entity):
                          the_attack_speed, the_hit_chance, the_damage_range)
 
         # Monster-specific attributes
-        self.__my_type = the_type.strip() if the_type else "Invalid type"  # Validate type
-        self.__my_heal_chance = min(max(0, the_heal_chance), 1)  # Clamp between 0 and 1
+        self.__my_type = the_type.strip() if the_type else "Invalid type"
+        # Clamp between 0 and 1
+        self.__my_heal_chance = min(max(0, the_heal_chance), 1)
+        # if heal range is incomplete defaults to 1
         self.__my_heal_range = (
             max(1, the_heal_range[0]),
             max(1, the_heal_range[0], the_heal_range[1])
-            # if heal range is incomplete defaults to 1
-        ) if the_damage_range and len(the_damage_range) == 2 else (1, 1)
+        )if the_damage_range and len(the_damage_range) == 2 else (1, 1)
 
     """ INTERNAL METHODS """
     @final

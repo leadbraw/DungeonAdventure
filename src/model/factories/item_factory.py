@@ -69,7 +69,8 @@ class ItemFactory:
                 name=raw_data["name"],
                 description=raw_data["description"],
                 target=raw_data["target"],
-                one_time_item=True,  # Mark the item as unique
+                # Mark the item as unique
+                one_time_item=True,
                 effect_min=raw_data.get("effect_min"),
                 effect_max=raw_data.get("effect_max"),
                 buff_type=raw_data.get("buff_type"),
@@ -87,6 +88,7 @@ class ItemFactory:
         :return: A standard Item instance.
         """
         # Ensure the 'one_time_item' attribute is explicitly set to False (non-unique)
-        raw_data["one_time_item"] = 0  # Representing non-unique in raw data
+        # Representing the non-unique in raw data
+        raw_data["one_time_item"] = 0
         item = ItemFactory.create_item_from_raw(raw_data)
         return item

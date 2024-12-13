@@ -21,9 +21,11 @@ class ItemManager:
         if ItemManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
 
-        # Separate raw item data into two dictionaries
-        self.one_time_items = {}  # Items that can only be acquired once
-        self.other_items = {}  # Items that can be acquired multiple times
+        # Separate raw items_data into two dictionaries
+        # Items that can only be acquired once
+        self.one_time_items = {}
+        # Items that can be acquired multiple times
+        self.other_items = {}
 
         for item_name, data in self.one_time_items.items():
             if not data["name"]:
@@ -46,7 +48,8 @@ class ItemManager:
                 "buff_type": row[7]
             }
 
-            if row[4]:  # If one_time_item is True
+            # If one_time_item
+            if row[4]:
                 self.one_time_items[item_name] = item_data
             else:
                 self.other_items[item_name] = item_data
@@ -62,7 +65,7 @@ class ItemManager:
         :return: Raw data for a random unique item, or None if no items remain.
         """
         if not self.one_time_items:
-            return None  # No more unique items to retrieve
+            return None
 
         item_name = list(self.one_time_items.keys())[floor_index]
         return self.one_time_items[item_name]
@@ -103,6 +106,6 @@ class ItemManager:
         """
         Randomizes the order of one_time_items for unique item placement (pillars).
         """
-        randomized_items = list(self.one_time_items.items())  # Convert to a list of (key, value) pairs
-        random.shuffle(randomized_items)  # Shuffle the items
-        self.one_time_items = dict(randomized_items)  # Reassign as a randomized dictionary
+        randomized_items = list(self.one_time_items.items())
+        random.shuffle(randomized_items)
+        self.one_time_items = dict(randomized_items)

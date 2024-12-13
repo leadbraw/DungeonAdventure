@@ -2,6 +2,8 @@ import pickle
 
 
 class GameStateManager:
+    # Singleton instance
+    _instance = None
     """
     Handles save/load by initiating pickling/unpickling from save file.
     """

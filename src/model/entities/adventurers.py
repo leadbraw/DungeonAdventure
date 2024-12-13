@@ -20,8 +20,10 @@ class Adventurer(Entity):
         :param the_block_chance: Block chance of the adventurer.
         """
         super().__init__(the_name, the_max_hp, the_attack_speed, the_hit_chance, the_damage_range)
-        self.__my_type = the_type.strip() if the_type else "Invalid type"  # Validate type
-        self.__my_block_chance = min(max(0, the_block_chance), 1)  # Clamp between 0 and 1
+        # Validate type
+        self.__my_type = the_type.strip() if the_type else "Invalid type"
+        # Clamp between 0 and 1
+        self.__my_block_chance = min(max(0, the_block_chance), 1)
         self.__inventory = Inventory()
 
     """ PUBLIC METHODS """
@@ -87,9 +89,11 @@ class Adventurer(Entity):
             self.block_chance = min(self.block_chance + (buff_value / 10), 1.0)
         elif buff_type == "attack_damage":
             min_damage, max_damage = self.damage_range
-            self.damage_range = (min_damage + buff_value, max_damage + buff_value)  # Uses the setter for damage_range
+            # Uses the setter for damage_range
+            self.damage_range = (min_damage + buff_value, max_damage + buff_value)
         elif buff_type == "attack_speed":
-            self.attack_speed = self.attack_speed + buff_value  # Uses the setter for attack_speed
+            # Uses the setter for attack_speed
+            self.attack_speed = self.attack_speed + buff_value
         elif buff_type == "hit_chance":
             self.hit_chance = buff_value
         else:
@@ -102,9 +106,11 @@ class Adventurer(Entity):
         """
         if self.hp < self.max_hp:
             healed = min(self.max_hp - self.hp, heal_amount)
-            self._update_hp(-healed)  # Negative value to heal
+            # Negative value to heal
+            self._update_hp(-healed)
         else:
             pass
+
     """ PROPERTIES """
     @property
     def type(self):
@@ -149,7 +155,6 @@ class Adventurer(Entity):
         self.__my_type = state['__my_type']
         self.__my_block_chance = state['__my_block_chance']
         self.__inventory = state['__inventory']
-
 
 """ ADVENTURER CLASSES """
 
@@ -279,9 +284,10 @@ class Thief(Adventurer):
             message += "." + self.attack(the_target)
 
         else:
-            message += f"{self.name} was detected."  # end statement
+            message += f"{self.name} was detected."
 
-        return message  # utilizes Entity attack method trimming
+        # utilizes Entity attack method trimming
+        return message
 
     def __special_action_msg(self, the_target):
         """

@@ -2,17 +2,19 @@ import os
 import random
 import sys
 import pygame
-from constants import (BACKGROUND_COLOR, DARK_GREY, get_fonts, OFF_WHITE, LIGHT_BLUE, MAP_CELL_WIDTH,
-                       MENU_BUTTON_HEIGHT, MENU_BUTTON_WIDTH, GOLD, SCREEN_WIDTH, SCREEN_HEIGHT, DARK_RED, RED, BROWN,
-                       FADED_GRAY, MEDIUM_GREY, VIOLET, DARK_VIOLET, BLACK, WHITE)
+from constants import (
+    BACKGROUND_COLOR, BLACK, BROWN, DARK_GREY, DARK_RED, DARK_VIOLET, FADED_GRAY,
+    GOLD, LIGHT_BLUE, MAP_CELL_WIDTH, MEDIUM_GREY, MENU_BUTTON_HEIGHT,
+    MENU_BUTTON_WIDTH, OFF_WHITE, RED, SCREEN_WIDTH, SCREEN_HEIGHT, VIOLET, WHITE, get_fonts
+)
 from src.controller.battle_controller import BattleController
 from src.controller.dungeon_manager import DungeonManager
 from src.view.gui_elements import Button
 from src.view.inventory_overlay import InventoryOverlay
-from src.model.managers.room_manager import RoomManager
 from src.model.managers.adventurer_manager import AdventurerManager
-from src.model.managers.sprite_manager import SpriteManager
 from src.model.managers.game_state_manager import GameStateManager
+from src.model.managers.room_manager import RoomManager
+from src.model.managers.sprite_manager import SpriteManager
 from src.model.factories.adventurer_factory import AdventurerFactory
 
 
@@ -35,11 +37,12 @@ class GameController:
         self.adventurer_manager = AdventurerManager.get_instance()
         self.minimap = None
         self.full_maps = []
-        for i in range(4):  # Collect all fully revealed maps for display upon game completion
+        # Collect all fully revealed maps for display upon game completion
+        for i in range(4):
             self.full_maps.append(self.dungeon_manager.get_floor_map(i + 1, reveal_all=True))
         # Attributes for game state
         self.current_floor = 1
-        self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)  # Fetch entrance position
+        self.position = self.dungeon_manager.get_floor_entrance(self.current_floor)
         self.active_adventurer = None
         self.current_message = None
         self.pillar_status = {
@@ -48,7 +51,8 @@ class GameController:
             "Pillar of Inheritance": False,
             "Pillar of Polymorphism": False
         }
-        self.return_to_menu = False  # Flag for if user chose to return to menu. Only set to True upon losing a battle.
+        # Flag for if user chose to return to menu. Only set to True upon losing a battle.
+        self.return_to_menu = False
 
         self.inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
                                        font=self.fonts["small"], text_color=WHITE, text="Inventory")
@@ -76,10 +80,11 @@ class GameController:
             room_doors = current_room.valid_directions
             sprite_config = self.room_manager.get_room_by_doors(room_doors)
             self.render_room_sprite(sprite_config)
-            if not self.debug:  # Don't fetch map every frame if not needed.
+            # Don't fetch map every frame if not needed.
+            if not self.debug:
                 self.minimap = pygame.transform.scale(self.dungeon_manager.get_floor_map(self.current_floor),
                                                       (150, 150))
-            self.draw_ui()  # Draw UI draws map as well
+            self.draw_ui()
 
             # Handle events
             for event in pygame.event.get():
@@ -99,17 +104,17 @@ class GameController:
                             self.screen,
                             self.fonts,
                             self.active_adventurer.inventory,
-                            pillar_status=self.pillar_status,  # Pass pillar_status here
-                            current_monster=None,  # No monster when out of combat
-                            current_room=self.position,  # Use current position
-                            dungeon=self.dungeon_manager.dungeon  # Pass the entire dungeon
+                            pillar_status=self.pillar_status,
+                            current_monster=None,
+                            current_room=self.position,
+                            dungeon=self.dungeon_manager.dungeon
                         )
 
                         # Provide position and the current dungeon floor to the display method
                         inventory_overlay.display(
                             target=self.active_adventurer,
                             position=self.position,
-                            dungeon=self.dungeon_manager.dungeon[self.current_floor - 1]  # Specific dungeon floor
+                            dungeon=self.dungeon_manager.dungeon[self.current_floor - 1]
                         )
                     elif self.save_button.is_hovered(mouse_pos):
                         GameStateManager.save_game_state(self)
@@ -119,7 +124,8 @@ class GameController:
                     self.player_movement(event.key)
 
             if self.return_to_menu:
-                return 1  # This will be seen by main.py and trigger a return to the main menu.
+                # This will be seen by main.py and trigger a return to the main menu.
+                return 1
             pygame.display.flip()
 
     def player_movement(self, key):
@@ -136,9 +142,13 @@ class GameController:
         }
         direction_indices = {
             pygame.K_UP: 0,
+            pygame.K_w: 0,
             pygame.K_RIGHT: 1,
+            pygame.K_d: 1,
             pygame.K_DOWN: 2,
-            pygame.K_LEFT: 3
+            pygame.K_s: 2,
+            pygame.K_LEFT: 3,
+            pygame.K_a: 3
         }
 
         if key in direction_map:
@@ -195,7 +205,7 @@ class GameController:
             screen=self.screen,
             fonts=self.fonts,
             inventory=self.active_adventurer.inventory,
-            pillar_status=self.pillar_status,  # Pass current pillar status
+            pillar_status=self.pillar_status,
             current_monster=monster,
             current_room=self.position,
             dungeon=self.dungeon_manager.dungeon
@@ -209,7 +219,7 @@ class GameController:
             position=self.position,
             get_adventurer_portrait=self.get_adventurer_portrait,
             minimap=self.minimap,
-            inventory_overlay=inventory_overlay  # Pass the dynamically created overlay
+            inventory_overlay=inventory_overlay
         )
 
         if battle_result == 1:
@@ -240,8 +250,8 @@ class GameController:
 
         # Update the specific pillar's status in the dictionary
         if item.name in self.pillar_status:
-            if not self.pillar_status[item.name]:  # Check if the pillar is already acquired
-                self.pillar_status[item.name] = True  # Mark the pillar as acquired
+            if not self.pillar_status[item.name]:
+                self.pillar_status[item.name] = True
                 self.display_message(f"You acquired the {item.name}!")
             else:
                 self.display_message(f"You've already acquired the {item.name}.")
@@ -254,7 +264,8 @@ class GameController:
 
     def handle_trap_room(self):
         """Handles interactions with TRAP rooms."""
-        trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp - 1)  # Ensure player can't die to trap.
+        # Ensure player can't die to trap.
+        trap_dmg = min(random.randint(1, 10), self.active_adventurer.hp - 1)
         self.active_adventurer._update_hp(trap_dmg)
         self.display_message(f"It's a trap! You take {trap_dmg} damage.")
         self.dungeon_manager.mark_room_visited(self.current_floor, self.position)
@@ -291,13 +302,14 @@ class GameController:
 
     def handle_exit_room(self):
         """Handles interaction with the Exit room."""
-        # Calculate the number of acquired pillars
-        acquired_pillars = sum(self.pillar_status.values())  # Count the number of True values in the dictionary
+        # Calculate the number of acquired pillars by counting the True values in the dictionary
+        acquired_pillars = sum(self.pillar_status.values())
 
         if self.current_floor == len(self.dungeon_manager.dungeon) and acquired_pillars == self.current_floor:
             # Player has found all pillars and is on the final floor
             self.display_message("You found the exit! Congratulations!", 2000)
-            if self.end_message() == 1:  # User chose to return to the main menu
+            # User chose to return to the main menu
+            if self.end_message() == 1:
                 self.return_to_menu = True
         elif acquired_pillars == self.current_floor:
             # Player has found all required pillars for the current floor
@@ -418,7 +430,8 @@ class GameController:
                     next_button.draw(self.screen, True)
 
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left click
+                # left click
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     clicked = True
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -430,7 +443,8 @@ class GameController:
                 elif prev_button.is_hovered(mouse_pos) and position > 0:
                     position -= 1
                 elif main_menu_button.is_hovered(mouse_pos):
-                    return 1  # Will be seen by handle_exit_room, which will set the return_to_menu field to True
+                    # Will be seen by handle_exit_room, which will set the return_to_menu field to True
+                    return 1
 
             pygame.display.flip()
 
@@ -471,7 +485,8 @@ class GameController:
         if raw_data:
             self.active_adventurer = AdventurerFactory.get_instance().make_adventurer(raw_data)
             if self.debug:
-                self.active_adventurer.apply_buff(999 - self.active_adventurer.max_hp, "max_hp")  # sets value to 999
+                # Overpower Stats
+                self.active_adventurer.apply_buff(999 - self.active_adventurer.max_hp, "max_hp")
                 self.active_adventurer.apply_buff(100, "block_chance")
                 self.active_adventurer.apply_buff(500, "attack_damage")
                 self.active_adventurer.apply_buff(50, "attack_speed")
@@ -557,7 +572,8 @@ class GameController:
         self.battle_manager = BattleController.get_instance(self.screen, self.fonts, self.draw_ui)
         self.sprite_manager = SpriteManager.get_instance()
         self.full_maps = []
-        for i in range(4):  # mirror constructor
+        # mirror constructor
+        for i in range(4):
             self.full_maps.append(self.dungeon_manager.get_floor_map(i + 1, reveal_all=True))
         self.inventory_button = Button(color=LIGHT_BLUE, x=670, y=160, width=110, height=30,
                                        font=self.fonts["small"], text_color=(255, 255, 255), text="Inventory")

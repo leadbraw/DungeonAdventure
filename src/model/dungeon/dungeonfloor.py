@@ -1,29 +1,28 @@
 import random
-import pygame
-from colorama import Fore, Style
 from copy import deepcopy
+import pygame
 from pygame import Surface
-from constants import BACKGROUND_COLOR, TRAP_CHANCE, ITEM_CHANCE, MONSTER_CHANCE, ELITE_CHANCE, EMPTY_CHANCE, \
-    EVENT_CHANCE, ENTITY_CHANCE, MAP_SURFACE_TILE_SIZE, FADED_GRAY, RED, DARK_RED, GOLD, BROWN, \
-    VIOLET, DARK_VIOLET, BLACK, MEDIUM_GREY
-
-'''
-MONSTER: Room with monster, battle begins upon entry
-BOSS: Room with boss enemy, battle begins upon entry
-EXIT: Allows exiting the dungeon
-ENTRANCE: Starting room
-ITEM: Room containing an item, picked up upon entry
-TRAP: Room that does some amount of damage to the adventurer upon entry
-
-BLOCKED: Inaccessible room
-
-RANDOM: Passed to Room constructor to indicate a random accessible room
-'''
+from colorama import Fore, Style
+from constants import (
+    BACKGROUND_COLOR, BLACK, BROWN, DARK_RED, DARK_VIOLET, ELITE_CHANCE, EMPTY_CHANCE, ENTITY_CHANCE,
+    EVENT_CHANCE, FADED_GRAY, GOLD, ITEM_CHANCE, MAP_SURFACE_TILE_SIZE, MEDIUM_GREY, MONSTER_CHANCE,
+    RED, TRAP_CHANCE, VIOLET
+)
 
 
 class Room:
     """Represents a single room. Should never be instantiated outside the context of within a Dungeon class."""
 
+    '''
+    BLOCKED: Inaccessible room
+    RANDOM: Passed to Room constructor to indicate a random accessible room
+    MONSTER: Room with monster, battle begins upon entry
+    BOSS: Room with boss enemy, battle begins upon entry
+    EXIT: Allows exiting the dungeon
+    ENTRANCE: Starting room
+    ITEM: Room containing an item, picked up upon entry
+    TRAP: Room that does some amount of damage to the adventurer upon entry
+    '''
     def __init__(self, room_type='BLOCKED'):
         """
         Constructor. Instantiates fields
@@ -34,12 +33,11 @@ class Room:
             # First roll: Decide the major category
             main_category = random.choices(
                 population=['ENTITY', 'EVENT', 'EMPTY'],
-                weights=[ENTITY_CHANCE, EVENT_CHANCE, EMPTY_CHANCE],  # 40% entity, 40% event, 20% empty
+                weights=[ENTITY_CHANCE, EVENT_CHANCE, EMPTY_CHANCE],
                 k=1
             )[0]
 
             if main_category == 'ENTITY':
-                # 80% chance for 'MONSTER', 20% for 'ELITE'
                 self.type = random.choices(
                     population=['MONSTER', 'ELITE'],
                     weights=[MONSTER_CHANCE, ELITE_CHANCE],
@@ -47,7 +45,6 @@ class Room:
                 )[0]
 
             elif main_category == 'EVENT':
-                # 50% chance for 'TRAP', 50% for 'ITEM'
                 self.type = random.choices(
                     population=['TRAP', 'ITEM'],
                     weights=[TRAP_CHANCE, ITEM_CHANCE],
@@ -61,7 +58,8 @@ class Room:
             # Assign fixed room type for non-random cases
             self.type = room_type
 
-        self.valid_directions = [False, False, False, False]  # Up, Right, Down, Left
+        # Up, Right, Down, Left
+        self.valid_directions = [False, False, False, False]
         # Attributes
         self.monster = None
         self.item = None
@@ -83,7 +81,8 @@ class Room:
             'PILLAR': Fore.LIGHTWHITE_EX,
             'BLOCKED': Fore.LIGHTBLACK_EX
         }
-        color = colors.get(self.type, Fore.RESET)  # Default to no color
+        # Default to no color
+        color = colors.get(self.type, Fore.RESET)
         return f"{color}{self.type:<8}{Style.RESET_ALL}"
 
     def set_monster(self, monster):
@@ -109,8 +108,6 @@ class Room:
         :return: Whether the room has a monster or not.
         """
         return self.monster is not None
-
-    # Item-related methods
 
     def set_item(self, item):
         """
@@ -179,7 +176,8 @@ class Room:
         :param x: The row position.
         :param y: The column position.
         """
-        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # Up, Right, Down, Left
+        # Up, Right, Down, Left
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
         count = 0
         for i in directions:
             if 0 <= x + i[0] < length and 0 <= y + i[1] < width and dungeon[x + i[0]][y + i[1]].type != 'BLOCKED':
@@ -216,7 +214,8 @@ class DungeonFloor:
         self._entrance_loc = None
         self._exit_loc = None
         self._pillar_loc = None
-        self._room_list = []  # List to store non-blocked room coordinates
+        # List to store non-blocked room coordinates
+        self._room_list = []
         '''Populates the map, in addition to instantiating the entrance_loc, exit_loc, and room_list fields'''
         self.__populate_map()
 
@@ -324,8 +323,10 @@ class DungeonFloor:
 
     def __populate_map(self):
         """Responsible for populating a fresh map with an entrance, exit, pillar, et cetera."""
-        essential_rooms = []  # Store the entrance, exit, and pillar here
-        other_rooms = []  # Temporarily store other non-blocked rooms here
+        # Store the entrance, exit, and pillar here
+        essential_rooms = []
+        # Temporarily store other non-blocked rooms here
+        other_rooms = []
 
         # Place entrance
         entrance_x, entrance_y = (random.randint(0, self._length - 1), random.randint(0, self._width - 1))
@@ -347,7 +348,8 @@ class DungeonFloor:
         path = self.__path_to_exit(entrance_x, entrance_y, exit_x, exit_y)
         offshoot_rooms = self.__generate_offshoots(path)
         populated_rooms = path + offshoot_rooms
-        self._room_list = populated_rooms  # Initialize the room list
+        # Initialize the room list
+        self._room_list = populated_rooms
 
         # Add all other rooms to other_rooms list
         for a in populated_rooms:
@@ -360,7 +362,8 @@ class DungeonFloor:
         pillar_coords = next(
             (x, y) for x, y in populated_rooms if self._map[x][y].get_type() == 'PILLAR'
         )
-        essential_rooms.append(pillar_coords)  # Add pillar as the third room in the list
+        # Add pillar as the third room in the list
+        essential_rooms.append(pillar_coords)
 
         # Finalize the room list
         self._room_list = essential_rooms + [room for room in other_rooms if room not in essential_rooms]
@@ -423,13 +426,15 @@ class DungeonFloor:
         :param exit_x: The row coordinate of the exit.
         :param exit_y: The column coordinate of the exit.
         """
-        x, y = random.choice(rooms[1:])  # excludes entrance room
+        # excludes entrance room
+        x, y = random.choice(rooms[1:])
         while x == exit_x and y == exit_y:
             x, y = random.choice(rooms[1:])
         self._map[x][y].set_type("PILLAR")
         self._pillar_loc = (x, y)
         if (x, y) not in self._room_list:
-            self._room_list.append((x, y))  # Add to non-blocked list
+            # Add to non-blocked list
+            self._room_list.append((x, y))
 
     def __valid_direction_for_offshoot(self, direction, x, y) -> bool:
         """
@@ -451,7 +456,8 @@ class DungeonFloor:
         :return A pygame Surface representing the current floor's map.
         """
         tile_size = MAP_SURFACE_TILE_SIZE
-        map_surface = Surface((MAP_SURFACE_TILE_SIZE * 8, MAP_SURFACE_TILE_SIZE * 8))  # 8 is max floor width/height
+        # 8 is max floor width/height for now
+        map_surface = Surface((MAP_SURFACE_TILE_SIZE * 8, MAP_SURFACE_TILE_SIZE * 8))
         color = None
         for row in range(self._length):
             for col in range(self._width):
@@ -502,7 +508,6 @@ class DungeonFloor:
         self._exit_loc = state['_exit_loc']
         self._pillar_loc = state['_pillar_loc']
         self._room_list = state['_room_list']
-
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode((500, 500))

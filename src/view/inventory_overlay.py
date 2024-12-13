@@ -1,6 +1,6 @@
 import sys
 import pygame
-from constants import LIGHT_BLUE, FADED_BLUE, FADED_GRAY, PASTEL_RED, SPRITE_PATHS
+from constants import FADED_BLUE, FADED_GRAY, LIGHT_BLUE, PASTEL_RED, SPRITE_PATHS
 from src.view.gui_elements import Button
 
 
@@ -20,7 +20,8 @@ class InventoryOverlay:
         self.current_monster = current_monster
         self.current_room = current_room
         self.dungeon = dungeon
-        self.current_floor = 1  # Initialize with a default value
+        # Needed initialization with a default value
+        self.current_floor = 1
 
     def draw_pillar_buttons(self, button_size, spacing):
         """
@@ -31,8 +32,10 @@ class InventoryOverlay:
         :return: All pillar buttons.
         """
         total_width = len(self.pillar_status) * button_size + (len(self.pillar_status) - 1) * spacing
-        row_start_x = (650 - total_width) // 2  # Center row horizontally
-        row_y = 6  # Fixed vertical position for the first row
+        # Center row horizontally
+        row_start_x = (650 - total_width) // 2
+        # Hardcoded count for fixed vertical position for the first row
+        row_y = 6
         buttons = []
 
         # Buff descriptions for each pillar
@@ -55,19 +58,20 @@ class InventoryOverlay:
                 height=button_size,
                 font=self.fonts["extra_small"],
                 text_color=(255, 255, 255),
-                text=""  # Remove text if relying solely on the image
+                text=""
             )
             item_button.draw(self.screen)
 
             # Determine the image to display (shrink to 100x100)
             sprite_key = name.split()[-1].lower() + "_pillar"
             image_path = SPRITE_PATHS.get(
-                sprite_key if acquired else "placeholder")  # Use a placeholder for blocked-out
+                # Use a placeholder for blocked-out
+                sprite_key if acquired else "placeholder")
             if image_path:
                 image = pygame.image.load(image_path)
-                image = pygame.transform.scale(image, (100, 100))  # Resize image to 100x100
+                image = pygame.transform.scale(image, (100, 100))
                 image_x = row_start_x + i * (button_size + spacing) + button_size // 2 - image.get_width() // 2
-                image_y = row_y + 5  # Center image at the top with padding
+                image_y = row_y + 5
                 self.screen.blit(image, (image_x, image_y))
 
                 # Display the buff text only if the pillar is acquired
@@ -76,7 +80,7 @@ class InventoryOverlay:
                     text_surface = self.fonts["extra_small"].render(buff_text, True, (255, 255, 255))
                     text_x = row_start_x + i * (
                                 button_size + spacing) + button_size // 2 - text_surface.get_width() // 2
-                    text_y = row_y + button_size - 20  # Position the text below the button
+                    text_y = row_y + button_size - 20
                     self.screen.blit(text_surface, (text_x, text_y))
 
             buttons.append(item_button)
@@ -93,8 +97,8 @@ class InventoryOverlay:
         """
         usable_items = ["Code Spike", "Energy Drink", "White Box"]
         total_width = len(usable_items) * button_size + (len(usable_items) - 1) * spacing
-        row_start_x = (650 - total_width) // 2  # Center row horizontally
-        row_y = 6 + button_size + 6  # Fixed vertical position: 6px top + button_size + 6px spacing
+        row_start_x = (650 - total_width) // 2
+        row_y = 6 + button_size + 6
 
         buttons = []
         for i, name in enumerate(usable_items):
@@ -112,14 +116,14 @@ class InventoryOverlay:
                 height=button_size,
                 font=self.fonts["small"],
                 text_color=(255, 255, 255),
-                text="",  # No text on the button itself
+                text="",
             )
             item_button.draw(self.screen)
 
             # Render the item name above the image
             name_surface = self.fonts["extra_small"].render(name, True, (255, 255, 255))
             name_x = row_start_x + i * (button_size + spacing) + button_size // 2 - name_surface.get_width() // 2
-            name_y = row_y + 8  # Adjusted padding above the image
+            name_y = row_y + 8
             self.screen.blit(name_surface, (name_x, name_y))
 
             # Load and center usable item image within the button
@@ -129,14 +133,14 @@ class InventoryOverlay:
                 image = pygame.image.load(image_path)
                 image = pygame.transform.scale(image, (64, 64))
                 image_x = row_start_x + i * (button_size + spacing) + button_size // 2 - image.get_width() // 2
-                image_y = name_y + name_surface.get_height() + 8  # Adjusted padding between name and image
+                image_y = name_y + name_surface.get_height() + 8
                 self.screen.blit(image, (image_x, image_y))
 
             # Display quantity text below the image
             quantity_text = f"x({quantity})"
             text_surface = self.fonts["extra_small"].render(quantity_text, True, (255, 255, 255))
             text_x = row_start_x + i * (button_size + spacing) + button_size // 2 - text_surface.get_width() // 2
-            text_y = image_y + image.get_height() + 8  # Adjusted padding below the image
+            text_y = image_y + image.get_height() + 8
             self.screen.blit(text_surface, (text_x, text_y))
 
             buttons.append((item_button, name, quantity))
@@ -151,9 +155,10 @@ class InventoryOverlay:
         :param spacing: The spacing between each button.
         :return: All usable item buttons.
         """
-        close_x = 650 - 40  # Align to the far right of the overlay
+        # Align to the far right of the overlay
+        close_x = 650 - 40
         # Align vertically with the center of the second row
-        row_y = 6 + button_size + spacing  # Second row's y position
+        row_y = 6 + button_size + spacing
         close_y = row_y + (button_size // 2) - (close_size // 2)
         close_button = Button(
             color=PASTEL_RED,
@@ -193,10 +198,13 @@ class InventoryOverlay:
 
                         # Determine the actual target based on item type
                         if name == "White Box":
-                            if isinstance(dungeon, list):  # Ensure dungeon is a list of floors
-                                current_dungeon = dungeon[self.current_floor - 1]  # Get the current floor
+                            # Ensure dungeon is a list of floors
+                            if isinstance(dungeon, list):
+                                # Get the current floor
+                                current_dungeon = dungeon[self.current_floor - 1]
                             else:
-                                current_dungeon = dungeon  # Single floor passed directly
+                                # Single floor passed directly
+                                current_dungeon = dungeon
                             actual_target = (position, current_dungeon)
                         else:
                             actual_target = (
@@ -215,7 +223,8 @@ class InventoryOverlay:
                 if close_button.is_hovered(mouse_pos):
                     return "close_overlay"
 
-        return "continue"  # Keep overlay open if no exit condition is met
+        # Keep overlay open if no exit condition is met
+        return "continue"
 
     def display(self, target, position=None, dungeon=None):
         """
@@ -248,7 +257,7 @@ class InventoryOverlay:
             pygame.draw.rect(self.screen, (30, 30, 30), (overlay_x, overlay_y, overlay_width, overlay_height))
 
             # Draw buttons
-            self.draw_pillar_buttons(button_size, spacing) # buttons discarded
+            self.draw_pillar_buttons(button_size, spacing)
             usable_item_buttons = self.draw_usable_item_buttons(button_size, spacing)
             close_button = self.draw_close_button(close_size, button_size, spacing)
 
@@ -261,13 +270,14 @@ class InventoryOverlay:
                 close_button,
                 target,
                 self.current_monster,
-                position or self.current_room,  # Fallback to current_room if position is None
-                dungeon or self.dungeon  # Fallback to self.dungeon if dungeon is None
+                position or self.current_room,
+                dungeon or self.dungeon
             )
 
             # Process the event result
             if event_result in {"item_used", "close_overlay"}:
-                self.screen.blit(self.previous_frame, (0, 0))  # Restore previous frame
+                # Restore previous frame
+                self.screen.blit(self.previous_frame, (0, 0))
                 pygame.display.flip()
                 running = False
 

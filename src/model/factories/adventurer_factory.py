@@ -26,7 +26,7 @@ class AdventurerFactory:
 
         Fields in raw_data (by position):
         0: name (str)
-        1: type (str) - The adventurer's class type (e.g., 'Warrior', 'Priest').
+        1: type (str) - Adventurer's class type (e.g., 'Warrior', 'Priest').
         2: max_HP (int)
         3: attack_speed (int)
         4: chance_to_hit (float)

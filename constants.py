@@ -27,18 +27,9 @@ FADED_BLUE = (100, 149, 237)
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-# Pillar Names (used in game_controller)
-PILLAR_NAMES = [
-    "Pillar of Abstraction",
-    "Pillar of Encapsulation",
-    "Pillar of Inheritance",
-    "Pillar of Polymorphism"
-]
-
 # Button Sizes
 MENU_BUTTON_WIDTH = 140
 MENU_BUTTON_HEIGHT = 40
-
 
 # Fonts (initialize after pygame.init())
 def get_fonts():
@@ -49,7 +40,6 @@ def get_fonts():
         "medium": pygame.font.Font(None, 50),
         "extra_small": pygame.font.Font(None, 25)
     }
-
 
 # Sprite Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

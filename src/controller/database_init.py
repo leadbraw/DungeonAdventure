@@ -5,14 +5,17 @@ import sqlite3
 class DatabaseInitializer:
     """Responsible for initializing the database."""
 
-    def __init__(self, db_path='data/dungeon_game.db'):
+    def __init__(self, db_name='dungeon_game.db'):
         """
-        Initializes the DatabaseInitializer with the given database path.
-        Ensures the `data` directory exists.
-        :param db_path: Path to the SQLite database file.
+        Initializes the DatabaseInitializer with the given database name.
+        Ensures the `data` directory exists and uses an absolute path for compatibility.
+        :param db_name: Name of the SQLite database file.
         """
-        os.makedirs(os.path.dirname(db_path), exist_ok=True)  # Ensure the 'data' directory exists
-        self.db_path = db_path
+        # Define an absolute path for the database in the 'data' directory
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        data_dir = os.path.join(project_root, '../../data')
+        os.makedirs(data_dir, exist_ok=True)
+        self.db_path = os.path.join(data_dir, db_name)
 
     def database_exists(self):
         """
@@ -68,7 +71,7 @@ class DatabaseInitializer:
                     name TEXT NOT NULL,
                     description TEXT,
                     target TEXT NOT NULL,
-                    one_time_item INTEGER, -- Use INTEGER instead of BOOLEAN
+                    one_time_item INTEGER, -- Need to use INTEGER instead of BOOLEAN
                     effect_min INTEGER,
                     effect_max INTEGER,
                     buff_type TEXT
@@ -81,18 +84,6 @@ class DatabaseInitializer:
                     image_path TEXT NOT NULL,
                     rotation INTEGER NOT NULL,
                     UNIQUE(doors)
-                );
-            """,
-            "game_saves": """
-                CREATE TABLE IF NOT EXISTS game_saves (
-                    id INTEGER PRIMARY KEY,
-                    slot_number INTEGER UNIQUE,
-                    save_name TEXT,
-                    level INTEGER,
-                    adventurer_state TEXT,
-                    items_state TEXT,
-                    monsters_state TEXT,
-                    save_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """
         }
@@ -113,12 +104,10 @@ class DatabaseInitializer:
         if self.database_exists():
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute("DROP TABLE IF EXISTS heroes")
                 cursor.execute("DROP TABLE IF EXISTS adventurers")
                 cursor.execute("DROP TABLE IF EXISTS monsters")
                 cursor.execute("DROP TABLE IF EXISTS items")
                 cursor.execute("DROP TABLE IF EXISTS rooms")
-                # cursor.execute("DROP TABLE IF EXISTS game_saves")
             self.create_tables()
         else:
             self.create_tables()

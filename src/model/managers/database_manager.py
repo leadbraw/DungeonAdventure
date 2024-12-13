@@ -2,7 +2,8 @@ import sqlite3
 
 
 class DatabaseManager:
-    _instance = None  # Singleton instance
+    # Singleton instance
+    _instance = None
 
     @staticmethod
     def get_instance(db_path='data/dungeon_game.db'):

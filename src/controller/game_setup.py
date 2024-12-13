@@ -1,15 +1,15 @@
+from constants import SPRITE_PATHS
 from src.controller.database_init import DatabaseInitializer
-from src.model.managers.item_manager import ItemManager
-from src.model.managers.room_manager import RoomManager
-from src.model.managers.monster_manager import MonsterManager
 from src.model.managers.adventurer_manager import AdventurerManager
+from src.model.managers.database_manager import DatabaseManager
+from src.model.managers.item_manager import ItemManager
+from src.model.managers.monster_manager import MonsterManager
+from src.model.managers.room_manager import RoomManager
 from src.model.managers.sprite_manager import SpriteManager
 from assets.seeders.adventurer_seeder import AdventurerSeeder
 from assets.seeders.item_seeder import ItemSeeder
 from assets.seeders.monster_seeder import MonsterSeeder
 from assets.seeders.room_seeder import RoomSeeder
-from src.model.managers.database_manager import DatabaseManager
-from constants import SPRITE_PATHS
 
 
 class GameSetup:

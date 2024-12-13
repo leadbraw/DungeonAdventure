@@ -14,7 +14,8 @@ class Inventory:
         :param capacity: The maximum number of items the inventory can hold.
         """
         self.capacity = capacity
-        self.items = []  # List of dictionaries: {"item": dict, "quantity": int}
+        # List of dictionaries: {"item": dict, "quantity": int}
+        self.items = []
 
     def add_item(self, item, quantity=1):
         """
@@ -27,13 +28,13 @@ class Inventory:
         if self.is_full():
             return False
 
-            # Check if the item already exists in the inventory
+        # Check if the item already exists in the inventory
         for entry in self.items:
             if entry["item"].name == item.name:
                 entry["quantity"] += quantity
                 return True
 
-            # If the item doesn't already exist, add it as a new entry
+        # If the item doesn't already exist, add it as a new entry
         self.items.append({"item": item, "quantity": quantity})
         return True
 
@@ -165,7 +166,7 @@ class Inventory:
                 damage = random.randint(effect_min, effect_max)
 
                 # Apply damage and log monster health
-                result_message = monster.take_item_damage(damage)  # Assuming this method exists and logs health changes
+                monster.take_item_damage(damage)
                 return True
 
             except Exception as e:
@@ -190,7 +191,7 @@ class Inventory:
 
             # All 8 adjacent rooms
             directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
-            current_x, current_y = position  # Unpack current position
+            current_x, current_y = position
 
             # Validate dungeon type
             if not hasattr(dungeon, "get_length") or not hasattr(dungeon, "get_width"):

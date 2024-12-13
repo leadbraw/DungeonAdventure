@@ -1,5 +1,6 @@
 class AdventurerManager:
-    _instance = None  # Singleton instance
+    # Singleton instance
+    _instance = None
 
     @staticmethod
     def get_instance(adventurers_data=None):
@@ -17,9 +18,10 @@ class AdventurerManager:
     def __init__(self, adventurers_data):
         if AdventurerManager._instance is not None:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
-
-        self.adventurer_data = {}  # Dictionary to hold all raw adventurer data
-        self.active_adventurer = None  # Placeholder for the single selected adventurer
+        # Dictionary to hold all raw adventurer data
+        self.adventurer_data = {}
+        # Placeholder for the single selected adventurer
+        self.active_adventurer = None
 
         # Load adventurers from the provided data
         self.load_adventurer_data(adventurers_data)

@@ -1,17 +1,17 @@
 import pygame
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, get_fonts, SPRITE_PATHS
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SPRITE_PATHS, get_fonts
 from src.model.managers.adventurer_manager import AdventurerManager
+from src.model.managers.sprite_manager import SpriteManager
+from src.model.managers.game_state_manager import GameStateManager
+from src.controller.game_controller import GameController
+from src.controller.game_setup import GameSetup
 from src.view.splash_screen import SplashScreen
 from src.view.main_screen import MainScreen
 from src.view.character_screen import CharacterScreen
-from src.controller.game_controller import GameController
-from src.controller.game_setup import GameSetup
-from src.model.managers.sprite_manager import SpriteManager
-from src.model.managers.game_state_manager import GameStateManager
 
 
 class MainController:
-    """Handles the main menu and state transitions to/from it (to character selection, gameplay, et cetera)."""
+    """Handles the main menu and state transitions to/from it (to character selection, gameplay, etcetera)."""
 
     def __init__(self):
         """Constructor. Initializes pygame, the window, and fields."""
@@ -20,7 +20,7 @@ class MainController:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Dungeon Adventure")
 
-        # Preload sprites and set icon
+        # Preload sprite and set icon
         sprite_manager = SpriteManager.get_instance()
         sprite_manager.preload_sprites({
             "dice": SPRITE_PATHS["dice"]
@@ -29,7 +29,7 @@ class MainController:
         pygame.display.set_icon(dungeon_icon)
 
         self.game_setup = GameSetup()
-        self.state = "MAIN_MENU" # Start at main menu.
+        self.state = "MAIN_MENU"
         self.selected_hero = None
         self.debug = False
         self.loading = False
@@ -62,17 +62,21 @@ class MainController:
                 self.game_controller = GameStateManager.load_game_state()
                 self.game_controller.set_up_from_load(self.screen, self.fonts)
                 self.state = "GAMEPLAY"
-            except:
+            except FileNotFoundError:
                 print("No saved game file found. Try saving a game before loading.")
+                self.loading = False
+                self.state = "MAIN_MENU"
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
                 self.loading = False
                 self.state = "MAIN_MENU"
 
     def character_selection(self):
         """Handles the character selection screen(s) and state transitions from them."""
         adventurer_manager = AdventurerManager.get_instance()
-        adventurer_data = adventurer_manager.get_adventurer_data()  # Fetch data
+        adventurer_data = adventurer_manager.get_adventurer_data()
 
-        character_screen = CharacterScreen(self.screen, self.fonts, adventurer_data)  # Pass data to view
+        character_screen = CharacterScreen(self.screen, self.fonts, adventurer_data)
         result = character_screen.run()
         if isinstance(result, tuple):
             if result[1] == "debug":

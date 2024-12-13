@@ -1,8 +1,8 @@
 from src.model.dungeon.dungeonfloor import DungeonFloor
-from src.model.factories.monster_factory import MonsterFactory
 from src.model.factories.item_factory import ItemFactory
-from src.model.managers.monster_manager import MonsterManager
+from src.model.factories.monster_factory import MonsterFactory
 from src.model.managers.item_manager import ItemManager
+from src.model.managers.monster_manager import MonsterManager
 
 
 class DungeonManager:
@@ -38,8 +38,7 @@ class DungeonManager:
         """
         # Randomize the pillar order
         self.item_manager.initialize_pillar_order()
-
-        self.dungeon = [DungeonFloor(1), DungeonFloor(2), DungeonFloor(3), DungeonFloor(4)]  # Four floors
+        self.dungeon = [DungeonFloor(1), DungeonFloor(2), DungeonFloor(3), DungeonFloor(4)]
 
         for i in range(4):
             all_rooms = self.dungeon[i].get_room_list()
@@ -77,7 +76,8 @@ class DungeonManager:
         for room_coords in item_rooms:
             self.place_item(floor, room_coords)
 
-        pillar_coords = all_rooms[2]  # Third room for the pillar
+        # Third room for the pillar for debugging knowledge
+        pillar_coords = all_rooms[2]
         self.place_pillar(floor, pillar_coords)
 
     def place_monster(self, floor, room_coords, monster_type):

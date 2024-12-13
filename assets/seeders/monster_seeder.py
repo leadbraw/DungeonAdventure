@@ -21,7 +21,6 @@ class MonsterSeeder:
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM monsters")
                 cursor.executemany(insert_query, monsters_data)
                 conn.commit()
         except sqlite3.Error as e:

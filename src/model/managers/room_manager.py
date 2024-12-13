@@ -17,7 +17,8 @@ class RoomManager:
             raise Exception("This class is a singleton! Use get_instance() to access the instance.")
         self.rooms = {}
         for row in rooms_data:
-            doors = json.loads(row[0])  # Convert JSON string back to a list
+            # Convert JSON string of directions back to a list
+            doors = json.loads(row[0])
             self.rooms[tuple(doors)] = {
                 "image_path": row[1],
                 "rotation": row[2]

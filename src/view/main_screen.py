@@ -1,8 +1,11 @@
 import math
 import time
 import pygame
-from constants import DARK_GREY, BACKGROUND_COLOR, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, LIGHT_BLUE, OFF_WHITE, \
-    SCREEN_WIDTH, SCREEN_HEIGHT, DARK_RED, RED, BROWN, GOLD, VIOLET, DARK_VIOLET, MEDIUM_GREY, FADED_GRAY
+from constants import (
+    BACKGROUND_COLOR, BROWN, DARK_GREY, DARK_RED, DARK_VIOLET, FADED_GRAY,
+    GOLD, LIGHT_BLUE, MEDIUM_GREY, MENU_BUTTON_HEIGHT, MENU_BUTTON_WIDTH,
+    OFF_WHITE, RED, SCREEN_HEIGHT, SCREEN_WIDTH, VIOLET
+)
 from src.view.gui_elements import Button
 
 
@@ -17,7 +20,7 @@ class MainScreen:
         :param fonts: The fonts.
         """
         self.screen = screen
-        self.fonts = fonts  # Dictionary of fonts passed from main
+        self.fonts = fonts
         self.new_game_button = Button(
             DARK_GREY, screen.get_width() / 2 - 70, 2 * screen.get_height() / 3,
             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, self.fonts["small"], OFF_WHITE, 'NEW GAME'
@@ -45,7 +48,8 @@ class MainScreen:
             self.screen.fill(BACKGROUND_COLOR)
 
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left click
+                # left click
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     clicked = True
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -164,7 +168,8 @@ class MainScreen:
             self.screen.blit(manual_body6, (SCREEN_WIDTH / 2 - manual_body.get_width() / 2,
                                             SCREEN_HEIGHT / 5 - manual_body.get_height() / 2 + 210))
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left click
+                # left click
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     clicked = True
                 if event.type == pygame.QUIT:
                     pygame.quit()
