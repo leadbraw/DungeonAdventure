@@ -47,8 +47,22 @@ Class GameController {
     +set_active_adventurer(adventurer_name)
     +player_movement(key)
     +room_interaction()
-    +draw_ui(message)
-    +get_hero_portrait() : Sprite
+    +draw_ui(message, in_battle=false) : void
+    +get_adventurer_portrait() : Sprite
+    +render_room_sprite(sprite_config) : void
+    +render_monster_sprite(monster_name) : void
+    +display_message(message, delay=0, in_battle=false) : void
+    +handle_monster_room(room) : void
+    +handle_item_room() : void
+    +handle_pillar_room() : int
+    +handle_trap_room() : void
+    +handle_exit_room() : void
+    +handle_regular_item(item) : void
+    +handle_pillar_item(item) : void
+    +end_message() : int
+    +set_up_from_load(the_screen, the_fonts) : void
+    +__getstate__() : dict
+    +__setstate__(state) : void
     -screen
     -hero_name
     -fonts
@@ -57,9 +71,16 @@ Class GameController {
     -battle_manager
     -dungeon_manager
     -adventurer_manager
+    -minimap
+    -full_maps
     -current_floor
     -position
     -active_adventurer
+    -current_message
+    -pillar_status : dict
+    -return_to_menu : bool
+    -inventory_button : Button
+    -save_button : Button
 }
 
 Class DungeonManager {
@@ -69,88 +90,55 @@ Class DungeonManager {
     +place_monster(floor, room_coords, monster_type) : void
     +place_item(floor, room_coords) : void
     +place_pillar(floor_index, pillar_coords) : void
-    +get_floor_map(floor) : Map
+    +get_floor_map(floor, reveal_all=false) : Map
     +get_monster_in_room(floor, position) : Monster
+    +get_item_in_room(floor, position) : Item
+    +clear_item_in_room(floor, position) : void
+    +get_floor_entrance(floor) : tuple
+    +mark_room_visited(floor, position) : void
+    +get_room(floor, position) : Room
+    +__getstate__() : dict
+    +__setstate__(state) : void
+    -dungeon : List<DungeonFloor>
+    -monster_manager : MonsterManager
+    -item_manager : ItemManager
 }
 
 Class BattleManager {
     +get_instance(screen, fonts, draw_ui) : BattleManager
-    +start_battle(adventurer, monster, dungeon, current_floor, position, get_hero_portrait, minimap) : int
-    +draw_battle_ui(monster, adventurer, fight_button, item_button, special_button, get_hero_portrait, minimap) : void
+    +reset(screen, fonts, draw_ui) : void
+    +start_battle(adventurer, monster, dungeon, current_floor, position, get_adventurer_portrait, minimap, inventory_overlay) : int
+    +draw_battle_ui(monster, adventurer, fight_button, item_button, special_button, get_adventurer_portrait, minimap) : void
     +handle_battle_event(monster, adventurer, inventory_overlay, dungeon, current_floor, position, fight_button, item_button, special_button) : bool
     +post_battle_logic(monster, adventurer, dungeon, current_floor, position) : int
     +execute_fight(monster, adventurer) : void
     +execute_special(monster, adventurer) : void
+    -screen
+    -fonts
+    -draw_ui
+    -inventory_overlay
 }
 
 Class DatabaseInitializer {
     +database_exists() : bool
     +initialize_database() : void
+    +create_tables() : void
     +reset_database() : void
+    -db_path : string
 }
 
-Class DatabaseManager {
-    +get_instance() : DatabaseManager
-    +fetch_items() : list
-    +fetch_rooms() : list
-    +fetch_monsters() : list
-    +fetch_adventurers() : list
-}
-
-Class RoomManager {
-    +get_instance() : RoomManager
-    +get_room_by_doors(doors) : dict
-}
-
-Class SpriteManager {
-    +get_instance() : SpriteManager
-    +preload_sprites(paths)
-    +get_sprite(name) : Sprite
-    +get_transformed_sprite(name, rotate) : Sprite
-}
-
-Class InventoryOverlay {
-    +display(target, position, dungeon) : void
-}
-
-Class AdventurerManager {
-    +get_instance() : AdventurerManager
-    +get_adventurer_data(name) : list
-}
-
-Class MonsterManager {
-    +get_instance() : MonsterManager
-    +get_monster_data(monster_type) : list
-}
-
-Class ItemManager {
-    +get_instance() : ItemManager
-    +get_random_consumable_item_data() : list
-    +get_unique_item_data(floor_index) : list
-}
-
-Class Button {
-    +draw(screen) : void
-    +is_hovered(mouse_pos) : bool
-}
-
-Class MonsterFactory {
-    +get_instance() : MonsterFactory
-    +make_monster(raw_data) : Monster
-}
-
-Class ItemFactory {
-    +get_instance() : ItemFactory
-    +create_item_from_raw(raw_data) : Item
-    +create_unique_item(raw_data) : Item
-}
-
-Class Dungeon {
-    +get_entrance_coords() : tuple
-    +fetch_room(row, column) : Room
-    +get_room_list() : List<tuple>
-    +create_map() : Map
-}
+Class DatabaseManager
+Class RoomManager
+Class SpriteManager
+Class InventoryOverlay
+Class AdventurerManager
+Class MonsterManager
+Class ItemManager
+Class Button
+Class MonsterFactory
+Class ItemFactory
+Class Dungeon
+Class DungeonFloor
 
 ' Relationships
 MainController o-- GameSetup
@@ -160,6 +148,7 @@ MainController ..> GameStateManager
 MainController ..> SplashScreen
 MainController ..> MainScreen
 MainController ..> CharacterScreen
+MainController ..> AdventurerManager
 
 GameSetup ..> DatabaseInitializer
 GameSetup ..> DatabaseManager
@@ -173,8 +162,9 @@ GameController o-- RoomManager
 GameController o-- BattleManager
 GameController o-- DungeonManager
 GameController ..> InventoryOverlay
+GameController ..> Button
 
-DungeonManager o-- Dungeon
+DungeonManager o-- DungeonFloor
 DungeonManager o-- MonsterManager
 DungeonManager o-- ItemManager
 DungeonManager ..> MonsterFactory

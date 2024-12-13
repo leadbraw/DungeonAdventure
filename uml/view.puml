@@ -21,7 +21,6 @@ skinparam Class {
 }
 left to right direction
 
-' MainScreen class definition
 Class MainScreen {
     +__init__(screen, fonts)
     +run() : string
@@ -35,7 +34,6 @@ Class MainScreen {
     -manual_menu_button : Button
 }
 
-' SplashScreen class definition
 Class SplashScreen {
     +__init__(screen, font)
     +display(message, setup_function) : void
@@ -43,9 +41,8 @@ Class SplashScreen {
     -font
 }
 
-' CharacterScreen class definition
 Class CharacterScreen {
-    +__init__(screen, fonts)
+    +__init__(screen, fonts, adventurer_data)
     +_initialize_adventurer_buttons() : void
     +_wrap_text(text, font, max_width) : List<string>
     +draw() : void
@@ -53,7 +50,7 @@ Class CharacterScreen {
     +run() : tuple
     -screen
     -fonts
-    -adventurer_manager : AdventurerManager
+    -adventurer_data : dict
     -adventurer_buttons : dict
     -initial_back_button : Button
     -on_confirmation_screen : bool
@@ -62,7 +59,6 @@ Class CharacterScreen {
     -confirm_back_button : Button
 }
 
-' InventoryOverlay class definition
 Class InventoryOverlay {
     +__init__(screen, fonts, inventory, current_monster=None, current_room=None, dungeon=None)
     +draw_overlay(overlay_x, overlay_y, overlay_width, overlay_height, opacity) : void
@@ -75,13 +71,14 @@ Class InventoryOverlay {
     -screen
     -fonts
     -inventory
+    -pillar_status : dict
     -selected_item
     -current_monster
     -current_room
     -dungeon
+    -current_floor : int
 }
 
-' Button class definition
 Class Button {
     +__init__(color, x, y, width, height, font=None, text_color=None, text='')
     +draw(screen, outline=None) : void
@@ -96,16 +93,20 @@ Class Button {
     -text : string
 }
 
-' AdventurerManager dependency
-Class AdventurerManager {
-    +get_instance() : AdventurerManager
-    +get_adventurer_data(name=None) : dict
-}
+Class MainController
+Class GameController
+Class BattleController
 
 ' Relationships
 MainScreen ..> Button : uses
 CharacterScreen o-- Button : owns
-CharacterScreen o-- AdventurerManager : uses
 InventoryOverlay o-- Button : uses
+MainController ..> SplashScreen : uses
+MainController ..> MainScreen : uses
+MainController ..> CharacterScreen : uses
+BattleController ..> Button : uses
+GameController ..> Button : uses
+GameController ..> InventoryOverlay : uses
+GameController ..> CharacterScreen : uses
 
 @enduml

@@ -29,6 +29,7 @@ Class Entity {
     +hit_chance : float
     +damage_range : tuple
     +hp : int
+    #_hit_response(damage) : void
 }
 
 Class Adventurer {
@@ -40,16 +41,34 @@ Class Adventurer {
     +heal_from_item(heal_amount) : void
 }
 
-Class Warrior
-Class Priest
-Class Thief
-Class Bard
+Class Warrior {
+    +special_action(target) : str
+    -__special_action_msg(target) : str
+}
+
+Class Priest {
+    +special_action(target) : str
+    -__special_action_msg(heal) : str
+}
+
+Class Thief {
+    +special_action(target) : str
+    -__special_action_msg(target) : str
+}
+
+Class Bard {
+    +special_action(target) : str
+    -__special_action_msg(target) : str
+}
 
 Class Monster {
     +type : str
     +heal_chance : float
     +heal_range : tuple
     +take_item_damage(damage) : str
+    #_hit_response(the_dmg) : str
+    #_regen_msg(the_heal) : str
+    #_regen() : int
 }
 
 Class Item {
@@ -82,7 +101,7 @@ Class Room {
     +visited : bool
 }
 
-Class Dungeon {
+Class DungeonFloor {
     +get_width() : int
     +get_length() : int
     +get_room_list() : list
@@ -94,6 +113,10 @@ Class Dungeon {
 Class AdventurerFactory {
     +get_instance() : AdventurerFactory
     +make_adventurer(raw_data) : Adventurer
+    +make_warrior(raw_data) : Warrior
+    +make_priest(raw_data) : Priest
+    +make_thief(raw_data) : Thief
+    +make_bard(raw_data) : Bard
 }
 
 Class MonsterFactory {
@@ -175,7 +198,7 @@ Adventurer --> Inventory
 Monster --> Item
 Room --> Monster
 Room --> Item
-Dungeon --> Room
+DungeonFloor --> Room
 AdventurerFactory ..> Adventurer
 MonsterFactory ..> Monster
 ItemFactory ..> Item
@@ -191,5 +214,15 @@ GameStateManager ..> GameController
 SpriteManager --> Room
 SpriteManager --> Adventurer
 SpriteManager --> Monster
+
+' Controller Generics
+Class GameController
+Class MainController
+Class BattleController
+Class DungeonManager
+Class GameSetup
+
+GameStateManager ..> GameController
+SpriteManager --> GameController
 
 @enduml
