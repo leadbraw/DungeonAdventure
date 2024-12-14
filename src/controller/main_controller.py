@@ -63,7 +63,7 @@ class MainController:
                 self.game_controller.set_up_from_load(self.screen, self.fonts)
                 self.state = "GAMEPLAY"
             except FileNotFoundError:
-                print("No saved game file found. Try saving a game before loading.")
+                print("[WARNING] No saved game file found. Try saving a game before loading.")
                 self.loading = False
                 self.state = "MAIN_MENU"
             except Exception as e:

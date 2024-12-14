@@ -13,7 +13,7 @@ class DatabaseInitializer:
         """
         # Define an absolute path for the database in the 'data' directory
         project_root = os.path.dirname(os.path.abspath(__file__))
-        data_dir = os.path.join(project_root, '../../data')
+        data_dir = os.path.join(project_root, '../../../data')
         os.makedirs(data_dir, exist_ok=True)
         self.db_path = os.path.join(data_dir, db_name)
 
